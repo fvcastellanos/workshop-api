@@ -14,7 +14,12 @@
 	<name>Workshop API</name>
 	<description>API to manage a Small Workshop</description>
 	<properties>
+	    <apache.commons-lang3.version>3.12.0</apache.commons-lang3.version>
+		<guava.version>31.0.1-jre</guava.version>
+		<hibernate.bean-validator.version>6.2.1.Final</hibernate.bean-validator.version>
 		<java.version>17</java.version>
+		<lombok.version>1.18.22</lombok.version>
+		<vavr.version>0.10.4</vavr.version>		
 	</properties>
 	<dependencies>
 		<dependency>
@@ -49,6 +54,27 @@
 			<optional>true</optional>
 		</dependency>
 		<dependency>
+			<groupId>org.hibernate.validator</groupId>
+			<artifactId>hibernate-validator</artifactId>
+			<version>${hibernate.bean-validator.version}</version>
+		</dependency>		
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>${apache.commons-lang3.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.vavr</groupId>
+			<artifactId>vavr</artifactId>
+			<version>${vavr.version}</version>
+		</dependency>		
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>${guava.version}</version>
+		</dependency>
+		
+		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
@@ -69,6 +95,14 @@
 					</excludes>
 				</configuration>
 			</plugin>
+			<plugin>
+                <groupId>org.flywaydb</groupId>
+                <artifactId>flyway-maven-plugin</artifactId>
+                <version>8.5.5</version>
+                <configuration>
+                    <url>${DATASOURCE_URL}</url>
+                </configuration>
+            </plugin>			
 		</plugins>
 	</build>
 

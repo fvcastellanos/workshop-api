@@ -1,4 +1,4 @@
-package net.cavitos.workshok;
+package net.cavitos.workshop;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
