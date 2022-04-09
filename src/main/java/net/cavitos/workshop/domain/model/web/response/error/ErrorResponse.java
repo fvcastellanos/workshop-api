@@ -1,4 +1,4 @@
-package net.cavitos.workshop.web.model.response;
+package net.cavitos.workshop.domain.model.web.response.error;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -9,8 +9,7 @@ import lombok.ToString;
 @Setter
 @ToString
 @EqualsAndHashCode
-public class ResourceResponse<T> {
+public class ErrorResponse {
     
-    private T content;
-    private LinkResponse links;
+    private String message;
 }

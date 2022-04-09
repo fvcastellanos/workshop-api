@@ -15,6 +15,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.springframework.data.annotation.CreatedDate;
 
 @Entity
 @Getter
@@ -25,7 +26,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @EqualsAndHashCode
 @Table(name = "car_brand")
-public class CarBrand {
+public class CarBrandEntity {
 
     @Id
     @Size(max = 50)
@@ -44,6 +45,7 @@ public class CarBrand {
     @Size(max = 50)
     private String tenant;
 
+    @CreatedDate
     private Instant created;
     
 }

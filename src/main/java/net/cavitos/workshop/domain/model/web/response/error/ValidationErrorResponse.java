@@ -1,4 +1,4 @@
-package net.cavitos.workshop.web.model.response.error;
+package net.cavitos.workshop.domain.model.web.response.error;
 
 import java.util.List;
 

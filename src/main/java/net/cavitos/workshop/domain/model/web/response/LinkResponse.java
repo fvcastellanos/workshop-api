@@ -1,4 +1,4 @@
-package net.cavitos.workshop.web.model.response;
+package net.cavitos.workshop.domain.model.web.response;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;

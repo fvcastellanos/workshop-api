@@ -1,22 +1,24 @@
 package net.cavitos.workshop.web.controller.advice;
 
-import java.util.List;
-
+import net.cavitos.workshop.domain.exception.BusinessException;
+import net.cavitos.workshop.domain.exception.ValidationException;
+import net.cavitos.workshop.domain.model.error.FieldError;
+import net.cavitos.workshop.domain.model.web.response.error.ErrorResponse;
+import net.cavitos.workshop.domain.model.web.response.error.ValidationErrorResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import net.cavitos.workshop.domain.exception.BusinessException;
-import net.cavitos.workshop.domain.exception.ValidationException;
-import net.cavitos.workshop.domain.model.error.FieldError;
-import net.cavitos.workshop.web.model.response.error.ErrorResponse;
-import net.cavitos.workshop.web.model.response.error.ValidationErrorResponse;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @ControllerAdvice
 public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
@@ -51,6 +53,36 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
 
         var error = buildValidationErrorResponse(exception.getFieldErrors());
         return handleExceptionInternal(exception, error, buildHttpHeaders(), HttpStatus.BAD_REQUEST, request);
+    }
+
+    @Override
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException exception,
+                                                                  HttpHeaders headers,
+                                                                  HttpStatus status,
+                                                                  WebRequest request) {
+
+        LOGGER.error("unable to process request because a validation exception - {}", exception.getMessage());
+
+        final var error = new ValidationErrorResponse();
+        error.setMessage("Request validation failed");
+
+        var fieldErrors = exception.getFieldErrors().stream()
+                .map(fError -> {
+
+                    final var value = Objects.nonNull(fError.getRejectedValue()) ? fError.getRejectedValue().toString()
+                            : "null";
+
+                    final var fieldError = new FieldError();
+                    fieldError.setError(fError.getDefaultMessage());
+                    fieldError.setFieldName(fError.getField());
+                    fieldError.setValue(value);
+
+                    return fieldError;
+                }).collect(Collectors.toList());
+
+        error.setErrors(fieldErrors);
+
+        return handleExceptionInternal(exception, error, headers, status, request);
     }
 
     // ------------------------------------------------------------------------------------------------

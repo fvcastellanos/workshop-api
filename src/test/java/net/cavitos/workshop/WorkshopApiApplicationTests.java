@@ -1,4 +1,4 @@
-package net.cavitos.workshok;
+package net.cavitos.workshop;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -9,5 +9,4 @@ class WorkshopApiApplicationTests {
 	@Test
 	void contextLoads() {
 	}
-
 }
