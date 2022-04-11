@@ -1,18 +1,20 @@
 package net.cavitos.workshop.web.controller;
 
+import net.cavitos.workshop.domain.model.web.brand.CarBrand;
+import net.cavitos.workshop.domain.model.web.response.ResourceResponse;
 import net.cavitos.workshop.model.entity.CarBrandEntity;
 import net.cavitos.workshop.service.CarBrandService;
-import net.cavitos.workshop.domain.model.web.brand.CarBrand;
-import net.cavitos.workshop.domain.model.web.response.LinkResponse;
-import net.cavitos.workshop.domain.model.web.response.ResourceResponse;
 import net.cavitos.workshop.transformer.CarBrandTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -20,7 +22,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
+
+import java.util.stream.Collectors;
 
 import static net.cavitos.workshop.web.controller.Route.CAR_BRANDS_RESOURCE;
 
@@ -36,25 +39,39 @@ public class CarBrandController extends BaseController {
         this.carBrandService = carBrandService;
     }
 
-    @GetMapping("/{tenant}")
-    public ResponseEntity<Page<CarBrandEntity>> getByTenant(@PathVariable @NotBlank @Size(max = 50) final String tenant,
-                                                            @RequestParam(defaultValue = "1") final int active,
+    @GetMapping
+    public ResponseEntity<Page<ResourceResponse<CarBrand>>> getByTenant(@RequestParam(defaultValue = "1") final int active,
+                                                            @RequestParam(defaultValue = "") final String name,
                                                             @RequestParam(defaultValue = DEFAULT_PAGE) final int page,
                                                             @RequestParam(defaultValue = DEFAULT_SIZE) final int size) {
 
-        final var carBrands = carBrandService.getAllByTenant(tenant, active, page, size);
+        final var carBrands = carBrandService.getAllByTenant(DEFAULT_TENANT, active, name, page, size);
 
-        return new ResponseEntity<>(carBrands, HttpStatus.OK);
+        final var brands = carBrands.stream()
+                .map(carBrandEntity -> CarBrandTransformer.toWeb(DEFAULT_TENANT, carBrandEntity))
+                .collect(Collectors.toList());
+
+        final var response = new PageImpl<ResourceResponse<CarBrand>>(brands, Pageable.ofSize(size), carBrands.getSize());
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @PostMapping("/{tenant}")
-    public ResponseEntity<ResourceResponse<CarBrand>> add(@PathVariable @NotBlank @Size(max = 50) final String tenant,
-                                                          @Valid @RequestBody final CarBrand carBrand) {
+    @PostMapping
+    public ResponseEntity<ResourceResponse<CarBrand>> add(@Valid @RequestBody final CarBrand carBrand) {
 
-        var entity = carBrandService.add(tenant, carBrand);
-        var response = CarBrandTransformer.toWeb(tenant, entity);
+        final var entity = carBrandService.add(DEFAULT_TENANT, carBrand);
+        final var response = CarBrandTransformer.toWeb(DEFAULT_TENANT, entity);
 
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
-    
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ResourceResponse<CarBrand>> update(@PathVariable @NotBlank final String id,
+                                                             @RequestBody @Valid final CarBrand carBrand) {
+
+        final var entity = carBrandService.update(DEFAULT_TENANT, id, carBrand);
+        final var response = CarBrandTransformer.toWeb(DEFAULT_TENANT, entity);
+
+        return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
+    }
 }

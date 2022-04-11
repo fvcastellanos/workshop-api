@@ -19,7 +19,8 @@ public final class CarBrandTransformer {
 
         var carBrand = new CarBrand();
         carBrand.setName(carBrandEntity.getName());
-        carBrand.setDescription(carBrand.getDescription());
+        carBrand.setDescription(carBrandEntity.getDescription());
+        carBrand.setActive(carBrandEntity.getActive());
 
         var response = new ResourceResponse<CarBrand>();
         response.setContent(carBrand);
@@ -34,6 +35,7 @@ public final class CarBrandTransformer {
                 .id(carBrandId)
                 .tenant(tenant)
                 .name(carBrand.getName())
+                .active(carBrand.getActive())
                 .description(carBrand.getDescription())
                 .build();
     }

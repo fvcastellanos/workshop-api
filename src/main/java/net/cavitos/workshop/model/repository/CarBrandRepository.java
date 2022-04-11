@@ -6,7 +6,10 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 
 import net.cavitos.workshop.model.entity.CarBrandEntity;
 
+import java.util.Optional;
+
 public interface CarBrandRepository extends PagingAndSortingRepository<CarBrandEntity, String> {
 
-    Page<CarBrandEntity> findByTenantAndActive(String tenant, int active, Pageable pageable);
+    Page<CarBrandEntity> findByTenantAndActiveAndNameContains(String tenant, int active, String name, Pageable pageable);
+    Optional<CarBrandEntity> findByNameAndTenant(String name, String tenant);
 }
