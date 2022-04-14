@@ -11,6 +11,6 @@ import lombok.ToString;
 @EqualsAndHashCode
 public class ResourceResponse<T> {
     
-    private T content;
+    private T entity;
     private LinkResponse links;
 }

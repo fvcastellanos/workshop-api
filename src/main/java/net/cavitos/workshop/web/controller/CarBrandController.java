@@ -46,10 +46,10 @@ public class CarBrandController extends BaseController {
         final var carBrandEntityPage = carBrandService.getAllByTenant(DEFAULT_TENANT, active, name, page, size);
 
         final var brands = carBrandEntityPage.stream()
-                .map(carBrandEntity -> CarBrandTransformer.toWeb(carBrandEntity))
+                .map(CarBrandTransformer::toWeb)
                 .collect(Collectors.toList());
 
-        final var response = new PageImpl<ResourceResponse<CarBrand>>(brands, Pageable.ofSize(size),
+        final var response = new PageImpl<>(brands, Pageable.ofSize(size),
                 carBrandEntityPage.getTotalElements());
 
         return new ResponseEntity<>(response, HttpStatus.OK);

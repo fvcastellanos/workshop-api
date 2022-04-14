@@ -206,10 +206,35 @@ CREATE TABLE IF NOT EXISTS `workshop`.`car_brand` (
     `active` INT NOT NULL DEFAULT 1,
     `tenant` VARCHAR(50) NOT NULL,
     PRIMARY KEY (`id`),
-    INDEX `idx_car_brand_name` (`name` ASC) VISIBLE,
+    UNIQUE INDEX `idx_car_brand_name` (`name` ASC, `tenant` ASC) VISIBLE,
     INDEX `idx_car_brand_created` (`created` ASC) VISIBLE,
     INDEX `idx_car_brand_active` (`active` ASC) INVISIBLE,
-    INDEX `idx_car_brand_tenant_id` (`tenant` ASC) VISIBLE)
+    INDEX `idx_car_brand_tenant` (`tenant` ASC) VISIBLE)
+    ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `workshop`.`car_line`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `workshop`.`car_line` (
+    `id` VARCHAR(50) NOT NULL,
+    `car_brand_id` VARCHAR(50) NOT NULL,
+    `name` VARCHAR(100) NOT NULL,
+    `description` VARCHAR(300) NULL,
+    `active` INT UNSIGNED NOT NULL DEFAULT 1,
+    `created` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `tenant` VARCHAR(50) NOT NULL,
+    PRIMARY KEY (`id`),
+    UNIQUE INDEX `idx_car_line_name` (`name` ASC, `tenant` ASC) INVISIBLE,
+    INDEX `idx_car_line_created` (`created` ASC) INVISIBLE,
+    INDEX `idx_car_line_active` (`active` ASC) INVISIBLE,
+    INDEX `idx_car_line_tenant` (`tenant` ASC) VISIBLE,
+    INDEX `fk_car_line_car_brand1_idx` (`car_brand_id` ASC) VISIBLE,
+    CONSTRAINT `fk_car_line_car_brand1`
+    FOREIGN KEY (`car_brand_id`)
+    REFERENCES `workshop`.`car_brand` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
     ENGINE = InnoDB;
 
 

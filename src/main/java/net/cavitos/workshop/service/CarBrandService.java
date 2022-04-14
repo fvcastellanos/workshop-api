@@ -38,9 +38,9 @@ public class CarBrandService {
                                          final int size) {
 
         LOGGER.info("get car brands configured for tenant={}", tenant);
-
         final var pageable = PageRequest.of(page, size);
-       return carBrandRepository.findByTenantAndActiveAndNameContains(tenant, active, name, pageable);
+
+        return carBrandRepository.findByTenantAndActiveAndNameContains(tenant, active, name, pageable);
     }
 
     public CarBrandEntity getById(final String tenant, final String id) {
@@ -65,17 +65,20 @@ public class CarBrandService {
 
         LOGGER.info("add new car brand with name={} for tenant={}", carBrand.getName(), tenant);
 
-        final var carBrandHolder = carBrandRepository.findByNameAndTenant(carBrand.getName(), tenant);
+        final var carBrandName = carBrand.getName()
+                .toUpperCase();
+
+        final var carBrandHolder = carBrandRepository.findByNameAndTenant(carBrandName, tenant);
 
         if (carBrandHolder.isPresent()) {
 
-            throw new BusinessException(HttpStatus.UNPROCESSABLE_ENTITY,
-                    format("Car brand with name=%s already exists for tenant=%s", carBrand.getName(), tenant));
+            LOGGER.warn("Car brand name={} already exists for tenant={}", carBrandName, tenant);
+            return carBrandHolder.get();
         }
 
         var entity = CarBrandEntity.builder()
                 .id(UUID.randomUUID().toString())
-                .name(carBrand.getName())
+                .name(carBrand.getName().toUpperCase())
                 .description(carBrand.getDescription())
                 .tenant(tenant)
                 .created(Instant.now())
@@ -100,7 +103,7 @@ public class CarBrandService {
             throw new BusinessException(HttpStatus.UNPROCESSABLE_ENTITY, "Car Brand not found");
         }
 
-        carBrandEntity.setName(carBrand.getName());
+        carBrandEntity.setName(carBrand.getName().toUpperCase());
         carBrandEntity.setDescription(carBrand.getDescription());
         carBrandEntity.setActive(carBrand.getActive());
         carBrandRepository.save(carBrandEntity);

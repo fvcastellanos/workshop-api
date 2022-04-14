@@ -23,7 +23,7 @@ public final class CarBrandTransformer {
         carBrand.setActive(carBrandEntity.getActive());
 
         var response = new ResourceResponse<CarBrand>();
-        response.setContent(carBrand);
+        response.setEntity(carBrand);
         response.setLinks(link);
 
         return response;

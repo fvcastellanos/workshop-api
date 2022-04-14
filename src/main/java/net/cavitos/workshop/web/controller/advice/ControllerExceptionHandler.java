@@ -42,7 +42,7 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
 
         var error = buildErrorResponse(exception.getMessage());
         
-        return handleExceptionInternal(exception, error, buildHttpHeaders(), 
+        return handleExceptionInternal(exception, error, buildHttpHeaders(),
             exception.getHttpStatus(), request);        
     }
 
