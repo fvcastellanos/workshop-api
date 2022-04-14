@@ -16,6 +16,7 @@ import java.time.Instant;
 import java.util.UUID;
 
 import static java.lang.String.format;
+import static net.cavitos.workshop.factory.BusinessExceptionFactory.createBusinessException;
 
 @Service
 public class CarBrandService {
@@ -31,27 +32,30 @@ public class CarBrandService {
     }
 
     public Page<CarBrandEntity> getAllByTenant(final String tenant,
-                                               final int active,
-                                               final String name,
-                                               final int page,
-                                               final int size) {
+                                         final int active,
+                                         final String name,
+                                         final int page,
+                                         final int size) {
 
         LOGGER.info("get car brands configured for tenant={}", tenant);
 
         final var pageable = PageRequest.of(page, size);
-        return carBrandRepository.findByTenantAndActiveAndNameContains(tenant, active, name, pageable);
+       return carBrandRepository.findByTenantAndActiveAndNameContains(tenant, active, name, pageable);
     }
 
-    public CarBrandEntity getById(final String tenant,
-                                            final String id) {
+    public CarBrandEntity getById(final String tenant, final String id) {
+
+        LOGGER.info("Retrieve car_brand_id={} for tenant={}", id, tenant);
 
         final var carBrandEntity = carBrandRepository.findById(id)
-                .orElseThrow(() -> new BusinessException(""));
+                .orElseThrow(() -> createBusinessException(HttpStatus.NOT_FOUND, "car_brand_id=%s not found for tenant=%s",
+                        id, tenant)
+                );
 
         if (!carBrandEntity.getTenant().equalsIgnoreCase(tenant)) {
 
-            LOGGER.error("Car Brand id={} is not assigned to tenant={}", id, tenant);
-            throw new BusinessException(HttpStatus.UNPROCESSABLE_ENTITY, "Invalid Car Brand");
+            LOGGER.error("car_brand_id={} is not assigned to tenant={}", id, tenant);
+            throw createBusinessException(HttpStatus.UNPROCESSABLE_ENTITY, "Invalid Car Brand");
         }
 
         return carBrandEntity;
@@ -92,7 +96,7 @@ public class CarBrandService {
 
         if (!carBrandEntity.getTenant().equalsIgnoreCase(tenant)) {
 
-            LOGGER.error("Car Brand id={} is not assigned to tenant={}", id, tenant);
+            LOGGER.error("car_brand_id={} is not assigned to tenant={}", id, tenant);
             throw new BusinessException(HttpStatus.UNPROCESSABLE_ENTITY, "Car Brand not found");
         }
 

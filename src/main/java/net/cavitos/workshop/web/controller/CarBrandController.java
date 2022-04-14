@@ -2,7 +2,6 @@ package net.cavitos.workshop.web.controller;
 
 import net.cavitos.workshop.domain.model.web.brand.CarBrand;
 import net.cavitos.workshop.domain.model.web.response.ResourceResponse;
-import net.cavitos.workshop.model.entity.CarBrandEntity;
 import net.cavitos.workshop.service.CarBrandService;
 import net.cavitos.workshop.transformer.CarBrandTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +21,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
-
 import java.util.stream.Collectors;
 
 import static net.cavitos.workshop.web.controller.Route.CAR_BRANDS_RESOURCE;
@@ -45,13 +43,23 @@ public class CarBrandController extends BaseController {
                                                             @RequestParam(defaultValue = DEFAULT_PAGE) final int page,
                                                             @RequestParam(defaultValue = DEFAULT_SIZE) final int size) {
 
-        final var carBrands = carBrandService.getAllByTenant(DEFAULT_TENANT, active, name, page, size);
+        final var carBrandEntityPage = carBrandService.getAllByTenant(DEFAULT_TENANT, active, name, page, size);
 
-        final var brands = carBrands.stream()
-                .map(carBrandEntity -> CarBrandTransformer.toWeb(DEFAULT_TENANT, carBrandEntity))
+        final var brands = carBrandEntityPage.stream()
+                .map(carBrandEntity -> CarBrandTransformer.toWeb(carBrandEntity))
                 .collect(Collectors.toList());
 
-        final var response = new PageImpl<ResourceResponse<CarBrand>>(brands, Pageable.ofSize(size), carBrands.getSize());
+        final var response = new PageImpl<ResourceResponse<CarBrand>>(brands, Pageable.ofSize(size),
+                carBrandEntityPage.getTotalElements());
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ResourceResponse<CarBrand>> getById(@PathVariable @NotBlank final String id) {
+
+        final var carBrandEntity = carBrandService.getById(DEFAULT_TENANT, id);
+        final var response = CarBrandTransformer.toWeb(carBrandEntity);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -60,7 +68,7 @@ public class CarBrandController extends BaseController {
     public ResponseEntity<ResourceResponse<CarBrand>> add(@Valid @RequestBody final CarBrand carBrand) {
 
         final var entity = carBrandService.add(DEFAULT_TENANT, carBrand);
-        final var response = CarBrandTransformer.toWeb(DEFAULT_TENANT, entity);
+        final var response = CarBrandTransformer.toWeb(entity);
 
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
@@ -70,7 +78,7 @@ public class CarBrandController extends BaseController {
                                                              @RequestBody @Valid final CarBrand carBrand) {
 
         final var entity = carBrandService.update(DEFAULT_TENANT, id, carBrand);
-        final var response = CarBrandTransformer.toWeb(DEFAULT_TENANT, entity);
+        final var response = CarBrandTransformer.toWeb(entity);
 
         return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
     }

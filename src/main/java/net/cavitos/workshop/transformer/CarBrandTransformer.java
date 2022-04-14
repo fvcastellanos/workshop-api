@@ -12,10 +12,10 @@ public final class CarBrandTransformer {
     private CarBrandTransformer() {
     }
 
-    public static ResourceResponse<CarBrand> toWeb(final String tenant, final CarBrandEntity carBrandEntity) {
+    public static ResourceResponse<CarBrand> toWeb(final CarBrandEntity carBrandEntity) {
 
         var link = new LinkResponse();
-        link.setSelf(CAR_BRANDS_RESOURCE + "/" + tenant + "/" + carBrandEntity.getId());
+        link.setSelf(CAR_BRANDS_RESOURCE + "/" + carBrandEntity.getId());
 
         var carBrand = new CarBrand();
         carBrand.setName(carBrandEntity.getName());
