@@ -7,6 +7,8 @@ public final class Route {
     public static final String CAR_BRANDS_RESOURCE = "/car-brands";
     public static final String CAR_LINES_RESOURCE = "/lines";
 
+    public static final String PROVIDERS_RESOURCE = "/providers";
+
     private Route() {
     }
 }
