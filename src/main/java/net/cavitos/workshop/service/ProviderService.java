@@ -69,7 +69,7 @@ public class ProviderService {
 
         if (existingProviderHolder.isPresent()) {
 
-            LOGGER.error("provider_code={} already exists for tenatn={}", provider.getCode(), tenant);
+            LOGGER.error("provider_code={} already exists for tenant={}", provider.getCode(), tenant);
             throw createBusinessException(HttpStatus.UNPROCESSABLE_ENTITY, "Another provider is using the code=%", provider.getCode());
         }
 
@@ -85,6 +85,31 @@ public class ProviderService {
                 .created(Instant.now())
                 .updated(Instant.now())
                 .build();
+
+        providerRepository.save(providerEntity);
+
+        return providerEntity;
+    }
+
+    public ProviderEntity update(final String tenant, final String id, final Provider provider) {
+
+        LOGGER.info("trying to update provider_id={} for tenant={}", id, tenant);
+
+        final var providerEntity = providerRepository.findById(id)
+                .orElseThrow(() -> createBusinessException(HttpStatus.NOT_FOUND, "Provider not found"));
+
+        if (!providerEntity.getTenant().equalsIgnoreCase(tenant)) {
+
+            LOGGER.error("provider_id={} is not assigned to tenant={}", id, tenant);
+            throw createBusinessException(HttpStatus.NOT_FOUND, "Provider not found");
+        }
+
+        providerEntity.setName(provider.getName());
+        providerEntity.setDescription(provider.getDescription());
+        providerEntity.setContact(provider.getContact());
+        providerEntity.setTaxId(provider.getTaxId());
+        providerEntity.setActive(provider.getActive());
+        providerEntity.setUpdated(Instant.now());
 
         providerRepository.save(providerEntity);
 

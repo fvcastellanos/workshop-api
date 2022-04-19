@@ -80,6 +80,6 @@ public class CarBrandController extends BaseController {
         final var entity = carBrandService.update(DEFAULT_TENANT, id, carBrand);
         final var response = CarBrandTransformer.toWeb(entity);
 
-        return new ResponseEntity<>(response, HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }

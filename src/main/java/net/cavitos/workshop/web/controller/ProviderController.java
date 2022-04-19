@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -71,5 +72,16 @@ public class ProviderController extends BaseController {
 
         final var resource = ProviderTransformer.toWeb(entity);
         return new ResponseEntity<>(resource, HttpStatus.CREATED);
+    }
+
+    @PutMapping("/{id}")
+    public  ResponseEntity<ResourceResponse<Provider>> update(@PathVariable @NotEmpty final String id,
+                                                              @RequestBody @Valid final Provider provider) {
+
+        final var entity = providerService.update(DEFAULT_TENANT, id, provider);
+
+        final var resource = ProviderTransformer.toWeb(entity);
+        return new ResponseEntity<>(resource, HttpStatus.ACCEPTED);
+
     }
 }

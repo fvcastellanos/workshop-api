@@ -2,7 +2,6 @@ package net.cavitos.workshop.web.controller;
 
 import net.cavitos.workshop.domain.model.web.CarLine;
 import net.cavitos.workshop.domain.model.web.response.ResourceResponse;
-import net.cavitos.workshop.model.entity.CarLineEntity;
 import net.cavitos.workshop.service.CarLineService;
 import net.cavitos.workshop.transformer.CarLineTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,6 +84,6 @@ public class CarLineController extends BaseController {
         final var entity = carLineService.update(DEFAULT_TENANT, carBrandId, id, carLine);
         final var resource = CarLineTransformer.toWeb(entity);
 
-        return new ResponseEntity<>(resource, HttpStatus.CREATED);
+        return new ResponseEntity<>(resource, HttpStatus.OK);
     }
 }
