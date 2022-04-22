@@ -7,13 +7,14 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 
 import java.util.Optional;
 
-public interface ProviderRepository extends PagingAndSortingRepository<ProviderEntity, String> {
+public interface ContactRepository extends PagingAndSortingRepository<ProviderEntity, String> {
 
     Page<ProviderEntity> findByTenantAndCodeContainsAndNameContainsAndActive(String tenant,
                                                                              String code,
+                                                                             String type,
                                                                              String name,
                                                                              int active,
                                                                              Pageable pageable);
 
-    Optional<ProviderEntity> findByCodeEqualsIgnoreCaseAndTenant(String code, String tenant);
+    Optional<ProviderEntity> findByCodeEqualsIgnoreCaseAndTenant(String code, String type, String tenant);
 }

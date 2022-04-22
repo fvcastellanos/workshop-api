@@ -1,6 +1,6 @@
 package net.cavitos.workshop.transformer;
 
-import net.cavitos.workshop.domain.model.web.Provider;
+import net.cavitos.workshop.domain.model.web.Contact;
 import net.cavitos.workshop.domain.model.web.response.LinkResponse;
 import net.cavitos.workshop.domain.model.web.response.ResourceResponse;
 import net.cavitos.workshop.model.entity.ProviderEntity;
@@ -12,12 +12,12 @@ public final class ProviderTransformer {
     private ProviderTransformer() {
     }
 
-    public static ResourceResponse<Provider> toWeb(final ProviderEntity providerEntity) {
+    public static ResourceResponse<Contact> toWeb(final ProviderEntity providerEntity) {
 
         final var links = new LinkResponse();
         links.setSelf(PROVIDERS_RESOURCE + "/" + providerEntity.getId());
 
-        final var provider = new Provider();
+        final var provider = new Contact();
         provider.setCode(providerEntity.getCode());
         provider.setName(providerEntity.getName());
         provider.setDescription(providerEntity.getDescription());
@@ -25,7 +25,7 @@ public final class ProviderTransformer {
         provider.setTaxId(providerEntity.getTaxId());
         provider.setActive(providerEntity.getActive());
 
-        final var resource = new ResourceResponse<Provider>();
+        final var resource = new ResourceResponse<Contact>();
         resource.setEntity(provider);
         resource.setLinks(links);
 

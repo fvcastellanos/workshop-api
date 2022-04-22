@@ -12,6 +12,8 @@ import org.springframework.data.annotation.CreatedDate;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 import java.time.Instant;
@@ -24,12 +26,16 @@ import java.time.Instant;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
-@Table(name = "provider")
+@Table(name = "contact")
 public class ProviderEntity {
 
     @Id
     @Size(max = 50)
     private String id;
+
+    @NotEmpty
+    @Size(max = 1)
+    private String type;
 
     @NotEmpty
     @Size(max = 50)
@@ -47,6 +53,9 @@ public class ProviderEntity {
 
     @Size(max = 300)
     private String description;
+
+    @Min(value = 0)
+    @Max(value = 1)
     private int active;
 
     @CreatedDate

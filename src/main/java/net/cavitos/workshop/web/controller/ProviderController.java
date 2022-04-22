@@ -1,6 +1,6 @@
 package net.cavitos.workshop.web.controller;
 
-import net.cavitos.workshop.domain.model.web.Provider;
+import net.cavitos.workshop.domain.model.web.Contact;
 import net.cavitos.workshop.domain.model.web.response.ResourceResponse;
 import net.cavitos.workshop.service.ProviderService;
 import net.cavitos.workshop.transformer.ProviderTransformer;
@@ -40,11 +40,11 @@ public class ProviderController extends BaseController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<ResourceResponse<Provider>>> getByTenant(@RequestParam(defaultValue = "") @Size(max = 50) final String code,
-                                                                        @RequestParam(defaultValue = "") @Size(max = 150) final String name,
-                                                                        @RequestParam(defaultValue = "1") final int active,
-                                                                        @RequestParam(defaultValue = DEFAULT_PAGE) final int page,
-                                                                        @RequestParam(defaultValue = DEFAULT_SIZE) final int size) {
+    public ResponseEntity<Page<ResourceResponse<Contact>>> getByTenant(@RequestParam(defaultValue = "") @Size(max = 50) final String code,
+                                                                       @RequestParam(defaultValue = "") @Size(max = 150) final String name,
+                                                                       @RequestParam(defaultValue = "1") final int active,
+                                                                       @RequestParam(defaultValue = DEFAULT_PAGE) final int page,
+                                                                       @RequestParam(defaultValue = DEFAULT_SIZE) final int size) {
 
         final var providerPage = providerService.getAll(DEFAULT_TENANT, code, name, active, page, size);
 
@@ -57,7 +57,7 @@ public class ProviderController extends BaseController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ResourceResponse<Provider>> getById(@PathVariable @NotEmpty final String id) {
+    public ResponseEntity<ResourceResponse<Contact>> getById(@PathVariable @NotEmpty final String id) {
 
         final var providerEntity = providerService.getById(DEFAULT_TENANT, id);
 
@@ -66,19 +66,19 @@ public class ProviderController extends BaseController {
     }
 
     @PostMapping
-    public ResponseEntity<ResourceResponse<Provider>> add(@RequestBody @Valid Provider provider) {
+    public ResponseEntity<ResourceResponse<Contact>> add(@RequestBody @Valid Contact contact) {
 
-        final var entity = providerService.add(DEFAULT_TENANT, provider);
+        final var entity = providerService.add(DEFAULT_TENANT, contact);
 
         final var resource = ProviderTransformer.toWeb(entity);
         return new ResponseEntity<>(resource, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
-    public  ResponseEntity<ResourceResponse<Provider>> update(@PathVariable @NotEmpty final String id,
-                                                              @RequestBody @Valid final Provider provider) {
+    public  ResponseEntity<ResourceResponse<Contact>> update(@PathVariable @NotEmpty final String id,
+                                                             @RequestBody @Valid final Contact contact) {
 
-        final var entity = providerService.update(DEFAULT_TENANT, id, provider);
+        final var entity = providerService.update(DEFAULT_TENANT, id, contact);
 
         final var resource = ProviderTransformer.toWeb(entity);
         return new ResponseEntity<>(resource, HttpStatus.ACCEPTED);

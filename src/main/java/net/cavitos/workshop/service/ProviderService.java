@@ -1,8 +1,8 @@
 package net.cavitos.workshop.service;
 
-import net.cavitos.workshop.domain.model.web.Provider;
+import net.cavitos.workshop.domain.model.web.Contact;
 import net.cavitos.workshop.model.entity.ProviderEntity;
-import net.cavitos.workshop.model.repository.ProviderRepository;
+import net.cavitos.workshop.model.repository.ContactRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,26 +21,27 @@ public class ProviderService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ProviderService.class);
 
-    private final ProviderRepository providerRepository;
+    private final ContactRepository contactRepository;
 
     @Autowired
-    public ProviderService(final ProviderRepository providerRepository) {
+    public ProviderService(final ContactRepository contactRepository) {
 
-        this.providerRepository = providerRepository;
+        this.contactRepository = contactRepository;
     }
 
     public Page<ProviderEntity> getAll(final String tenant,
                                        final String code,
+                                       final String type,
                                        final String name,
                                        final int active,
                                        final int page,
                                        final int size) {
 
-        LOGGER.info("Retrieve all providers for tenant={} with code={}, name={}, active={}", tenant, code, name,
-                active);
+        LOGGER.info("Retrieve all providers for tenant={} with code={}, type={} name={}, active={}", tenant, code, type,
+                name, active);
 
         final var pageable = PageRequest.of(page, size);
-        return providerRepository.findByTenantAndCodeContainsAndNameContainsAndActive(tenant, code, name, active,
+        return contactRepository.findByTenantAndCodeContainsAndNameContainsAndActive(tenant, code, type, name, active,
                 pageable);
     }
 
@@ -48,7 +49,7 @@ public class ProviderService {
 
         LOGGER.info("Retrieve provider_id={} for tenant={}", id, tenant);
 
-        final var providerEntity = providerRepository.findById(id)
+        final var providerEntity = contactRepository.findById(id)
                 .orElseThrow(() -> createBusinessException(HttpStatus.NOT_FOUND, "Provider not found"));
 
         if (!providerEntity.getTenant().equalsIgnoreCase(tenant)) {
@@ -60,42 +61,42 @@ public class ProviderService {
         return providerEntity;
     }
 
-    public ProviderEntity add(final String tenant, final Provider provider) {
+    public ProviderEntity add(final String tenant, final Contact contact) {
 
-        LOGGER.info("trying to add a new provider with name={} for tenant={}", provider.getName(), tenant);
+        LOGGER.info("trying to add a new provider with name={} for tenant={}", contact.getName(), tenant);
 
-        final var existingProviderHolder = providerRepository.findByCodeEqualsIgnoreCaseAndTenant(provider.getCode(),
-                tenant);
+        final var existingProviderHolder = contactRepository.findByCodeEqualsIgnoreCaseAndTenant(contact.getCode(),
+                contact.getType(), tenant);
 
         if (existingProviderHolder.isPresent()) {
 
-            LOGGER.error("provider_code={} already exists for tenant={}", provider.getCode(), tenant);
-            throw createBusinessException(HttpStatus.UNPROCESSABLE_ENTITY, "Another provider is using the code=%", provider.getCode());
+            LOGGER.error("provider_code={} already exists for tenant={}", contact.getCode(), tenant);
+            throw createBusinessException(HttpStatus.UNPROCESSABLE_ENTITY, "Another provider is using the code=%", contact.getCode());
         }
 
         final var providerEntity = ProviderEntity.builder()
                 .id(UUID.randomUUID().toString())
-                .code(provider.getCode())
-                .name(provider.getName())
-                .description(provider.getDescription())
-                .taxId(provider.getTaxId())
-                .contact(provider.getContact())
+                .code(contact.getCode())
+                .name(contact.getName())
+                .description(contact.getDescription())
+                .taxId(contact.getTaxId())
+                .contact(contact.getContact())
                 .tenant(tenant)
                 .active(1)
                 .created(Instant.now())
                 .updated(Instant.now())
                 .build();
 
-        providerRepository.save(providerEntity);
+        contactRepository.save(providerEntity);
 
         return providerEntity;
     }
 
-    public ProviderEntity update(final String tenant, final String id, final Provider provider) {
+    public ProviderEntity update(final String tenant, final String id, final Contact contact) {
 
         LOGGER.info("trying to update provider_id={} for tenant={}", id, tenant);
 
-        final var providerEntity = providerRepository.findById(id)
+        final var providerEntity = contactRepository.findById(id)
                 .orElseThrow(() -> createBusinessException(HttpStatus.NOT_FOUND, "Provider not found"));
 
         if (!providerEntity.getTenant().equalsIgnoreCase(tenant)) {
@@ -104,14 +105,14 @@ public class ProviderService {
             throw createBusinessException(HttpStatus.NOT_FOUND, "Provider not found");
         }
 
-        providerEntity.setName(provider.getName());
-        providerEntity.setDescription(provider.getDescription());
-        providerEntity.setContact(provider.getContact());
-        providerEntity.setTaxId(provider.getTaxId());
-        providerEntity.setActive(provider.getActive());
+        providerEntity.setName(contact.getName());
+        providerEntity.setDescription(contact.getDescription());
+        providerEntity.setContact(contact.getContact());
+        providerEntity.setTaxId(contact.getTaxId());
+        providerEntity.setActive(contact.getActive());
         providerEntity.setUpdated(Instant.now());
 
-        providerRepository.save(providerEntity);
+        contactRepository.save(providerEntity);
 
         return providerEntity;
     }
