@@ -1,21 +1,22 @@
 package net.cavitos.workshop.transformer;
 
 import net.cavitos.workshop.domain.model.web.Contact;
-import net.cavitos.workshop.domain.model.web.response.LinkResponse;
-import net.cavitos.workshop.domain.model.web.response.ResourceResponse;
 import net.cavitos.workshop.model.entity.ContactEntity;
+import net.cavitos.workshop.web.controller.ContactController;
 
-import static net.cavitos.workshop.web.controller.Route.CONTACTS_RESOURCE;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 public final class ContactTransformer {
 
     private ContactTransformer() {
     }
 
-    public static ResourceResponse<Contact> toWeb(final ContactEntity contactEntity) {
+    public static Contact toWeb(final ContactEntity contactEntity) {
 
-        final var links = new LinkResponse();
-        links.setSelf(CONTACTS_RESOURCE + "/" + contactEntity.getId());
+        final var selfLink = linkTo(methodOn(ContactController.class)
+                .getById(contactEntity.getId()))
+                .withSelfRel();
 
         final var provider = new Contact();
         provider.setCode(contactEntity.getCode());
@@ -26,10 +27,8 @@ public final class ContactTransformer {
         provider.setTaxId(contactEntity.getTaxId());
         provider.setActive(contactEntity.getActive());
 
-        final var resource = new ResourceResponse<Contact>();
-        resource.setEntity(provider);
-        resource.setLinks(links);
+        provider.add(selfLink);
 
-        return resource;
+        return provider;
     }
 }

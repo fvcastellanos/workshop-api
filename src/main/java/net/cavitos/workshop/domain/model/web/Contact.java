@@ -4,6 +4,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.springframework.hateoas.RepresentationModel;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
@@ -14,8 +15,8 @@ import javax.validation.constraints.Size;
 @Getter
 @Setter
 @ToString
-@EqualsAndHashCode
-public class Contact {
+@EqualsAndHashCode(callSuper = true)
+public class Contact extends RepresentationModel<Contact> {
 
     @NotEmpty
     @Size(max = 50)

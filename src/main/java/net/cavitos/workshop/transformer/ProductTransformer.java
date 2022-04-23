@@ -1,8 +1,6 @@
 package net.cavitos.workshop.transformer;
 
 import net.cavitos.workshop.domain.model.web.Product;
-import net.cavitos.workshop.domain.model.web.response.LinkResponse;
-import net.cavitos.workshop.domain.model.web.response.ResourceResponse;
 import net.cavitos.workshop.model.entity.ProductEntity;
 import net.cavitos.workshop.web.controller.ProductController;
 

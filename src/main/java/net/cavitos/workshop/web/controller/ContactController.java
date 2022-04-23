@@ -1,7 +1,6 @@
 package net.cavitos.workshop.web.controller;
 
 import net.cavitos.workshop.domain.model.web.Contact;
-import net.cavitos.workshop.domain.model.web.response.ResourceResponse;
 import net.cavitos.workshop.service.ContactService;
 import net.cavitos.workshop.transformer.ContactTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +38,7 @@ public class ContactController extends BaseController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<ResourceResponse<Contact>>> getByTenant(@RequestParam(defaultValue = "") @Size(max = 50) final String code,
+    public ResponseEntity<Page<Contact>> getByTenant(@RequestParam(defaultValue = "") @Size(max = 50) final String code,
                                                                        @RequestParam(defaultValue = "P") @Size(max = 1) final String type,
                                                                        @RequestParam(defaultValue = "") @Size(max = 150) final String name,
                                                                        @RequestParam(defaultValue = "1") final int active,
@@ -57,7 +56,7 @@ public class ContactController extends BaseController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ResourceResponse<Contact>> getById(@PathVariable @NotEmpty final String id) {
+    public ResponseEntity<Contact> getById(@PathVariable @NotEmpty final String id) {
 
         final var providerEntity = contactService.getById(DEFAULT_TENANT, id);
 
@@ -66,7 +65,7 @@ public class ContactController extends BaseController {
     }
 
     @PostMapping
-    public ResponseEntity<ResourceResponse<Contact>> add(@RequestBody @Valid Contact contact) {
+    public ResponseEntity<Contact> add(@RequestBody @Valid Contact contact) {
 
         final var entity = contactService.add(DEFAULT_TENANT, contact);
 
@@ -75,7 +74,7 @@ public class ContactController extends BaseController {
     }
 
     @PutMapping("/{id}")
-    public  ResponseEntity<ResourceResponse<Contact>> update(@PathVariable @NotEmpty final String id,
+    public  ResponseEntity<Contact> update(@PathVariable @NotEmpty final String id,
                                                              @RequestBody @Valid final Contact contact) {
 
         final var entity = contactService.update(DEFAULT_TENANT, id, contact);

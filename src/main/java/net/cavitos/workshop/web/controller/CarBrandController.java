@@ -1,7 +1,6 @@
 package net.cavitos.workshop.web.controller;
 
 import net.cavitos.workshop.domain.model.web.CarBrand;
-import net.cavitos.workshop.domain.model.web.response.ResourceResponse;
 import net.cavitos.workshop.service.CarBrandService;
 import net.cavitos.workshop.transformer.CarBrandTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +37,7 @@ public class CarBrandController extends BaseController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<ResourceResponse<CarBrand>>> getByTenant(@RequestParam(defaultValue = "1") final int active,
+    public ResponseEntity<Page<CarBrand>> getByTenant(@RequestParam(defaultValue = "1") final int active,
                                                             @RequestParam(defaultValue = "") final String name,
                                                             @RequestParam(defaultValue = DEFAULT_PAGE) final int page,
                                                             @RequestParam(defaultValue = DEFAULT_SIZE) final int size) {
@@ -56,7 +55,7 @@ public class CarBrandController extends BaseController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ResourceResponse<CarBrand>> getById(@PathVariable @NotBlank final String id) {
+    public ResponseEntity<CarBrand> getById(@PathVariable @NotBlank final String id) {
 
         final var carBrandEntity = carBrandService.getById(DEFAULT_TENANT, id);
         final var response = CarBrandTransformer.toWeb(carBrandEntity);
@@ -65,7 +64,7 @@ public class CarBrandController extends BaseController {
     }
 
     @PostMapping
-    public ResponseEntity<ResourceResponse<CarBrand>> add(@Valid @RequestBody final CarBrand carBrand) {
+    public ResponseEntity<CarBrand> add(@Valid @RequestBody final CarBrand carBrand) {
 
         final var entity = carBrandService.add(DEFAULT_TENANT, carBrand);
         final var response = CarBrandTransformer.toWeb(entity);
@@ -74,7 +73,7 @@ public class CarBrandController extends BaseController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ResourceResponse<CarBrand>> update(@PathVariable @NotBlank final String id,
+    public ResponseEntity<CarBrand> update(@PathVariable @NotBlank final String id,
                                                              @RequestBody @Valid final CarBrand carBrand) {
 
         final var entity = carBrandService.update(DEFAULT_TENANT, id, carBrand);

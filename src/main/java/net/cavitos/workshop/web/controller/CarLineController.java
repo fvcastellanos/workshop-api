@@ -1,7 +1,6 @@
 package net.cavitos.workshop.web.controller;
 
 import net.cavitos.workshop.domain.model.web.CarLine;
-import net.cavitos.workshop.domain.model.web.response.ResourceResponse;
 import net.cavitos.workshop.service.CarLineService;
 import net.cavitos.workshop.transformer.CarLineTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +38,7 @@ public class CarLineController extends BaseController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<ResourceResponse<CarLine>>> getByTenant(@PathVariable @NotBlank final String carBrandId,
+    public ResponseEntity<Page<CarLine>> getByTenant(@PathVariable @NotBlank final String carBrandId,
                                                                        @RequestParam(defaultValue = "1") final int active,
                                                                        @RequestParam(defaultValue = "") final String name,
                                                                        @RequestParam(defaultValue = DEFAULT_PAGE) final int page,
@@ -57,7 +56,7 @@ public class CarLineController extends BaseController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ResourceResponse<CarLine>> getById(@PathVariable @NotBlank final String carBrandId,
+    public ResponseEntity<CarLine> getById(@PathVariable @NotBlank final String carBrandId,
                                                              @PathVariable @NotBlank final String id) {
 
         final var carLineEntity = carLineService.findById(DEFAULT_TENANT, carBrandId, id);
@@ -67,7 +66,7 @@ public class CarLineController extends BaseController {
     }
 
     @PostMapping
-    public ResponseEntity<ResourceResponse<CarLine>> add(@PathVariable @NotBlank final String carBrandId,
+    public ResponseEntity<CarLine> add(@PathVariable @NotBlank final String carBrandId,
                                                          @Valid @RequestBody final CarLine carLine) {
 
         final var entity = carLineService.add(DEFAULT_TENANT, carBrandId, carLine);
@@ -77,7 +76,7 @@ public class CarLineController extends BaseController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ResourceResponse<CarLine>> update(@PathVariable @NotBlank final String carBrandId,
+    public ResponseEntity<CarLine> update(@PathVariable @NotBlank final String carBrandId,
                                                             @PathVariable @NotBlank final String id,
                                                             @Valid @RequestBody final CarLine carLine) {
 

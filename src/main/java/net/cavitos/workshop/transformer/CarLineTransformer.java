@@ -1,33 +1,32 @@
 package net.cavitos.workshop.transformer;
 
 import net.cavitos.workshop.domain.model.web.CarLine;
-import net.cavitos.workshop.domain.model.web.response.LinkResponse;
-import net.cavitos.workshop.domain.model.web.response.ResourceResponse;
 import net.cavitos.workshop.model.entity.CarLineEntity;
+import net.cavitos.workshop.web.controller.CarLineController;
 
-import static net.cavitos.workshop.web.controller.Route.CAR_BRANDS_RESOURCE;
-import static net.cavitos.workshop.web.controller.Route.CAR_LINES_RESOURCE;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 public final class CarLineTransformer {
 
     private CarLineTransformer() {
     }
 
-    public static ResourceResponse<CarLine> toWeb(final CarLineEntity carLineEntity) {
+    public static CarLine toWeb(final CarLineEntity carLineEntity) {
 
-        final var linkResponse = new LinkResponse();
-        linkResponse.setSelf(CAR_BRANDS_RESOURCE + "/" + carLineEntity.getCarBrand().getId() + CAR_LINES_RESOURCE +
-                "/" + carLineEntity.getId());
+        var carBrandEntity = carLineEntity.getCarBrand();
+
+        final var selfLink = linkTo(methodOn(CarLineController.class)
+                .getById(carBrandEntity.getId(), carLineEntity.getId()))
+                .withSelfRel();
 
         final var carLine = new CarLine();
         carLine.setName(carLineEntity.getName());
         carLine.setDescription(carLineEntity.getDescription());
         carLine.setActive(carLineEntity.getActive());
 
-        final var resource = new ResourceResponse<CarLine>();
-        resource.setEntity(carLine);
-        resource.setLinks(linkResponse);
+        carLine.add(selfLink);
 
-        return resource;
+        return carLine;
     }
 }
