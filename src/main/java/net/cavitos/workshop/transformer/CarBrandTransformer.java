@@ -1,6 +1,6 @@
 package net.cavitos.workshop.transformer;
 
-import net.cavitos.workshop.domain.model.web.brand.CarBrand;
+import net.cavitos.workshop.domain.model.web.CarBrand;
 import net.cavitos.workshop.domain.model.web.response.LinkResponse;
 import net.cavitos.workshop.domain.model.web.response.ResourceResponse;
 import net.cavitos.workshop.model.entity.CarBrandEntity;

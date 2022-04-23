@@ -1,20 +1,20 @@
 package net.cavitos.workshop.model.repository;
 
-import net.cavitos.workshop.model.entity.ContactEntity;
+import net.cavitos.workshop.model.entity.ProductEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
 import java.util.Optional;
 
-public interface ContactRepository extends PagingAndSortingRepository<ContactEntity, String> {
+public interface ProductRepository extends PagingAndSortingRepository<ProductEntity, String> {
 
-    Page<ContactEntity> findByTenantAndCodeContainsAndTypeAndNameContainsAndActive(String tenant,
+    Page<ProductEntity> findByTypeAndCodeContainsAndNameContainsAndActiveAndTenant(String type,
                                                                                    String code,
-                                                                                   String type,
                                                                                    String name,
                                                                                    int active,
+                                                                                   String tenant,
                                                                                    Pageable pageable);
 
-    Optional<ContactEntity> findByCodeEqualsIgnoreCaseAndTypeAndTenant(String code, String type, String tenant);
+    Optional<ProductEntity> findByCodeEqualsIgnoreCaseAndTypeAndTenant(String code, String type, String tenant);
 }

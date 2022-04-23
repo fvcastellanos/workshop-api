@@ -1,4 +1,4 @@
-package net.cavitos.workshop.domain.model.web.brand;
+package net.cavitos.workshop.domain.model.web;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;

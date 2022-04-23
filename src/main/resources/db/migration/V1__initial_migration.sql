@@ -44,7 +44,7 @@ CREATE TABLE IF NOT EXISTS `workshop`.`product` (
     `code` VARCHAR(50) NOT NULL,
     `name` VARCHAR(150) NOT NULL,
     `description` VARCHAR(300) NULL DEFAULT NULL,
-    `minimal_amount` INT NOT NULL DEFAULT '0',
+    `minimal_quantity` DOUBLE NOT NULL DEFAULT '0',
     `sale_price` DOUBLE NOT NULL,
     `created` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `updated` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,

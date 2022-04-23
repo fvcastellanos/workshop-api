@@ -2,8 +2,8 @@ package net.cavitos.workshop.web.controller;
 
 import net.cavitos.workshop.domain.model.web.Contact;
 import net.cavitos.workshop.domain.model.web.response.ResourceResponse;
-import net.cavitos.workshop.service.ProviderService;
-import net.cavitos.workshop.transformer.ProviderTransformer;
+import net.cavitos.workshop.service.ContactService;
+import net.cavitos.workshop.transformer.ContactTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -22,55 +22,55 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
-
 import java.util.stream.Collectors;
 
-import static net.cavitos.workshop.web.controller.Route.PROVIDERS_RESOURCE;
+import static net.cavitos.workshop.web.controller.Route.CONTACTS_RESOURCE;
 
 @RestController
-@RequestMapping(PROVIDERS_RESOURCE)
-public class ProviderController extends BaseController {
+@RequestMapping(CONTACTS_RESOURCE)
+public class ContactController extends BaseController {
 
-    private final ProviderService providerService;
+    private final ContactService contactService;
 
     @Autowired
-    public ProviderController(final ProviderService providerService) {
+    public ContactController(final ContactService contactService) {
 
-        this.providerService = providerService;
+        this.contactService = contactService;
     }
 
     @GetMapping
     public ResponseEntity<Page<ResourceResponse<Contact>>> getByTenant(@RequestParam(defaultValue = "") @Size(max = 50) final String code,
+                                                                       @RequestParam(defaultValue = "P") @Size(max = 1) final String type,
                                                                        @RequestParam(defaultValue = "") @Size(max = 150) final String name,
                                                                        @RequestParam(defaultValue = "1") final int active,
                                                                        @RequestParam(defaultValue = DEFAULT_PAGE) final int page,
                                                                        @RequestParam(defaultValue = DEFAULT_SIZE) final int size) {
 
-        final var providerPage = providerService.getAll(DEFAULT_TENANT, code, name, active, page, size);
+        final var contactPage = contactService.getAll(DEFAULT_TENANT, code, type, name, active, page, size);
 
-        final var providers = providerPage.stream()
-                .map(ProviderTransformer::toWeb)
+        final var providers = contactPage.stream()
+                .map(ContactTransformer::toWeb)
                 .collect(Collectors.toList());
 
-        final var response = new PageImpl<>(providers, Pageable.ofSize(size), providerPage.getTotalElements());
+        final var response = new PageImpl<>(providers, Pageable.ofSize(size), contactPage.getTotalElements());
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<ResourceResponse<Contact>> getById(@PathVariable @NotEmpty final String id) {
 
-        final var providerEntity = providerService.getById(DEFAULT_TENANT, id);
+        final var providerEntity = contactService.getById(DEFAULT_TENANT, id);
 
-        final var resource = ProviderTransformer.toWeb(providerEntity);
+        final var resource = ContactTransformer.toWeb(providerEntity);
         return  new ResponseEntity<>(resource, HttpStatus.OK);
     }
 
     @PostMapping
     public ResponseEntity<ResourceResponse<Contact>> add(@RequestBody @Valid Contact contact) {
 
-        final var entity = providerService.add(DEFAULT_TENANT, contact);
+        final var entity = contactService.add(DEFAULT_TENANT, contact);
 
-        final var resource = ProviderTransformer.toWeb(entity);
+        final var resource = ContactTransformer.toWeb(entity);
         return new ResponseEntity<>(resource, HttpStatus.CREATED);
     }
 
@@ -78,10 +78,9 @@ public class ProviderController extends BaseController {
     public  ResponseEntity<ResourceResponse<Contact>> update(@PathVariable @NotEmpty final String id,
                                                              @RequestBody @Valid final Contact contact) {
 
-        final var entity = providerService.update(DEFAULT_TENANT, id, contact);
+        final var entity = contactService.update(DEFAULT_TENANT, id, contact);
 
-        final var resource = ProviderTransformer.toWeb(entity);
-        return new ResponseEntity<>(resource, HttpStatus.ACCEPTED);
-
+        final var resource = ContactTransformer.toWeb(entity);
+        return new ResponseEntity<>(resource, HttpStatus.OK);
     }
 }

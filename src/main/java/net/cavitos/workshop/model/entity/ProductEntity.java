@@ -9,11 +9,10 @@ import lombok.Setter;
 import lombok.ToString;
 import org.springframework.data.annotation.CreatedDate;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 import java.time.Instant;
@@ -26,41 +25,40 @@ import java.time.Instant;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
-@Table(name = "contact")
-public class ProviderEntity {
+@Table(name = "product")
+public class ProductEntity {
 
     @Id
     @Size(max = 50)
     private String id;
 
     @NotEmpty
-    @Size(max = 1)
-    private String type;
-
-    @NotEmpty
     @Size(max = 50)
     private String code;
 
     @NotEmpty
-    @Size(max = 50)
-    private String name;
+    @Size(max = 1)
+    private String type;
 
+    @NotEmpty
     @Size(max = 150)
-    private String contact;
-
-    @Size(max = 50)
-    private String taxId;
+    private String name;
 
     @Size(max = 300)
     private String description;
 
-    @Min(value = 0)
-    @Max(value = 1)
-    private int active;
+    @Column(name = "minimal_quantity")
+    private double minimalQuantity;
+
+    @Column(name = "sale_price")
+    private double salePrice;
 
     @CreatedDate
     private Instant created;
+
     private Instant updated;
+
+    private int active;
 
     @NotEmpty
     @Size(max = 50)

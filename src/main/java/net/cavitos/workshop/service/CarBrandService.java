@@ -1,7 +1,7 @@
 package net.cavitos.workshop.service;
 
 import net.cavitos.workshop.domain.exception.BusinessException;
-import net.cavitos.workshop.domain.model.web.brand.CarBrand;
+import net.cavitos.workshop.domain.model.web.CarBrand;
 import net.cavitos.workshop.model.entity.CarBrandEntity;
 import net.cavitos.workshop.model.repository.CarBrandRepository;
 import org.slf4j.Logger;
