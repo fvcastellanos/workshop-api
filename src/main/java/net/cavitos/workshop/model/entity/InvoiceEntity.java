@@ -28,7 +28,7 @@ import java.time.Instant;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
-@Table(name = "work_order")
+@Table(name = "invoice")
 public class InvoiceEntity {
 
     @Id

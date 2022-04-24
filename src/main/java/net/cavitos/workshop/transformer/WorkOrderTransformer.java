@@ -1,8 +1,8 @@
 package net.cavitos.workshop.transformer;
 
 import net.cavitos.workshop.domain.model.web.WorkOrder;
-import net.cavitos.workshop.domain.model.web.workorder.WorkOrderCarLine;
-import net.cavitos.workshop.domain.model.web.workorder.WorkOrderContact;
+import net.cavitos.workshop.domain.model.web.common.CommonCarLine;
+import net.cavitos.workshop.domain.model.web.common.CommonContact;
 import net.cavitos.workshop.model.entity.CarLineEntity;
 import net.cavitos.workshop.model.entity.ContactEntity;
 import net.cavitos.workshop.model.entity.WorkOrderEntity;
@@ -48,9 +48,9 @@ public final class WorkOrderTransformer {
 
     // ------------------------------------------------------------------------------------------------------
 
-    private static WorkOrderContact buildWorkOrderContact(final ContactEntity contactEntity) {
+    private static CommonContact buildWorkOrderContact(final ContactEntity contactEntity) {
 
-        final var contact = new WorkOrderContact();
+        final var contact = new CommonContact();
         contact.setCode(contactEntity.getCode());
         contact.setType(contactEntity.getType());
         contact.setName(contactEntity.getName());
@@ -58,9 +58,9 @@ public final class WorkOrderTransformer {
         return contact;
     }
 
-    private static WorkOrderCarLine buildWorkOrderCarLine(final CarLineEntity entity) {
+    private static CommonCarLine buildWorkOrderCarLine(final CarLineEntity entity) {
 
-        final var carLine = new WorkOrderCarLine();
+        final var carLine = new CommonCarLine();
         carLine.setId(entity.getId());
         carLine.setName(entity.getName());
 

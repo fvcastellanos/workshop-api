@@ -4,14 +4,12 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import net.cavitos.workshop.domain.model.web.workorder.WorkOrderCarLine;
-import net.cavitos.workshop.domain.model.web.workorder.WorkOrderContact;
+import net.cavitos.workshop.domain.model.web.common.CommonCarLine;
+import net.cavitos.workshop.domain.model.web.common.CommonContact;
+
 import org.springframework.hateoas.RepresentationModel;
 
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 
 @Getter
 @Setter
@@ -24,6 +22,7 @@ public class WorkOrder extends RepresentationModel<WorkOrder> {
     private String number;
 
     @Size(max = 1)
+    @Pattern(regexp = "[A|P|I|C]", message = "Invalid type, allowed values: A, P, I or C")
     private String status;
 
     @NotEmpty
@@ -40,8 +39,8 @@ public class WorkOrder extends RepresentationModel<WorkOrder> {
     private String notes;
 
     @NotNull
-    private WorkOrderCarLine carLine;
+    private CommonCarLine carLine;
 
     @NotNull
-    private WorkOrderContact contact;
+    private CommonContact contact;
 }

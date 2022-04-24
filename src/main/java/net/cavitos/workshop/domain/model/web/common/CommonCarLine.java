@@ -1,4 +1,4 @@
-package net.cavitos.workshop.domain.model.web.workorder;
+package net.cavitos.workshop.domain.model.web.common;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -12,7 +12,7 @@ import javax.validation.constraints.Size;
 @Setter
 @ToString
 @EqualsAndHashCode
-public class WorkOrderCarLine {
+public class CommonCarLine {
 
     @NotEmpty
     @Size(max = 50)

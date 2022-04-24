@@ -1,7 +1,6 @@
 package net.cavitos.workshop.web.controller;
 
 import net.cavitos.workshop.domain.model.web.Product;
-import net.cavitos.workshop.model.entity.ProductEntity;
 import net.cavitos.workshop.service.ProductService;
 import net.cavitos.workshop.transformer.ProductTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
