@@ -9,12 +9,12 @@ import lombok.Setter;
 import lombok.ToString;
 import org.springframework.data.annotation.CreatedDate;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -29,45 +29,46 @@ import java.time.Instant;
 @AllArgsConstructor
 @EqualsAndHashCode
 @Table(name = "work_order")
-public class WorkOrderEntity {
+public class InvoiceEntity {
 
     @Id
     @Size(max = 50)
     private String id;
 
     @ManyToOne
-    @JoinColumn(name = "car_line_id")
-    private CarLineEntity carLineEntity;
-
-    @ManyToOne
     @JoinColumn(name = "contact_id")
     private ContactEntity contactEntity;
+
+    @NotEmpty
+    @Size(max = 1)
+    private String type;
+
+    @NotEmpty
+    @Size(max = 30)
+    private String suffix;
 
     @NotEmpty
     @Size(max = 100)
     private String number;
 
-    @NotEmpty
-    @Size(max = 1)
-    private String status;
+    @Size(max = 250)
+    @Column(name = "image_url")
+    private String imageUrl;
 
-    @NotEmpty
-    @Size(max = 1)
-    private String odometerMeasurement;
-
-    @Min(0)
     @NotNull
-    private double odometerValue;
+    @Column(name = "invoice_date")
+    private Instant invoiceDate;
 
-    @Min(0)
-    @NotNull
-    private double gasAmount;
+    @Column(name = "effective_date")
+    private Instant effectiveDate;
 
     @NotEmpty
     @Size(max = 50)
     private String tenant;
 
-    private String notes;
+    @NotEmpty
+    @Size(max = 1)
+    private String status;
 
     @NotNull
     @CreatedDate
