@@ -13,6 +13,7 @@ import net.cavitos.workshop.domain.model.web.Invoice;
 
 import static net.cavitos.workshop.web.controller.Route.INVOICES_RESOURCE;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import java.util.stream.Collectors;
 
@@ -53,5 +54,14 @@ public class InvoiceController extends BaseController {
 
         final var response = InvoiceTransformer.toWeb(entity);
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PostMapping
+    public ResponseEntity<Invoice> add(@RequestBody @Valid final Invoice invoice) {
+
+        final var entity = invoiceService.add(DEFAULT_TENANT, invoice);
+
+        final var response = InvoiceTransformer.toWeb(entity);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 }

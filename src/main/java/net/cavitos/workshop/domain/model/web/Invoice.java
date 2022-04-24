@@ -8,6 +8,8 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import net.cavitos.workshop.domain.model.type.InvoiceStatus;
+import net.cavitos.workshop.domain.model.validator.Date;
+import net.cavitos.workshop.domain.model.validator.ValueOfEnum;
 import org.springframework.hateoas.RepresentationModel;
 
 import lombok.EqualsAndHashCode;
@@ -37,16 +39,14 @@ public class Invoice extends RepresentationModel<Invoice> {
 
     private String imageUrl;
 
+    @Date
     @NotNull
-    private Instant invoiceDate;
+    private String invoiceDate;
 
-    private Instant effectiveDate;
+    private String effectiveDate;
 
-//    @Pattern(regexp = "[ACTIVE|CLOSED|CANCELLED]", message = "Invalid type, allowed values: ACTIVE, CLOSED or CANCELLED")
-//    private String status;
-
-    @Pattern(regexp = "[ACTIVE|CLOSED|CANCELLED]", message = "Invalid type, allowed values: ACTIVE, CLOSED or CANCELLED")
-    private InvoiceStatus status;
+    @ValueOfEnum(enumType = InvoiceStatus.class, message = "Invalid type, allowed values: ACTIVE|CLOSED|CANCELLED")
+    private String status;
 
     @NotNull
     private CommonContact contact;

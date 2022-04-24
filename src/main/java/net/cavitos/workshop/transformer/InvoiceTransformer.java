@@ -7,6 +7,9 @@ import net.cavitos.workshop.model.entity.ContactEntity;
 import net.cavitos.workshop.model.entity.InvoiceEntity;
 import net.cavitos.workshop.web.controller.InvoiceController;
 
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
+
 import static java.util.Objects.nonNull;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -18,17 +21,21 @@ public final class InvoiceTransformer {
 
     public static Invoice toWeb(final InvoiceEntity entity) {
 
-         final var selfLink = linkTo(methodOn(InvoiceController.class)
-                 .getById(entity.getId()))
-                 .withSelfRel();
+        final var selfLink = linkTo(methodOn(InvoiceController.class)
+                .getById(entity.getId()))
+                .withSelfRel();
+
+        final var status = InvoiceStatus.of(entity.getStatus());
+
+        final var dateFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT);
 
         final var invoice = new Invoice();
         invoice.setType(entity.getType());
         invoice.setNumber(entity.getNumber());
-        invoice.setStatus(InvoiceStatus.of(entity.getStatus()));
+        invoice.setStatus(status.name());
         invoice.setImageUrl(entity.getImageUrl());
-        invoice.setInvoiceDate(entity.getInvoiceDate());
-        invoice.setEffectiveDate(entity.getEffectiveDate());
+        invoice.setInvoiceDate(dateFormatter.format(entity.getInvoiceDate()));
+        invoice.setEffectiveDate(dateFormatter.format(entity.getEffectiveDate()));
 
         if (nonNull(entity.getContactEntity())) {
 

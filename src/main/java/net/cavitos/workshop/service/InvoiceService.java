@@ -13,6 +13,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
 import static net.cavitos.workshop.factory.BusinessExceptionFactory.createBusinessException;
@@ -75,6 +77,8 @@ public class InvoiceService {
         final var contactEntity = contactRepository.findByCodeEqualsIgnoreCaseAndTenant(contact.getCode(), tenant)
                 .orElseThrow(() -> createBusinessException(HttpStatus.UNPROCESSABLE_ENTITY, "Contact not found"));
 
+        var createdDate = LocalDate.parse(invoice.getInvoiceDate(), DateTimeFormatter.ISO_LOCAL_DATE);
+
         var entity = InvoiceEntity.builder()
                 .id(UUID.randomUUID().toString())
                 .contactEntity(contactEntity)
@@ -84,8 +88,8 @@ public class InvoiceService {
                 .type(invoice.getType())
                 .status(InvoiceStatus.ACTIVE.value())
                 .tenant(tenant)
-                .invoiceDate(invoice.getInvoiceDate())
-                .effectiveDate(invoice.getEffectiveDate())
+                .invoiceDate(Instant.parse(invoice.getInvoiceDate()))
+                .effectiveDate(Instant.parse(invoice.getEffectiveDate()))
                 .created(Instant.now())
                 .updated(Instant.now())
                 .build();
