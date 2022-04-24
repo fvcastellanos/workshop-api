@@ -9,12 +9,12 @@ import java.util.Optional;
 
 public interface ContactRepository extends PagingAndSortingRepository<ContactEntity, String> {
 
-    Page<ContactEntity> findByTenantAndCodeContainsAndTypeAndNameContainsAndActive(String tenant,
-                                                                                   String code,
-                                                                                   String type,
-                                                                                   String name,
-                                                                                   int active,
-                                                                                   Pageable pageable);
+    Page<ContactEntity> findByTenantAndCodeContainsIgnoreCaseAndTypeAndNameContainsIgnoreCaseAndActive(String tenant,
+                                                                                                       String code,
+                                                                                                       String type,
+                                                                                                       String name,
+                                                                                                       int active,
+                                                                                                       Pageable pageable);
 
-    Optional<ContactEntity> findByCodeEqualsIgnoreCaseAndTypeAndTenant(String code, String type, String tenant);
+    Optional<ContactEntity> findByCodeEqualsIgnoreCaseAndTenant(String code, String tenant);
 }

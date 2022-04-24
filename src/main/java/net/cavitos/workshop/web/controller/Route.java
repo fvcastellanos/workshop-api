@@ -6,6 +6,7 @@ public final class Route {
     public static final String CAR_LINES_RESOURCE = "/lines";
     public static final String CONTACTS_RESOURCE = "/contacts";
     public static final String PRODUCTS_RESOURCE = "/products";
+    public static final String WORK_ORDERS_RESOURCE = "/work-orders";
 
     private Route() {
     }

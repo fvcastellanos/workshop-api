@@ -9,12 +9,12 @@ import java.util.Optional;
 
 public interface ProductRepository extends PagingAndSortingRepository<ProductEntity, String> {
 
-    Page<ProductEntity> findByTypeAndCodeContainsAndNameContainsAndActiveAndTenant(String type,
-                                                                                   String code,
-                                                                                   String name,
-                                                                                   int active,
-                                                                                   String tenant,
-                                                                                   Pageable pageable);
+    Page<ProductEntity> findByTypeAndCodeContainsIgnoreCaseAndNameContainsIgnoreCaseAndActiveAndTenant(String type,
+                                                                                                       String code,
+                                                                                                       String name,
+                                                                                                       int active,
+                                                                                                       String tenant,
+                                                                                                       Pageable pageable);
 
-    Optional<ProductEntity> findByCodeEqualsIgnoreCaseAndTypeAndTenant(String code, String type, String tenant);
+    Optional<ProductEntity> findByCodeEqualsIgnoreCaseAndTenant(String code, String tenant);
 }

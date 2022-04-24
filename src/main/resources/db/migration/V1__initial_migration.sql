@@ -203,6 +203,7 @@ CREATE TABLE IF NOT EXISTS `workshop`.`work_order` (
     `id` VARCHAR(50) NOT NULL,
     `car_line_id` VARCHAR(50) NOT NULL,
     `contact_id` VARCHAR(50) NOT NULL,
+    `number` VARCHAR(100) NOT NULL,
     `status` CHAR(1) NOT NULL DEFAULT 'P',
     `odometer_measurement` CHAR(1) NOT NULL DEFAULT 'K',
     `odometer_value` DOUBLE NOT NULL,
@@ -214,6 +215,7 @@ CREATE TABLE IF NOT EXISTS `workshop`.`work_order` (
     PRIMARY KEY (`id`),
     INDEX `fk_work_order_car_line1_idx` (`car_line_id` ASC) VISIBLE,
     INDEX `fk_work_order_contact1_idx` (`contact_id` ASC) VISIBLE,
+    UNIQUE INDEX `uq_work_order_number` (`number` ASC, `tenant` ASC) VISIBLE,
     CONSTRAINT `fk_work_order_car_line1`
     FOREIGN KEY (`car_line_id`)
     REFERENCES `workshop`.`car_line` (`id`)

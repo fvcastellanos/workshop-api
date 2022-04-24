@@ -10,6 +10,6 @@ import java.util.Optional;
 
 public interface CarBrandRepository extends PagingAndSortingRepository<CarBrandEntity, String> {
 
-    Page<CarBrandEntity> findByTenantAndActiveAndNameContains(String tenant, int active, String name, Pageable pageable);
+    Page<CarBrandEntity> findByTenantAndActiveAndNameContainsIgnoreCase(String tenant, int active, String name, Pageable pageable);
     Optional<CarBrandEntity> findByNameAndTenant(String name, String tenant);
 }

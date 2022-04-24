@@ -40,7 +40,7 @@ public class CarBrandService {
         LOGGER.info("get car brands configured for tenant={}", tenant);
         final var pageable = PageRequest.of(page, size);
 
-        return carBrandRepository.findByTenantAndActiveAndNameContains(tenant, active, name, pageable);
+        return carBrandRepository.findByTenantAndActiveAndNameContainsIgnoreCase(tenant, active, name, pageable);
     }
 
     public CarBrandEntity getById(final String tenant, final String id) {

@@ -41,7 +41,7 @@ public class ProductService {
                 name, active);
 
         final var pageable = PageRequest.of(page, size);
-        return productRepository.findByTypeAndCodeContainsAndNameContainsAndActiveAndTenant(type, code, name, active,
+        return productRepository.findByTypeAndCodeContainsIgnoreCaseAndNameContainsIgnoreCaseAndActiveAndTenant(type, code, name, active,
                 tenant, pageable);
     }
 
@@ -120,8 +120,8 @@ public class ProductService {
 
     private void verifyExistingCodeAndTypeForTenant(final String tenant, final Product product) {
 
-        final var existingProductHolder = productRepository.findByCodeEqualsIgnoreCaseAndTypeAndTenant(product.getCode(),
-                product.getType(), tenant);
+        final var existingProductHolder = productRepository.findByCodeEqualsIgnoreCaseAndTenant(product.getCode(),
+                tenant);
 
         if (existingProductHolder.isPresent()) {
 

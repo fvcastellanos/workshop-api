@@ -48,7 +48,7 @@ public class CarLineService {
         final var carBrandEntity = carBrandRepository.findById(carBrandId)
                 .orElseThrow(() -> createBusinessException(HttpStatus.NOT_FOUND, "Car Brand Id: %s, not found", carBrandId));
 
-        return carLineRepository.findByCarBrandAndTenantAndActiveAndNameContains(carBrandEntity, tenant, active, name, pageable);
+        return carLineRepository.findByCarBrandAndTenantAndActiveAndNameContainsIgnoreCase(carBrandEntity, tenant, active, name, pageable);
     }
 
     public CarLineEntity findById(final String tenant,

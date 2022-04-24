@@ -10,11 +10,13 @@ import java.util.Optional;
 
 public interface CarLineRepository extends PagingAndSortingRepository<CarLineEntity, String> {
 
-    Page<CarLineEntity> findByCarBrandAndTenantAndActiveAndNameContains(CarBrandEntity carBrandEntity,
-                                                                        String tenant,
-                                                                        int active,
-                                                                        String name,
-                                                                        Pageable pageable);
+    Page<CarLineEntity> findByCarBrandAndTenantAndActiveAndNameContainsIgnoreCase(CarBrandEntity carBrandEntity,
+                                                                                  String tenant,
+                                                                                  int active,
+                                                                                  String name,
+                                                                                  Pageable pageable);
 
     Optional<CarLineEntity> findByCarBrandAndNameAndTenant(CarBrandEntity carBrandEntity, String name, String tenant);
+
+    Optional<CarLineEntity> findByIdAndTenant(String id, String tenant);
 }

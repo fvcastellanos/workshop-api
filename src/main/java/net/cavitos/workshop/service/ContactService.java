@@ -41,7 +41,7 @@ public class ContactService {
                 name, active);
 
         final var pageable = PageRequest.of(page, size);
-        return contactRepository.findByTenantAndCodeContainsAndTypeAndNameContainsAndActive(tenant, code, type, name,
+        return contactRepository.findByTenantAndCodeContainsIgnoreCaseAndTypeAndNameContainsIgnoreCaseAndActive(tenant, code, type, name,
                 active, pageable);
     }
 
@@ -122,8 +122,8 @@ public class ContactService {
 
     private void verifyExistingCodeTypeForTenant(final String tenant, final Contact contact) {
 
-        final var existingContactHolder = contactRepository.findByCodeEqualsIgnoreCaseAndTypeAndTenant(contact.getCode(),
-                contact.getType(), tenant);
+        final var existingContactHolder = contactRepository.findByCodeEqualsIgnoreCaseAndTenant(contact.getCode(),
+                tenant);
 
         if (existingContactHolder.isPresent()) {
 
