@@ -1,5 +1,6 @@
 package net.cavitos.workshop.transformer;
 
+import net.cavitos.workshop.domain.model.enumeration.ActiveStatus;
 import net.cavitos.workshop.domain.model.web.CarBrand;
 import net.cavitos.workshop.model.entity.CarBrandEntity;
 import net.cavitos.workshop.web.controller.CarBrandController;
@@ -23,10 +24,13 @@ public final class CarBrandTransformer {
                 .slash("lines")
                 .withRel("carBrandLines");
 
-        var carBrand = new CarBrand();
+        final var active = ActiveStatus.of(carBrandEntity.getActive())
+                .name();
+
+        final var carBrand = new CarBrand();
         carBrand.setName(carBrandEntity.getName());
         carBrand.setDescription(carBrandEntity.getDescription());
-        carBrand.setActive(carBrandEntity.getActive());
+        carBrand.setActive(active);
 
         carBrand.add(selfLink, carBrandLines);
 

@@ -1,4 +1,4 @@
-package net.cavitos.workshop.domain.model.type;
+package net.cavitos.workshop.domain.model.enumeration;
 
 public enum InvoiceStatus {
 

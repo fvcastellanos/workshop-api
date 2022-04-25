@@ -43,7 +43,6 @@ public class InvoiceEntity {
     @Size(max = 1)
     private String type;
 
-    @NotEmpty
     @Size(max = 30)
     private String suffix;
 

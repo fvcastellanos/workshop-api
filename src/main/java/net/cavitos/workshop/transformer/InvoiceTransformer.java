@@ -1,14 +1,11 @@
 package net.cavitos.workshop.transformer;
 
-import net.cavitos.workshop.domain.model.type.InvoiceStatus;
+import net.cavitos.workshop.domain.model.enumeration.InvoiceStatus;
 import net.cavitos.workshop.domain.model.web.Invoice;
 import net.cavitos.workshop.domain.model.web.common.CommonContact;
 import net.cavitos.workshop.model.entity.ContactEntity;
 import net.cavitos.workshop.model.entity.InvoiceEntity;
 import net.cavitos.workshop.web.controller.InvoiceController;
-
-import java.time.format.DateTimeFormatter;
-import java.time.format.FormatStyle;
 
 import static java.util.Objects.nonNull;
 import static net.cavitos.workshop.factory.DateTimeFactory.buildStringFromInstant;

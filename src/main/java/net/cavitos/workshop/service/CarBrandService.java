@@ -1,6 +1,7 @@
 package net.cavitos.workshop.service;
 
 import net.cavitos.workshop.domain.exception.BusinessException;
+import net.cavitos.workshop.domain.model.enumeration.ActiveStatus;
 import net.cavitos.workshop.domain.model.web.CarBrand;
 import net.cavitos.workshop.model.entity.CarBrandEntity;
 import net.cavitos.workshop.model.repository.CarBrandRepository;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.util.UUID;
 
+import static net.cavitos.workshop.domain.model.enumeration.ActiveStatus.ACTIVE;
 import static net.cavitos.workshop.factory.BusinessExceptionFactory.createBusinessException;
 
 @Service
@@ -81,7 +83,7 @@ public class CarBrandService {
                 .description(carBrand.getDescription())
                 .tenant(tenant)
                 .created(Instant.now())
-                .active(1)
+                .active(ACTIVE.value())
                 .build();
 
         return carBrandRepository.save(entity);
@@ -102,9 +104,12 @@ public class CarBrandService {
             throw new BusinessException(HttpStatus.UNPROCESSABLE_ENTITY, "Car Brand not found");
         }
 
+        final var active = ActiveStatus.valueOf(carBrand.getActive())
+                        .value();
+
         carBrandEntity.setName(carBrand.getName().toUpperCase());
         carBrandEntity.setDescription(carBrand.getDescription());
-        carBrandEntity.setActive(carBrand.getActive());
+        carBrandEntity.setActive(active);
         carBrandRepository.save(carBrandEntity);
 
         return carBrandEntity;

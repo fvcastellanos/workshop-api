@@ -1,13 +1,11 @@
 package net.cavitos.workshop.domain.model.web;
 
-import java.time.Instant;
-
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
-import net.cavitos.workshop.domain.model.type.InvoiceStatus;
+import net.cavitos.workshop.domain.model.enumeration.InvoiceStatus;
 import net.cavitos.workshop.domain.model.validator.Date;
 import net.cavitos.workshop.domain.model.validator.ValueOfEnum;
 import org.springframework.hateoas.RepresentationModel;

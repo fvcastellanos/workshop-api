@@ -1,5 +1,6 @@
 package net.cavitos.workshop.service;
 
+import net.cavitos.workshop.domain.model.enumeration.ActiveStatus;
 import net.cavitos.workshop.domain.model.web.CarLine;
 import net.cavitos.workshop.model.entity.CarBrandEntity;
 import net.cavitos.workshop.model.entity.CarLineEntity;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.util.UUID;
 
+import static net.cavitos.workshop.domain.model.enumeration.ActiveStatus.ACTIVE;
 import static net.cavitos.workshop.factory.BusinessExceptionFactory.createBusinessException;
 
 @Service
@@ -95,7 +97,7 @@ public class CarLineService {
                 .carBrand(carBrandEntity)
                 .name(carLineName)
                 .description(carLine.getDescription())
-                .active(1)
+                .active(ACTIVE.value())
                 .tenant(tenant)
                 .created(Instant.now())
                 .build();
@@ -123,7 +125,10 @@ public class CarLineService {
 
         findCarBrandEntity(carBrandId);
 
-        carLineEntity.setActive(carLine.getActive());
+        final var active = ActiveStatus.valueOf(carLine.getActive())
+                        .value();
+
+        carLineEntity.setActive(active);
         carLineEntity.setName(carLine.getName());
         carLineEntity.setDescription(carLine.getDescription());
 

@@ -4,10 +4,10 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import net.cavitos.workshop.domain.model.enumeration.ActiveStatus;
+import net.cavitos.workshop.domain.model.validator.ValueOfEnum;
 import org.springframework.hateoas.RepresentationModel;
 
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
@@ -24,7 +24,6 @@ public class CarBrand extends RepresentationModel<CarBrand> {
     @Size(max = 300)
     private String description;
 
-    @Min(value = 0)
-    @Max(value = 1)
-    private int active;
+    @ValueOfEnum(enumType = ActiveStatus.class, message = "Invalid type, allowed values: ACTIVE|INACTIVE")
+    private String active;
 }

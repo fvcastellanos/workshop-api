@@ -1,6 +1,6 @@
 package net.cavitos.workshop.service;
 
-import net.cavitos.workshop.domain.model.type.InvoiceStatus;
+import net.cavitos.workshop.domain.model.enumeration.InvoiceStatus;
 import net.cavitos.workshop.domain.model.web.Invoice;
 import net.cavitos.workshop.domain.model.web.common.CommonContact;
 import net.cavitos.workshop.model.entity.ContactEntity;
