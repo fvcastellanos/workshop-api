@@ -2,6 +2,8 @@ package net.cavitos.workshop.service;
 
 import net.cavitos.workshop.domain.model.type.InvoiceStatus;
 import net.cavitos.workshop.domain.model.web.Invoice;
+import net.cavitos.workshop.domain.model.web.common.CommonContact;
+import net.cavitos.workshop.model.entity.ContactEntity;
 import net.cavitos.workshop.model.entity.InvoiceEntity;
 import net.cavitos.workshop.model.repository.ContactRepository;
 import net.cavitos.workshop.model.repository.InvoiceRepository;
@@ -12,12 +14,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
 import static net.cavitos.workshop.factory.BusinessExceptionFactory.createBusinessException;
+import static net.cavitos.workshop.factory.DateTimeFactory.buildInstantFrom;
+import static net.cavitos.workshop.factory.DateTimeFactory.getUTCNow;
 
 @Service
 public class InvoiceService {
@@ -63,21 +64,13 @@ public class InvoiceService {
         LOGGER.info("Add new Invoice={} for tenant={}", invoice, tenant);
 
         final var contact = invoice.getContact();
-        final var existingInvoiceHolder = invoiceRepository.findBySuffixEqualsIgnoreCaseAndNumberEqualsIgnoreCaseAndContactEntityCodeEqualsIgnoreCaseAndTenant(invoice.getSuffix(),
-                invoice.getNumber(), contact.getCode(), tenant);
 
-        if (existingInvoiceHolder.isPresent()) {
+        verifyExistingInvoice(tenant, invoice);
 
-            LOGGER.error("invoice_suffix={}, invoice_number={} already exists for tenant={}", invoice.getSuffix(),
-                    invoice.getNumber(), tenant);
+        final var contactEntity = findContactEntity(tenant, contact);
 
-            throw createBusinessException(HttpStatus.UNPROCESSABLE_ENTITY, "Invoice already exists");
-        }
-
-        final var contactEntity = contactRepository.findByCodeEqualsIgnoreCaseAndTenant(contact.getCode(), tenant)
-                .orElseThrow(() -> createBusinessException(HttpStatus.UNPROCESSABLE_ENTITY, "Contact not found"));
-
-        var createdDate = LocalDate.parse(invoice.getInvoiceDate(), DateTimeFormatter.ISO_LOCAL_DATE);
+        final var invoiceDate = buildInstantFrom(invoice.getInvoiceDate());
+        final var effectiveDate = buildInstantFrom(invoice.getEffectiveDate());
 
         var entity = InvoiceEntity.builder()
                 .id(UUID.randomUUID().toString())
@@ -88,14 +81,73 @@ public class InvoiceService {
                 .type(invoice.getType())
                 .status(InvoiceStatus.ACTIVE.value())
                 .tenant(tenant)
-                .invoiceDate(Instant.parse(invoice.getInvoiceDate()))
-                .effectiveDate(Instant.parse(invoice.getEffectiveDate()))
-                .created(Instant.now())
-                .updated(Instant.now())
+                .invoiceDate(invoiceDate)
+                .effectiveDate(effectiveDate)
+                .created(getUTCNow())
+                .updated(getUTCNow())
                 .build();
 
         invoiceRepository.save(entity);
 
         return entity;
+    }
+
+    public InvoiceEntity update(final String tenant, final String id, final Invoice invoice) {
+
+        LOGGER.info("Update invoice={} for tenant={}", invoice, tenant);
+
+        final var entity = findById(tenant, id);
+
+        var contactEntity = entity.getContactEntity();
+        final var contact = invoice.getContact();
+
+        if (!contactEntity.getCode().equalsIgnoreCase(contact.getCode())) {
+
+            contactEntity = findContactEntity(tenant, contact);
+        }
+
+        if (!entity.getNumber().equalsIgnoreCase(invoice.getNumber())) {
+
+            verifyExistingInvoice(tenant, invoice);
+        }
+
+        final var invoiceStatus = InvoiceStatus.valueOf(invoice.getStatus())
+                .value();
+
+        entity.setNumber(invoice.getNumber());
+        entity.setSuffix(invoice.getSuffix());
+        entity.setInvoiceDate(buildInstantFrom(invoice.getInvoiceDate()));
+        entity.setEffectiveDate(buildInstantFrom(invoice.getEffectiveDate()));
+        entity.setImageUrl(invoice.getImageUrl());
+        entity.setStatus(invoiceStatus);
+        entity.setType(invoice.getType());
+        entity.setContactEntity(contactEntity);
+        entity.setUpdated(getUTCNow());
+
+        invoiceRepository.save(entity);
+
+        return entity;
+    }
+
+    // ------------------------------------------------------------------------------------------------------
+    private ContactEntity findContactEntity(final String tenant, final CommonContact contact) {
+
+        return contactRepository.findByCodeEqualsIgnoreCaseAndTenant(contact.getCode(), tenant)
+                .orElseThrow(() -> createBusinessException(HttpStatus.UNPROCESSABLE_ENTITY, "Contact not found"));
+    }
+
+    private void verifyExistingInvoice(final String tenant, final Invoice invoice) {
+
+        final var contact = invoice.getContact();
+        final var existingInvoiceHolder = invoiceRepository.findBySuffixEqualsIgnoreCaseAndNumberEqualsIgnoreCaseAndContactEntityCodeEqualsIgnoreCaseAndTenant(invoice.getSuffix(),
+                invoice.getNumber(), contact.getCode(), tenant);
+
+        if (existingInvoiceHolder.isPresent()) {
+
+            LOGGER.error("invoice_suffix={}, invoice_number={} already exists for tenant={}", invoice.getSuffix(),
+                    invoice.getNumber(), tenant);
+
+            throw createBusinessException(HttpStatus.UNPROCESSABLE_ENTITY, "Invoice already exists");
+        }
     }
 }

@@ -11,6 +11,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 
 import static java.util.Objects.nonNull;
+import static net.cavitos.workshop.factory.DateTimeFactory.buildStringFromInstant;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
@@ -27,15 +28,13 @@ public final class InvoiceTransformer {
 
         final var status = InvoiceStatus.of(entity.getStatus());
 
-        final var dateFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT);
-
         final var invoice = new Invoice();
         invoice.setType(entity.getType());
         invoice.setNumber(entity.getNumber());
         invoice.setStatus(status.name());
         invoice.setImageUrl(entity.getImageUrl());
-        invoice.setInvoiceDate(dateFormatter.format(entity.getInvoiceDate()));
-        invoice.setEffectiveDate(dateFormatter.format(entity.getEffectiveDate()));
+        invoice.setInvoiceDate(buildStringFromInstant(entity.getInvoiceDate()));
+        invoice.setEffectiveDate(buildStringFromInstant(entity.getEffectiveDate()));
 
         if (nonNull(entity.getContactEntity())) {
 

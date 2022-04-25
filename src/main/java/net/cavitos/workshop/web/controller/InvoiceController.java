@@ -64,4 +64,14 @@ public class InvoiceController extends BaseController {
         final var response = InvoiceTransformer.toWeb(entity);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Invoice> update(@PathVariable @NotBlank final String id,
+                                          @RequestBody @Valid final Invoice invoice) {
+
+        final var entity = invoiceService.update(DEFAULT_TENANT, id, invoice);
+
+        final var response = InvoiceTransformer.toWeb(entity);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 }
