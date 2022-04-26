@@ -1,5 +1,6 @@
 package net.cavitos.workshop.transformer;
 
+import net.cavitos.workshop.domain.model.status.WorkOrderStatus;
 import net.cavitos.workshop.domain.model.web.WorkOrder;
 import net.cavitos.workshop.domain.model.web.common.CommonCarLine;
 import net.cavitos.workshop.domain.model.web.common.CommonContact;
@@ -23,9 +24,12 @@ public final class WorkOrderTransformer {
                 .getById(entity.getId()))
                 .withSelfRel();
 
+        final var status = WorkOrderStatus.of(entity.getStatus())
+                .name();
+
         final var workOrder = new WorkOrder();
         workOrder.setNumber(entity.getNumber());
-        workOrder.setStatus(entity.getStatus());
+        workOrder.setStatus(status);
         workOrder.setOdometerMeasurement(entity.getOdometerMeasurement());
         workOrder.setOdometerValue(entity.getOdometerValue());
         workOrder.setGasAmount(entity.getGasAmount());

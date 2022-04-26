@@ -5,7 +5,8 @@ public enum WorkOrderStatus {
     IN_PROGRESS("P"),
     CANCELLED("A"),
     CLOSED("C"),
-    DELIVERED("D");
+    DELIVERED("D"),
+    UNKNOWN("U");
 
     private final String status;
 
@@ -17,5 +18,16 @@ public enum WorkOrderStatus {
     public String value() {
 
         return status;
+    }
+
+    public static WorkOrderStatus of(final String value) {
+
+        return switch (value) {
+            case "P" -> IN_PROGRESS;
+            case "A" -> CANCELLED;
+            case "C" -> CLOSED;
+            case "D" -> DELIVERED;
+            default -> UNKNOWN;
+        };
     }
 }

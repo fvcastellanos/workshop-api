@@ -24,6 +24,11 @@ public final class InvoiceTransformer {
                 .getById(entity.getId()))
                 .withSelfRel();
 
+        final var detailsLink = linkTo(methodOn(InvoiceController.class)
+                .getById(entity.getId()))
+                .slash("details")
+                .withRel("invoiceDetails");
+
         final var status = InvoiceStatus.of(entity.getStatus());
         final var type = InvoiceType.of(entity.getType())
                 .name();
@@ -41,7 +46,7 @@ public final class InvoiceTransformer {
             invoice.setContact(buildCommonContact(entity.getContactEntity()));
         }
 
-        invoice.add(selfLink);
+        invoice.add(selfLink, detailsLink);
 
         return  invoice;
     }
@@ -57,5 +62,4 @@ public final class InvoiceTransformer {
 
         return contact;
     }
-    
 }
