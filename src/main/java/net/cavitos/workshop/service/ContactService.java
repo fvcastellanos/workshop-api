@@ -1,5 +1,6 @@
 package net.cavitos.workshop.service;
 
+import net.cavitos.workshop.domain.model.enumeration.ActiveStatus;
 import net.cavitos.workshop.domain.model.web.Contact;
 import net.cavitos.workshop.model.entity.ContactEntity;
 import net.cavitos.workshop.model.repository.ContactRepository;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.util.UUID;
 
+import static net.cavitos.workshop.domain.model.enumeration.ActiveStatus.ACTIVE;
 import static net.cavitos.workshop.factory.BusinessExceptionFactory.createBusinessException;
 
 @Service
@@ -76,7 +78,7 @@ public class ContactService {
                 .taxId(contact.getTaxId())
                 .contact(contact.getContact())
                 .tenant(tenant)
-                .active(1)
+                .active(ACTIVE.value())
                 .created(Instant.now())
                 .updated(Instant.now())
                 .build();
@@ -104,13 +106,16 @@ public class ContactService {
             verifyExistingCodeTypeForTenant(tenant, contact);
         }
 
+        final var active = ActiveStatus.valueOf(contact.getActive())
+                        .value();
+
         providerEntity.setName(contact.getName());
         providerEntity.setCode(contact.getCode());
         providerEntity.setType(contact.getType());
         providerEntity.setDescription(contact.getDescription());
         providerEntity.setContact(contact.getContact());
         providerEntity.setTaxId(contact.getTaxId());
-        providerEntity.setActive(contact.getActive());
+        providerEntity.setActive(active);
         providerEntity.setUpdated(Instant.now());
 
         contactRepository.save(providerEntity);

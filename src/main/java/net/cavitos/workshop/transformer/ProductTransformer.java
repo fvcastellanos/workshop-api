@@ -1,5 +1,6 @@
 package net.cavitos.workshop.transformer;
 
+import net.cavitos.workshop.domain.model.enumeration.ActiveStatus;
 import net.cavitos.workshop.domain.model.web.Product;
 import net.cavitos.workshop.model.entity.ProductEntity;
 import net.cavitos.workshop.web.controller.ProductController;
@@ -18,12 +19,15 @@ public final class ProductTransformer {
                 .getById(productEntity.getId()))
                 .withSelfRel();
 
+        final var active = ActiveStatus.of(productEntity.getActive())
+                .name();
+
         final var product = new Product();
         product.setCode(productEntity.getCode());
         product.setName(productEntity.getName());
         product.setDescription(productEntity.getDescription());
         product.setType(productEntity.getType());
-        product.setActive(productEntity.getActive());
+        product.setActive(active);
         product.setMinimalQuantity(productEntity.getMinimalQuantity());
 
         product.add(selfLink);

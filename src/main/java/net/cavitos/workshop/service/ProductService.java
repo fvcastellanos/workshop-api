@@ -1,5 +1,6 @@
 package net.cavitos.workshop.service;
 
+import net.cavitos.workshop.domain.model.enumeration.ActiveStatus;
 import net.cavitos.workshop.domain.model.web.Product;
 import net.cavitos.workshop.model.entity.ProductEntity;
 import net.cavitos.workshop.model.repository.ProductRepository;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.util.UUID;
 
+import static net.cavitos.workshop.domain.model.enumeration.ActiveStatus.ACTIVE;
 import static net.cavitos.workshop.factory.BusinessExceptionFactory.createBusinessException;
 
 @Service
@@ -75,7 +77,7 @@ public class ProductService {
                 .description(product.getDescription())
                 .minimalQuantity(product.getMinimalQuantity())
                 .tenant(tenant)
-                .active(1)
+                .active(ACTIVE.value())
                 .created(Instant.now())
                 .updated(Instant.now())
                 .build();
@@ -103,7 +105,10 @@ public class ProductService {
             verifyExistingCodeAndTypeForTenant(tenant, product);
         }
 
-        entity.setActive(product.getActive());
+        final var active = ActiveStatus.valueOf(product.getActive())
+                        .value();
+
+        entity.setActive(active);
         entity.setName(product.getName());
         entity.setCode(product.getCode());
         entity.setDescription(product.getDescription());

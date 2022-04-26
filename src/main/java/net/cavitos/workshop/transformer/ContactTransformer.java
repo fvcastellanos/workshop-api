@@ -1,5 +1,6 @@
 package net.cavitos.workshop.transformer;
 
+import net.cavitos.workshop.domain.model.enumeration.ActiveStatus;
 import net.cavitos.workshop.domain.model.web.Contact;
 import net.cavitos.workshop.model.entity.ContactEntity;
 import net.cavitos.workshop.web.controller.ContactController;
@@ -18,6 +19,9 @@ public final class ContactTransformer {
                 .getById(contactEntity.getId()))
                 .withSelfRel();
 
+        final var active = ActiveStatus.of(contactEntity.getActive())
+                .name();
+
         final var provider = new Contact();
         provider.setCode(contactEntity.getCode());
         provider.setType(contactEntity.getType());
@@ -25,7 +29,7 @@ public final class ContactTransformer {
         provider.setDescription(contactEntity.getDescription());
         provider.setContact(contactEntity.getContact());
         provider.setTaxId(contactEntity.getTaxId());
-        provider.setActive(contactEntity.getActive());
+        provider.setActive(active);
 
         provider.add(selfLink);
 
