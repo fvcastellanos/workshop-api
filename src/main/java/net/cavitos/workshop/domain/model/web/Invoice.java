@@ -1,20 +1,19 @@
 package net.cavitos.workshop.domain.model.web;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
-
-import net.cavitos.workshop.domain.model.enumeration.InvoiceStatus;
-import net.cavitos.workshop.domain.model.validator.Date;
-import net.cavitos.workshop.domain.model.validator.ValueOfEnum;
-import org.springframework.hateoas.RepresentationModel;
-
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import net.cavitos.workshop.domain.model.status.InvoiceStatus;
+import net.cavitos.workshop.domain.model.type.InvoiceType;
+import net.cavitos.workshop.domain.model.validator.Date;
+import net.cavitos.workshop.domain.model.validator.ValueOfEnum;
 import net.cavitos.workshop.domain.model.web.common.CommonContact;
+import org.springframework.hateoas.RepresentationModel;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 @Getter
 @Setter
@@ -23,8 +22,7 @@ import net.cavitos.workshop.domain.model.web.common.CommonContact;
 public class Invoice extends RepresentationModel<Invoice> {
     
     @NotBlank
-    @Size(max = 1)
-    @Pattern(regexp = "[P|C]", message = "Invalid type, allowed values: P or C")
+    @ValueOfEnum(enumType = InvoiceType.class, message = "Invalid type, allowed values: CUSTOMER|PROVIDER")
     private String type;
 
     @NotBlank

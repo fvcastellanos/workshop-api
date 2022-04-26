@@ -1,6 +1,7 @@
 package net.cavitos.workshop.service;
 
-import net.cavitos.workshop.domain.model.enumeration.InvoiceStatus;
+import net.cavitos.workshop.domain.model.status.InvoiceStatus;
+import net.cavitos.workshop.domain.model.type.InvoiceType;
 import net.cavitos.workshop.domain.model.web.Invoice;
 import net.cavitos.workshop.domain.model.web.common.CommonContact;
 import net.cavitos.workshop.model.entity.ContactEntity;
@@ -78,7 +79,7 @@ public class InvoiceService {
                 .suffix(invoice.getSuffix())
                 .number(invoice.getNumber())
                 .imageUrl(invoice.getImageUrl())
-                .type(invoice.getType())
+                .type(buildTypeFrom(invoice.getType()))
                 .status(InvoiceStatus.ACTIVE.value())
                 .tenant(tenant)
                 .invoiceDate(invoiceDate)
@@ -120,7 +121,7 @@ public class InvoiceService {
         entity.setEffectiveDate(buildInstantFrom(invoice.getEffectiveDate()));
         entity.setImageUrl(invoice.getImageUrl());
         entity.setStatus(invoiceStatus);
-        entity.setType(invoice.getType());
+        entity.setType(buildTypeFrom(invoice.getType()));
         entity.setContactEntity(contactEntity);
         entity.setUpdated(getUTCNow());
 
@@ -149,5 +150,11 @@ public class InvoiceService {
 
             throw createBusinessException(HttpStatus.UNPROCESSABLE_ENTITY, "Invoice already exists");
         }
+    }
+
+    private String buildTypeFrom(final String value) {
+
+        return InvoiceType.valueOf(value)
+                .value();
     }
 }

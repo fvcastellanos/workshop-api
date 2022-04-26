@@ -1,6 +1,6 @@
 package net.cavitos.workshop.transformer;
 
-import net.cavitos.workshop.domain.model.enumeration.ActiveStatus;
+import net.cavitos.workshop.domain.model.status.ActiveStatus;
 import net.cavitos.workshop.domain.model.web.CarLine;
 import net.cavitos.workshop.model.entity.CarLineEntity;
 import net.cavitos.workshop.web.controller.CarLineController;

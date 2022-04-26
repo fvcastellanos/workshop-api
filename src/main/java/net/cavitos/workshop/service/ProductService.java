@@ -1,6 +1,6 @@
 package net.cavitos.workshop.service;
 
-import net.cavitos.workshop.domain.model.enumeration.ActiveStatus;
+import net.cavitos.workshop.domain.model.status.ActiveStatus;
 import net.cavitos.workshop.domain.model.web.Product;
 import net.cavitos.workshop.model.entity.ProductEntity;
 import net.cavitos.workshop.model.repository.ProductRepository;
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.util.UUID;
 
-import static net.cavitos.workshop.domain.model.enumeration.ActiveStatus.ACTIVE;
+import static net.cavitos.workshop.domain.model.status.ActiveStatus.ACTIVE;
 import static net.cavitos.workshop.factory.BusinessExceptionFactory.createBusinessException;
 
 @Service

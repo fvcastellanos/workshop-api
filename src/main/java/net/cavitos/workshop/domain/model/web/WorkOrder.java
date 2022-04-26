@@ -4,6 +4,8 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import net.cavitos.workshop.domain.model.status.WorkOrderStatus;
+import net.cavitos.workshop.domain.model.validator.ValueOfEnum;
 import net.cavitos.workshop.domain.model.web.common.CommonCarLine;
 import net.cavitos.workshop.domain.model.web.common.CommonContact;
 
@@ -21,8 +23,7 @@ public class WorkOrder extends RepresentationModel<WorkOrder> {
     @Size(max = 100)
     private String number;
 
-    @Size(max = 1)
-    @Pattern(regexp = "[A|P|I|C]", message = "Invalid type, allowed values: A, P, I or C")
+    @ValueOfEnum(enumType = WorkOrderStatus.class, message = "Invalid type, allowed values: IN_PROGRESS|CANCELLED|CLOSED|DELIVERED")
     private String status;
 
     @NotEmpty

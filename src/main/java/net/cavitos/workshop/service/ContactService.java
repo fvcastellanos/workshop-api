@@ -1,6 +1,7 @@
 package net.cavitos.workshop.service;
 
-import net.cavitos.workshop.domain.model.enumeration.ActiveStatus;
+import net.cavitos.workshop.domain.model.status.ActiveStatus;
+import net.cavitos.workshop.domain.model.type.ContactType;
 import net.cavitos.workshop.domain.model.web.Contact;
 import net.cavitos.workshop.model.entity.ContactEntity;
 import net.cavitos.workshop.model.repository.ContactRepository;
@@ -15,7 +16,7 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.util.UUID;
 
-import static net.cavitos.workshop.domain.model.enumeration.ActiveStatus.ACTIVE;
+import static net.cavitos.workshop.domain.model.status.ActiveStatus.ACTIVE;
 import static net.cavitos.workshop.factory.BusinessExceptionFactory.createBusinessException;
 
 @Service
@@ -69,10 +70,11 @@ public class ContactService {
 
         verifyExistingCodeTypeForTenant(tenant, contact);
 
+
         final var providerEntity = ContactEntity.builder()
                 .id(UUID.randomUUID().toString())
                 .code(contact.getCode())
-                .type(contact.getType())
+                .type(buildContactTypeFrom(contact.getType()))
                 .name(contact.getName())
                 .description(contact.getDescription())
                 .taxId(contact.getTaxId())
@@ -111,7 +113,7 @@ public class ContactService {
 
         providerEntity.setName(contact.getName());
         providerEntity.setCode(contact.getCode());
-        providerEntity.setType(contact.getType());
+        providerEntity.setType(buildContactTypeFrom(contact.getType()));
         providerEntity.setDescription(contact.getDescription());
         providerEntity.setContact(contact.getContact());
         providerEntity.setTaxId(contact.getTaxId());
@@ -136,5 +138,11 @@ public class ContactService {
             throw createBusinessException(HttpStatus.UNPROCESSABLE_ENTITY, "Another contact is using the code=% for type=%s",
                     contact.getCode(), contact.getType());
         }
+    }
+
+    private String buildContactTypeFrom(String value) {
+
+        return ContactType.valueOf(value)
+                .value();
     }
 }

@@ -4,14 +4,12 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import net.cavitos.workshop.domain.model.enumeration.ActiveStatus;
+import net.cavitos.workshop.domain.model.status.ActiveStatus;
+import net.cavitos.workshop.domain.model.type.ContactType;
 import net.cavitos.workshop.domain.model.validator.ValueOfEnum;
 import org.springframework.hateoas.RepresentationModel;
 
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 @Getter
@@ -25,7 +23,7 @@ public class Contact extends RepresentationModel<Contact> {
     private String code;
 
     @NotEmpty
-    @Pattern(regexp = "[P|C]", message = "Invalid type, allowed values: P or C")
+    @ValueOfEnum(enumType = ContactType.class, message = "Invalid type, allowed values: CUSTOMER|PROVIDER")
     private String type;
 
     @NotEmpty

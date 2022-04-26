@@ -1,5 +1,6 @@
 package net.cavitos.workshop.service;
 
+import net.cavitos.workshop.domain.model.status.WorkOrderStatus;
 import net.cavitos.workshop.domain.model.web.WorkOrder;
 import net.cavitos.workshop.model.entity.CarLineEntity;
 import net.cavitos.workshop.model.entity.ContactEntity;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.util.UUID;
 
+import static net.cavitos.workshop.domain.model.status.WorkOrderStatus.IN_PROGRESS;
 import static net.cavitos.workshop.factory.BusinessExceptionFactory.createBusinessException;
 
 @Service
@@ -83,7 +85,7 @@ public class WorkOrderService {
                 .id(UUID.randomUUID().toString())
                 .carLineEntity(carLineEntity)
                 .contactEntity(contactEntity)
-                .status("P")
+                .status(IN_PROGRESS.value())
                 .odometerMeasurement(workOrder.getOdometerMeasurement())
                 .odometerValue(workOrder.getOdometerValue())
                 .gasAmount(workOrder.getGasAmount())
@@ -121,7 +123,7 @@ public class WorkOrderService {
         entity.setGasAmount(workOrder.getGasAmount());
         entity.setOdometerMeasurement(workOrder.getOdometerMeasurement());
         entity.setOdometerValue(workOrder.getOdometerValue());
-        entity.setStatus(workOrder.getStatus());
+        entity.setStatus(buildWorkOrderStatusFrom(workOrder.getStatus()));
         entity.setUpdated(Instant.now());
 
         workOrderRepository.save(entity);
@@ -155,5 +157,11 @@ public class WorkOrderService {
         final var contact = workOrder.getContact();
         return contactRepository.findByCodeEqualsIgnoreCaseAndTenant(contact.getCode(), tenant)
                 .orElseThrow(() -> createBusinessException(HttpStatus.UNPROCESSABLE_ENTITY, "Contact not found"));
+    }
+
+    private String buildWorkOrderStatusFrom(final String value) {
+
+        return WorkOrderStatus.valueOf(value)
+                .value();
     }
 }
