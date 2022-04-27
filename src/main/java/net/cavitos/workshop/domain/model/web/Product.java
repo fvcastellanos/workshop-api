@@ -5,12 +5,12 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import net.cavitos.workshop.domain.model.status.ActiveStatus;
+import net.cavitos.workshop.domain.model.type.ProductType;
 import net.cavitos.workshop.domain.model.validator.ValueOfEnum;
 import org.springframework.hateoas.RepresentationModel;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 @Getter
@@ -24,7 +24,7 @@ public class Product extends RepresentationModel<Product> {
     private String code;
 
     @NotEmpty
-    @Pattern(regexp = "[P|S]", message = "Invalid type, allowed values: P or S")
+    @ValueOfEnum(enumType = ProductType.class, message = "Invalid type, allowed values: PRODUCT|SERVICE")
     private String type;
 
     @NotEmpty

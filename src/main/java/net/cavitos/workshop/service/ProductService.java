@@ -1,6 +1,7 @@
 package net.cavitos.workshop.service;
 
 import net.cavitos.workshop.domain.model.status.ActiveStatus;
+import net.cavitos.workshop.domain.model.type.ProductType;
 import net.cavitos.workshop.domain.model.web.Product;
 import net.cavitos.workshop.model.entity.ProductEntity;
 import net.cavitos.workshop.model.repository.ProductRepository;
@@ -71,7 +72,7 @@ public class ProductService {
 
         var entity = ProductEntity.builder()
                 .id(UUID.randomUUID().toString())
-                .type(product.getType())
+                .type(buildTypeFor(product.getType()))
                 .name(product.getName())
                 .code(product.getCode())
                 .description(product.getDescription())
@@ -112,7 +113,7 @@ public class ProductService {
         entity.setName(product.getName());
         entity.setCode(product.getCode());
         entity.setDescription(product.getDescription());
-        entity.setType(product.getType());
+        entity.setType(buildTypeFor(product.getType()));
         entity.setMinimalQuantity(product.getMinimalQuantity());
         entity.setUpdated(Instant.now());
 
@@ -133,5 +134,11 @@ public class ProductService {
             LOGGER.error("Product with code={}, type={} already exists for tenant={}", product.getCode(), product.getType(), tenant);
             throw createBusinessException(HttpStatus.UNPROCESSABLE_ENTITY, "Product already exists");
         }
+    }
+
+    private String buildTypeFor(final String value) {
+
+        return ProductType.valueOf(value)
+                .value();
     }
 }
