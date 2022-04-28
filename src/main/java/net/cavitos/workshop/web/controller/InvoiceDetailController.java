@@ -60,4 +60,6 @@ public class InvoiceDetailController extends BaseController {
         final var response = InvoiceDetailTransformer.toWeb(entity);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
+
+//    public ResponseEntity delete(@PathVariable @NotEmpty final String invoiceId,)
 }
