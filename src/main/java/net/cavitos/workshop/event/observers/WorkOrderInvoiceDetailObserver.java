@@ -7,6 +7,7 @@ import net.cavitos.workshop.model.repository.WorkOrderDetailRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -26,12 +27,14 @@ public class WorkOrderInvoiceDetailObserver implements InvoiceDetailObserver {
     }
 
     @Override
+    @Transactional
     public void update(EventType eventType, InvoiceDetailEntity invoiceDetailEntity) {
 
         if (Objects.nonNull(invoiceDetailEntity) && Objects.nonNull(invoiceDetailEntity.getWorkOrderEntity())) {
 
             switch (eventType) {
                 case ADD -> addWorkOrderDetailFor(invoiceDetailEntity);
+                case UPDATE -> updateWorkOrderDetailFor(invoiceDetailEntity);
                 case DELETE -> deleteWorkOrderDetailFor(invoiceDetailEntity);
             }
         }
@@ -44,7 +47,8 @@ public class WorkOrderInvoiceDetailObserver implements InvoiceDetailObserver {
 
     // --------------------------------------------------------------------------------------------------------
 
-    private void deleteWorkOrderDetailFor(InvoiceDetailEntity invoiceDetailEntity) {
+    @Transactional
+    void deleteWorkOrderDetailFor(InvoiceDetailEntity invoiceDetailEntity) {
 
         final var workOrderEntity = invoiceDetailEntity.getWorkOrderEntity();
         final var productEntity = invoiceDetailEntity.getProductEntity();
@@ -58,7 +62,8 @@ public class WorkOrderInvoiceDetailObserver implements InvoiceDetailObserver {
                         });
     }
 
-    private void addWorkOrderDetailFor(InvoiceDetailEntity invoiceDetailEntity) {
+    @Transactional
+    void addWorkOrderDetailFor(InvoiceDetailEntity invoiceDetailEntity) {
 
         final var workOrderEntity = invoiceDetailEntity.getWorkOrderEntity();
         final var productEntity = invoiceDetailEntity.getProductEntity();
@@ -89,5 +94,26 @@ public class WorkOrderInvoiceDetailObserver implements InvoiceDetailObserver {
                 .build();
 
         workOrderDetailRepository.save(detail);
+    }
+
+    @Transactional
+    void updateWorkOrderDetailFor(InvoiceDetailEntity invoiceDetailEntity) {
+
+        final var workOrderEntity = invoiceDetailEntity.getWorkOrderEntity();
+        final var productEntity = invoiceDetailEntity.getProductEntity();
+        final var tenant = invoiceDetailEntity.getTenant();
+
+        LOGGER.info("Update work order detail for work_order_number={} and tenant={}", workOrderEntity.getNumber(), tenant);
+
+        workOrderDetailRepository.findByWorkOrderEntityAndProductEntityAndTenant(workOrderEntity, productEntity, tenant)
+                .ifPresent(detail -> {
+
+                    detail.setWorkOrderEntity(workOrderEntity);
+                    detail.setProductEntity(productEntity);
+                    detail.setQuantity(invoiceDetailEntity.getQuantity());
+                    detail.setUnitPrice(invoiceDetailEntity.getUnitPrice());
+
+                    workOrderDetailRepository.save(detail);
+                });
     }
 }

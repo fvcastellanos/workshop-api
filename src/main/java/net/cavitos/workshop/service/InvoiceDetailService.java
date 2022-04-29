@@ -1,7 +1,12 @@
 package net.cavitos.workshop.service;
 
 import net.cavitos.workshop.domain.model.web.InvoiceDetail;
+import net.cavitos.workshop.domain.model.web.common.CommonProduct;
+import net.cavitos.workshop.event.model.EventType;
+import net.cavitos.workshop.event.subject.InvoiceDetailObservable;
 import net.cavitos.workshop.model.entity.InvoiceDetailEntity;
+import net.cavitos.workshop.model.entity.InvoiceEntity;
+import net.cavitos.workshop.model.entity.ProductEntity;
 import net.cavitos.workshop.model.entity.WorkOrderEntity;
 import net.cavitos.workshop.model.repository.InvoiceDetailRepository;
 import net.cavitos.workshop.model.repository.InvoiceRepository;
@@ -14,6 +19,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
@@ -29,16 +35,19 @@ public class InvoiceDetailService {
     private final ProductRepository productRepository;
     private final InvoiceRepository invoiceRepository;
     private final WorkOrderRepository workOrderRepository;
+    private final InvoiceDetailObservable invoiceDetailObservable;
 
     public InvoiceDetailService(final InvoiceDetailRepository invoiceDetailRepository,
                                 final ProductRepository productRepository,
                                 final InvoiceRepository invoiceRepository,
-                                final WorkOrderRepository workOrderRepository) {
+                                final WorkOrderRepository workOrderRepository,
+                                final InvoiceDetailObservable invoiceDetailObservable) {
 
         this.invoiceDetailRepository = invoiceDetailRepository;
         this.productRepository = productRepository;
         this.invoiceRepository = invoiceRepository;
         this.workOrderRepository = workOrderRepository;
+        this.invoiceDetailObservable = invoiceDetailObservable;
     }
 
     public Page<InvoiceDetailEntity> getInvoiceDetails(final String invoiceId, final String tenant, final int page, final int size) {
@@ -49,16 +58,14 @@ public class InvoiceDetailService {
         return invoiceDetailRepository.findByInvoiceEntityIdAndTenant(invoiceId, tenant, pageable);
     }
 
+    @Transactional
     public InvoiceDetailEntity add(final String tenant, final String invoiceId, final InvoiceDetail invoiceDetail) {
 
         LOGGER.info("Add new detail for invoice_id={} and tenant={}", invoiceId, tenant);
 
         final var product = invoiceDetail.getProduct();
-        final var productEntity = productRepository.findByCodeEqualsIgnoreCaseAndTenant(product.getCode(), tenant)
-                        .orElseThrow(() -> createBusinessException(HttpStatus.UNPROCESSABLE_ENTITY, "Product not found"));
-
-        final var invoiceEntity = invoiceRepository.findByIdAndTenant(invoiceId, tenant)
-                .orElseThrow(() -> createBusinessException(HttpStatus.NOT_FOUND, "Invoice not found"));
+        final var productEntity = findProductEntity(tenant, product);
+        final var invoiceEntity = findInvoiceEntity(tenant, invoiceId);
 
         WorkOrderEntity workOrderEntity = null;
         if (StringUtils.isNotBlank(invoiceDetail.getWorkOrderNumber())) {
@@ -90,8 +97,78 @@ public class InvoiceDetailService {
                 .created(getUTCNow())
                 .build();
 
+
         invoiceDetailRepository.save(entity);
+        invoiceDetailObservable.createEvent(EventType.ADD, entity);
+        invoiceDetailObservable.notifyObservers();
 
         return entity;
+    }
+
+    @Transactional
+    public InvoiceDetailEntity update(final String tenant,
+                                      final String invoiceId,
+                                      final String invoiceDetailId,
+                                      final InvoiceDetail invoiceDetail) {
+
+        LOGGER.info("update invoice_detail_id={} for invoice_id={} and tenant={}", invoiceDetailId, invoiceId, tenant);
+
+        final var invoiceDetailEntity = invoiceDetailRepository.findByIdAndTenant(invoiceDetailId, tenant)
+                .orElseThrow(() -> createBusinessException(HttpStatus.NOT_FOUND, "Invoice Detail not found"));
+
+        var productEntity = invoiceDetailEntity.getProductEntity();
+
+        final var product = invoiceDetail.getProduct();
+
+        if (!productEntity.getCode().equalsIgnoreCase(product.getCode())) {
+
+            productEntity = findProductEntity(tenant, product);
+        }
+
+        WorkOrderEntity workOrderEntity = null;
+        if (StringUtils.isNotBlank(invoiceDetail.getWorkOrderNumber())) {
+
+            workOrderEntity = workOrderRepository.findByNumberEqualsIgnoreCaseAndTenant(invoiceDetail.getWorkOrderNumber(), tenant)
+                    .orElseThrow(() -> createBusinessException(HttpStatus.UNPROCESSABLE_ENTITY, "Work Order not found"));
+        }
+
+        invoiceDetailEntity.setWorkOrderEntity(workOrderEntity);
+        invoiceDetailEntity.setProductEntity(productEntity);
+        invoiceDetailEntity.setQuantity(invoiceDetail.getQuantity());
+        invoiceDetailEntity.setUnitPrice(invoiceDetail.getUnitPrice());
+
+        invoiceDetailRepository.save(invoiceDetailEntity);
+
+        invoiceDetailObservable.createEvent(EventType.UPDATE, invoiceDetailEntity);
+        invoiceDetailObservable.notifyObservers();
+
+        return invoiceDetailEntity;
+    }
+
+    @Transactional
+    public void delete(final String tenant, final String invoiceId, final String invoiceDetailId) {
+
+        LOGGER.info("delete invoice_detail_id={} for invoice_id={} and tenant={}", invoiceDetailId, invoiceId, tenant);
+
+        final var invoiceDetailEntity = invoiceDetailRepository.findByIdAndTenant(invoiceDetailId, tenant)
+                .orElseThrow(() -> createBusinessException(HttpStatus.NOT_FOUND, "Invoice Detail not found"));
+
+        invoiceDetailRepository.delete(invoiceDetailEntity);
+        invoiceDetailObservable.createEvent(EventType.DELETE, invoiceDetailEntity);
+        invoiceDetailObservable.notifyObservers();
+    }
+
+    // --------------------------------------------------------------------------------------------------------
+
+    private ProductEntity findProductEntity(final String tenant, final CommonProduct product) {
+
+        return productRepository.findByCodeEqualsIgnoreCaseAndTenant(product.getCode(), tenant)
+                .orElseThrow(() -> createBusinessException(HttpStatus.UNPROCESSABLE_ENTITY, "Product not found"));
+    }
+
+    private InvoiceEntity findInvoiceEntity(final String tenant, final String invoiceId) {
+
+        return invoiceRepository.findByIdAndTenant(invoiceId, tenant)
+                .orElseThrow(() -> createBusinessException(HttpStatus.NOT_FOUND, "Invoice not found"));
     }
 }

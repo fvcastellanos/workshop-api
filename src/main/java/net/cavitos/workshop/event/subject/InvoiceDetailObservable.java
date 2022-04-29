@@ -6,12 +6,10 @@ import net.cavitos.workshop.event.observers.InvoiceDetailObserver;
 import net.cavitos.workshop.model.entity.InvoiceDetailEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Objects;
 
-@Component
 public class InvoiceDetailObservable implements Subject<InvoiceDetailObserver> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InvoiceDetailObservable.class);
