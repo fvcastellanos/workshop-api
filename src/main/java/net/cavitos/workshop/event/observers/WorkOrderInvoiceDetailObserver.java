@@ -6,6 +6,7 @@ import net.cavitos.workshop.model.entity.WorkOrderDetailEntity;
 import net.cavitos.workshop.model.repository.WorkOrderDetailRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +22,7 @@ public class WorkOrderInvoiceDetailObserver implements InvoiceDetailObserver {
 
     private final WorkOrderDetailRepository workOrderDetailRepository;
 
+    @Autowired
     public WorkOrderInvoiceDetailObserver(final WorkOrderDetailRepository workOrderDetailRepository) {
 
         this.workOrderDetailRepository = workOrderDetailRepository;
