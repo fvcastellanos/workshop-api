@@ -75,7 +75,7 @@ public class ContactController extends BaseController {
 
     @PutMapping("/{id}")
     public  ResponseEntity<Contact> update(@PathVariable @NotEmpty final String id,
-                                                             @RequestBody @Valid final Contact contact) {
+                                           @RequestBody @Valid final Contact contact) {
 
         final var entity = contactService.update(DEFAULT_TENANT, id, contact);
 

@@ -34,6 +34,7 @@ public final class WorkOrderTransformer {
         workOrder.setOdometerValue(entity.getOdometerValue());
         workOrder.setGasAmount(entity.getGasAmount());
         workOrder.setNotes(entity.getNotes());
+        workOrder.setPlateNumber(entity.getPlateNumber());
 
         if (nonNull(entity.getContactEntity())) {
 

@@ -92,6 +92,7 @@ public class WorkOrderService {
                 .number(workOrder.getNumber())
                 .notes(workOrder.getNotes())
                 .tenant(tenant)
+                .plateNumber(workOrder.getPlateNumber())
                 .created(Instant.now())
                 .updated(Instant.now())
                 .build();
@@ -124,6 +125,7 @@ public class WorkOrderService {
         entity.setOdometerMeasurement(workOrder.getOdometerMeasurement());
         entity.setOdometerValue(workOrder.getOdometerValue());
         entity.setStatus(buildWorkOrderStatusFrom(workOrder.getStatus()));
+        entity.setPlateNumber(workOrder.getPlateNumber());
         entity.setUpdated(Instant.now());
 
         workOrderRepository.save(entity);

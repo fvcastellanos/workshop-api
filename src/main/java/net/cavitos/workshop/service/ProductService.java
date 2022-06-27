@@ -101,7 +101,10 @@ public class ProductService {
             throw createBusinessException(HttpStatus.NOT_FOUND, "Product not found");
         }
 
-        if (!entity.getCode().equalsIgnoreCase(product.getCode()) || !entity.getType().equalsIgnoreCase(product.getType())) {
+        var productType = ProductType.valueOf(product.getType())
+                .value();
+
+        if (!entity.getCode().equalsIgnoreCase(product.getCode()) || !entity.getType().equalsIgnoreCase(productType)) {
 
             verifyExistingCodeAndTypeForTenant(tenant, product);
         }

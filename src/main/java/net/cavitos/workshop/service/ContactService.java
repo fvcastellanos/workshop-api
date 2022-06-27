@@ -103,7 +103,10 @@ public class ContactService {
             throw createBusinessException(HttpStatus.NOT_FOUND, "Contact not found");
         }
 
-        if (!providerEntity.getCode().equalsIgnoreCase(contact.getCode()) || !providerEntity.getType().equalsIgnoreCase(contact.getType())) {
+        final var type = ContactType.valueOf(contact.getType())
+                .value();
+
+        if (!providerEntity.getCode().equalsIgnoreCase(contact.getCode()) || !providerEntity.getType().equalsIgnoreCase(type)) {
 
             verifyExistingCodeTypeForTenant(tenant, contact);
         }
@@ -135,7 +138,7 @@ public class ContactService {
         if (existingContactHolder.isPresent()) {
 
             LOGGER.error("contact_code={} and type={} already exists for tenant={}", contact.getCode(), contact.getType(), tenant);
-            throw createBusinessException(HttpStatus.UNPROCESSABLE_ENTITY, "Another contact is using the code=% for type=%s",
+            throw createBusinessException(HttpStatus.UNPROCESSABLE_ENTITY, "Another contact is using the code=%s for type=%s",
                     contact.getCode(), contact.getType());
         }
     }

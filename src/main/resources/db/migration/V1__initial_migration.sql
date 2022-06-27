@@ -63,29 +63,6 @@ CREATE TABLE IF NOT EXISTS `workshop`.`product` (
 
 
 -- -----------------------------------------------------
--- Table `workshop`.`operation_type`
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `workshop`.`operation_type` (
-    `id` VARCHAR(50) NOT NULL,
-    `type` CHAR(1) NOT NULL DEFAULT 'I',
-    `name` VARCHAR(150) NOT NULL,
-    `description` VARCHAR(300) NULL DEFAULT NULL,
-    `created` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    `updated` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    `active` INT NOT NULL DEFAULT '1',
-    `tenant` VARCHAR(50) NOT NULL,
-    PRIMARY KEY (`id`),
-    INDEX `idx_operation_type_created` (`created` ASC) VISIBLE,
-    INDEX `idx_operation_type_updated` (`updated` ASC) VISIBLE,
-    INDEX `idx_operation_type_tenant_id` (`tenant` ASC) INVISIBLE,
-    INDEX `idx_operation_type_active` (`active` ASC) VISIBLE,
-    INDEX `idx_operation_type_type` (`type` ASC) VISIBLE)
-    ENGINE = InnoDB
-    DEFAULT CHARACTER SET = utf8mb4
-    COLLATE = utf8mb4_bin;
-
-
--- -----------------------------------------------------
 -- Table `workshop`.`contact`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `workshop`.`contact` (
@@ -205,6 +182,7 @@ CREATE TABLE IF NOT EXISTS `workshop`.`work_order` (
     `contact_id` VARCHAR(50) NOT NULL,
     `number` VARCHAR(100) NOT NULL,
     `status` CHAR(1) NOT NULL DEFAULT 'P',
+    `plate_number` VARCHAR(30) NOT NULL,
     `odometer_measurement` CHAR(1) NOT NULL DEFAULT 'K',
     `odometer_value` DOUBLE NOT NULL,
     `gas_amount` DOUBLE NOT NULL DEFAULT 0,
@@ -216,6 +194,7 @@ CREATE TABLE IF NOT EXISTS `workshop`.`work_order` (
     INDEX `fk_work_order_car_line1_idx` (`car_line_id` ASC) VISIBLE,
     INDEX `fk_work_order_contact1_idx` (`contact_id` ASC) VISIBLE,
     UNIQUE INDEX `uq_work_order_number` (`number` ASC, `tenant` ASC) VISIBLE,
+    INDEX `idx_work_order_plate_number` () VISIBLE,
     CONSTRAINT `fk_work_order_car_line1`
     FOREIGN KEY (`car_line_id`)
     REFERENCES `workshop`.`car_line` (`id`)
@@ -275,13 +254,14 @@ CREATE TABLE IF NOT EXISTS `workshop`.`invoice_detail` (
 CREATE TABLE IF NOT EXISTS `workshop`.`inventory` (
     `id` VARCHAR(50) NOT NULL,
     `product_id` VARCHAR(50) NOT NULL,
-    `operation_type_id` VARCHAR(50) NOT NULL,
     `invoice_detail_id` VARCHAR(50) NULL,
+    `operation_type` CHAR(1) NOT NULL,
     `quantity` DOUBLE NOT NULL DEFAULT '1',
     `unit_price` DOUBLE NOT NULL DEFAULT 0,
     `discount_amount` DOUBLE NOT NULL DEFAULT 0,
     `total` DOUBLE NOT NULL,
     `created` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `description` VARCHAR(200) NULL,
     `updated` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `tenant` VARCHAR(50) NOT NULL,
     PRIMARY KEY (`id`),
@@ -289,16 +269,12 @@ CREATE TABLE IF NOT EXISTS `workshop`.`inventory` (
     INDEX `idx_inventory_updated` (`updated` ASC) VISIBLE,
     INDEX `idx_inventory_tenant_id` (`tenant` ASC) VISIBLE,
     INDEX `fk_inventory_product1_idx` (`product_id` ASC) VISIBLE,
-    INDEX `fk_inventory_operation_type1_idx` (`operation_type_id` ASC) VISIBLE,
     INDEX `fk_inventory_invoice_detail1_idx` (`invoice_detail_id` ASC) VISIBLE,
+    INDEX `idx_inventory_operation_type` (`operation_type` ASC) VISIBLE,
+    UNIQUE INDEX `uq_inventory_movement_tenant` (`product_id` ASC, `invoice_detail_id` ASC, `operation_type` ASC, `tenant` ASC) VISIBLE,
     CONSTRAINT `fk_inventory_product1`
     FOREIGN KEY (`product_id`)
     REFERENCES `workshop`.`product` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-    CONSTRAINT `fk_inventory_operation_type1`
-    FOREIGN KEY (`operation_type_id`)
-    REFERENCES `workshop`.`operation_type` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
     CONSTRAINT `fk_inventory_invoice_detail1`
@@ -306,6 +282,29 @@ CREATE TABLE IF NOT EXISTS `workshop`.`inventory` (
     REFERENCES `workshop`.`invoice_detail` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
+    ENGINE = InnoDB
+    DEFAULT CHARACTER SET = utf8mb4
+    COLLATE = utf8mb4_bin;
+
+
+-- -----------------------------------------------------
+-- Table `workshop`.`operation_type`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `workshop`.`operation_type` (
+    `id` VARCHAR(50) NOT NULL,
+    `type` CHAR(1) NOT NULL DEFAULT 'I',
+    `name` VARCHAR(150) NOT NULL,
+    `description` VARCHAR(300) NULL DEFAULT NULL,
+    `created` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `active` INT NOT NULL DEFAULT '1',
+    `tenant` VARCHAR(50) NOT NULL,
+    PRIMARY KEY (`id`),
+    INDEX `idx_operation_type_created` (`created` ASC) VISIBLE,
+    INDEX `idx_operation_type_updated` (`updated` ASC) VISIBLE,
+    INDEX `idx_operation_type_tenant_id` (`tenant` ASC) INVISIBLE,
+    INDEX `idx_operation_type_active` (`active` ASC) VISIBLE,
+    INDEX `idx_operation_type_type` (`type` ASC) VISIBLE)
     ENGINE = InnoDB
     DEFAULT CHARACTER SET = utf8mb4
     COLLATE = utf8mb4_bin;

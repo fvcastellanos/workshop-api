@@ -69,6 +69,10 @@ public class WorkOrderEntity {
     @Size(max = 50)
     private String tenant;
 
+    @NotEmpty
+    @Size(max = 30)
+    private String plateNumber;
+
     private String notes;
 
     @NotNull

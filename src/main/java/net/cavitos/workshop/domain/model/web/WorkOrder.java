@@ -39,6 +39,10 @@ public class WorkOrder extends RepresentationModel<WorkOrder> {
     @Size(max = 1024)
     private String notes;
 
+    @NotEmpty
+    @Size(max = 30)
+    private String plateNumber;
+
     @NotNull
     private CommonCarLine carLine;
 
