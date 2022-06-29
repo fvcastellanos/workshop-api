@@ -15,7 +15,7 @@ public interface WorkOrderRepository extends PagingAndSortingRepository<WorkOrde
                                                                                                                  String tenant,
                                                                                                                  Pageable pageable);
 
-    Optional<WorkOrderEntity> findByNumberEqualsIgnoreCaseAndTenant(final String number, final String tenant);
+    Optional<WorkOrderEntity> findByNumberEqualsIgnoreCaseAndTenant(String number, String tenant);
 
-    Optional<WorkOrderEntity> findByIdAndTenant(final String id, final String tenant);
+    Optional<WorkOrderEntity> findByIdAndTenant(String id, String tenant);
 }

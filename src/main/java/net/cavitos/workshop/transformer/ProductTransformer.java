@@ -17,7 +17,7 @@ public final class ProductTransformer {
     public static Product toWeb(final ProductEntity productEntity) {
 
         final var selfLink = linkTo(methodOn(ProductController.class)
-                .getById(productEntity.getId()))
+                .getById(productEntity.getId(), null))
                 .withSelfRel();
 
         final var active = ActiveStatus.of(productEntity.getActive())

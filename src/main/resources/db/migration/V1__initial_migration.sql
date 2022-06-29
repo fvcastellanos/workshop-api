@@ -194,7 +194,7 @@ CREATE TABLE IF NOT EXISTS `workshop`.`work_order` (
     INDEX `fk_work_order_car_line1_idx` (`car_line_id` ASC) VISIBLE,
     INDEX `fk_work_order_contact1_idx` (`contact_id` ASC) VISIBLE,
     UNIQUE INDEX `uq_work_order_number` (`number` ASC, `tenant` ASC) VISIBLE,
-    INDEX `idx_work_order_plate_number` () VISIBLE,
+    INDEX `idx_work_order_plate_number` (`plate_number` ASC) VISIBLE,
     CONSTRAINT `fk_work_order_car_line1`
     FOREIGN KEY (`car_line_id`)
     REFERENCES `workshop`.`car_line` (`id`)
@@ -320,7 +320,8 @@ CREATE TABLE IF NOT EXISTS `workshop`.`tenant` (
     `active` INT NOT NULL DEFAULT 1,
     `created` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `updated` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (`id`))
+    PRIMARY KEY (`id`),
+    INDEX `idx_tenant_code` (`code` ASC) VISIBLE)
     ENGINE = InnoDB
     DEFAULT CHARACTER SET = utf8mb4
     COLLATE = utf8mb4_bin;
@@ -357,6 +358,30 @@ CREATE TABLE IF NOT EXISTS `workshop`.`work_order_detail` (
     CONSTRAINT `fk_work_order_detail_invoice_detail1`
     FOREIGN KEY (`invoice_detail_id`)
     REFERENCES `workshop`.`invoice_detail` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+    ENGINE = InnoDB
+    DEFAULT CHARACTER SET = utf8mb4
+    COLLATE = utf8mb4_bin;
+
+
+-- -----------------------------------------------------
+-- Table `workshop`.`user`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `workshop`.`user` (
+    `id` VARCHAR(50) NOT NULL,
+    `tenant_id` VARCHAR(50) NOT NULL,
+    `provider` VARCHAR(50) NOT NULL,
+    `user_id` VARCHAR(150) NOT NULL,
+    `active` INT NOT NULL,
+    `created` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated` TIMESTAMP NULL,
+    PRIMARY KEY (`id`),
+    UNIQUE INDEX `uq_user_user_id` (`user_id` ASC, `provider` ASC) VISIBLE,
+    INDEX `fk_user_tenant1_idx` (`tenant_id` ASC) VISIBLE,
+    CONSTRAINT `fk_user_tenant1`
+    FOREIGN KEY (`tenant_id`)
+    REFERENCES `workshop`.`tenant` (`id`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
     ENGINE = InnoDB

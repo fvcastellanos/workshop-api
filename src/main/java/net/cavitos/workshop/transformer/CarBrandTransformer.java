@@ -16,11 +16,11 @@ public final class CarBrandTransformer {
     public static CarBrand toWeb(final CarBrandEntity carBrandEntity) {
 
         final var selfLink = linkTo(methodOn(CarBrandController.class)
-                .getById(carBrandEntity.getId()))
+                .getById(carBrandEntity.getId(), null))
                 .withSelfRel();
 
         final var carBrandLines = linkTo(methodOn(CarBrandController.class)
-                .getById(carBrandEntity.getId()))
+                .getById(carBrandEntity.getId(), null))
                 .slash("lines")
                 .withRel("carBrandLines");
 

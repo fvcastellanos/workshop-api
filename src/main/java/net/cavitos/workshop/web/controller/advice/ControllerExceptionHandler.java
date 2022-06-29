@@ -1,5 +1,6 @@
 package net.cavitos.workshop.web.controller.advice;
 
+import net.cavitos.workshop.domain.exception.AuthenticationException;
 import net.cavitos.workshop.domain.exception.BusinessException;
 import net.cavitos.workshop.domain.exception.ValidationException;
 import net.cavitos.workshop.domain.model.error.FieldError;
@@ -54,6 +55,17 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
         var error = buildValidationErrorResponse(exception.getFieldErrors());
         return handleExceptionInternal(exception, error, buildHttpHeaders(), HttpStatus.BAD_REQUEST, request);
     }
+
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<Object> handleAuthenticationException(AuthenticationException exception, WebRequest request) {
+
+        LOGGER.error("access denied to resource", exception);
+
+        var error = buildErrorResponse(exception.getMessage());
+        return handleExceptionInternal(exception, error, buildHttpHeaders(), HttpStatus.FORBIDDEN, request);
+    }
+
+    // ------------------------------------------------------------------------------------------------
 
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException exception,

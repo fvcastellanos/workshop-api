@@ -1,6 +1,7 @@
 package net.cavitos.workshop.web.controller;
 
 import net.cavitos.workshop.domain.model.web.InvoiceDetail;
+import net.cavitos.workshop.security.service.UserService;
 import net.cavitos.workshop.service.InvoiceDetailService;
 import net.cavitos.workshop.transformer.InvoiceDetailTransformer;
 import org.springframework.data.domain.Page;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 
+import java.security.Principal;
 import java.util.stream.Collectors;
 
 import static net.cavitos.workshop.web.controller.Route.INVOICES_RESOURCE;
@@ -32,17 +34,20 @@ public class InvoiceDetailController extends BaseController {
 
     private final InvoiceDetailService invoiceDetailService;
 
-    public InvoiceDetailController(final InvoiceDetailService invoiceDetailService) {
+    public InvoiceDetailController(final InvoiceDetailService invoiceDetailService, final UserService userService) {
 
+        super(userService);
         this.invoiceDetailService = invoiceDetailService;
     }
 
     @GetMapping
     public ResponseEntity<Page<InvoiceDetail>> details(@PathVariable @NotEmpty final String invoiceId,
                                                        @RequestParam(defaultValue = DEFAULT_PAGE) final int page,
-                                                       @RequestParam(defaultValue = DEFAULT_SIZE) final int size) {
+                                                       @RequestParam(defaultValue = DEFAULT_SIZE) final int size,
+                                                       final Principal principal) {
 
-        final var detailPage = invoiceDetailService.getInvoiceDetails(invoiceId, DEFAULT_TENANT,
+        final var tenant = getUserTenant(principal);
+        final var detailPage = invoiceDetailService.getInvoiceDetails(invoiceId, tenant,
                 page, size);
 
         final var details = detailPage.stream()
@@ -55,9 +60,11 @@ public class InvoiceDetailController extends BaseController {
 
     @PostMapping
     public ResponseEntity<InvoiceDetail> add(@PathVariable @NotEmpty final String invoiceId,
-                                             @RequestBody @Valid final InvoiceDetail invoiceDetail) {
+                                             @RequestBody @Valid final InvoiceDetail invoiceDetail,
+                                             final Principal principal) {
 
-        final var entity = invoiceDetailService.add(DEFAULT_TENANT, invoiceId, invoiceDetail);
+        final var tenant = getUserTenant(principal);
+        final var entity = invoiceDetailService.add(tenant, invoiceId, invoiceDetail);
 
         final var response = InvoiceDetailTransformer.toWeb(entity);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
@@ -66,9 +73,11 @@ public class InvoiceDetailController extends BaseController {
     @PutMapping("/{invoiceDetailId}")
     public ResponseEntity<InvoiceDetail> update(@PathVariable @NotEmpty final String invoiceId,
                                                 @PathVariable @NotEmpty final String invoiceDetailId,
-                                                @RequestBody @Valid final InvoiceDetail invoiceDetail) {
+                                                @RequestBody @Valid final InvoiceDetail invoiceDetail,
+                                                final Principal principal) {
 
-        final var entity = invoiceDetailService.update(DEFAULT_TENANT, invoiceId, invoiceDetailId, invoiceDetail);
+        final var tenant = getUserTenant(principal);
+        final var entity = invoiceDetailService.update(tenant, invoiceId, invoiceDetailId, invoiceDetail);
 
         final var response = InvoiceDetailTransformer.toWeb(entity);
         return new ResponseEntity<>(response, HttpStatus.OK);
@@ -76,9 +85,11 @@ public class InvoiceDetailController extends BaseController {
 
     @DeleteMapping("/{invoiceDetailId}")
     public ResponseEntity<Void> delete(@PathVariable @NotEmpty final String invoiceId,
-                                 @PathVariable @NotEmpty final String invoiceDetailId) {
+                                       @PathVariable @NotEmpty final String invoiceDetailId,
+                                       final Principal principal) {
 
-        invoiceDetailService.delete(DEFAULT_TENANT, invoiceId, invoiceDetailId);
+        final var tenant = getUserTenant(principal);
+        invoiceDetailService.delete(tenant, invoiceId, invoiceDetailId);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

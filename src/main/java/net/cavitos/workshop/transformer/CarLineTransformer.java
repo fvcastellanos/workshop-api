@@ -18,7 +18,7 @@ public final class CarLineTransformer {
         var carBrandEntity = carLineEntity.getCarBrand();
 
         final var selfLink = linkTo(methodOn(CarLineController.class)
-                .getById(carBrandEntity.getId(), carLineEntity.getId()))
+                .getById(carBrandEntity.getId(), carLineEntity.getId(), null))
                 .withSelfRel();
 
         final var active = ActiveStatus.of(carLineEntity.getActive())

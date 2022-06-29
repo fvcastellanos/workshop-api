@@ -21,7 +21,7 @@ public final class WorkOrderTransformer {
     public static WorkOrder toWeb(WorkOrderEntity entity) {
 
         final var selfLink = linkTo(methodOn(WorkOrderController.class)
-                .getById(entity.getId()))
+                .getById(entity.getId(), null))
                 .withSelfRel();
 
         final var status = WorkOrderStatus.of(entity.getStatus())

@@ -56,12 +56,12 @@ public final class InvoiceDetailTransformer {
                 .getId();
 
         final var updateLink = linkTo(methodOn(InvoiceDetailController.class)
-                .update(invoiceId, id, null))
+                .update(invoiceId, id, null, null))
                 .withRel("update")
                 .withType("PUT");
 
         final var deleteLink = linkTo(methodOn(InvoiceDetailController.class)
-                .update(invoiceId, id, null))
+                .update(invoiceId, id, null, null))
                 .withRel("delete")
                 .withType("DELETE");
 
