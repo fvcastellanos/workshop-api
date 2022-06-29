@@ -1,5 +1,6 @@
 package net.cavitos.workshop.web.controller;
 
+import net.cavitos.workshop.security.service.UserService;
 import net.cavitos.workshop.service.InvoiceService;
 import net.cavitos.workshop.transformer.InvoiceTransformer;
 import org.springframework.data.domain.Page;
@@ -15,6 +16,7 @@ import static net.cavitos.workshop.web.controller.Route.INVOICES_RESOURCE;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
+import java.security.Principal;
 import java.util.stream.Collectors;
 
 @RestController
@@ -23,8 +25,9 @@ public class InvoiceController extends BaseController {
 
     private final InvoiceService invoiceService;
 
-    public InvoiceController(final InvoiceService invoiceService) {
+    public InvoiceController(final InvoiceService invoiceService, final UserService userService) {
 
+        super(userService);
         this.invoiceService = invoiceService;
     }
 
@@ -34,9 +37,11 @@ public class InvoiceController extends BaseController {
                                                 @RequestParam(defaultValue = "") final String number,
                                                 @RequestParam(defaultValue = "A") final String status,
                                                 @RequestParam(defaultValue = DEFAULT_PAGE) final int page,
-                                                @RequestParam(defaultValue = DEFAULT_SIZE) final int size) {
+                                                @RequestParam(defaultValue = DEFAULT_SIZE) final int size,
+                                                Principal principal) {
 
-        final var invoicePage = invoiceService.search(DEFAULT_TENANT, type, contactName, number, status,
+        final var tenant = getUserTenant(principal);
+        final var invoicePage = invoiceService.search(tenant, type, contactName, number, status,
                 page, size);
 
         final var invoices = invoicePage.stream()
@@ -48,18 +53,22 @@ public class InvoiceController extends BaseController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Invoice> getById(@PathVariable @NotBlank final String id) {
+    public ResponseEntity<Invoice> getById(@PathVariable @NotBlank final String id,
+                                           final Principal principal) {
 
-        final var entity = invoiceService.findById(DEFAULT_TENANT, id);
+        final var tenant = getUserTenant(principal);
+        final var entity = invoiceService.findById(tenant, id);
 
         final var response = InvoiceTransformer.toWeb(entity);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PostMapping
-    public ResponseEntity<Invoice> add(@RequestBody @Valid final Invoice invoice) {
+    public ResponseEntity<Invoice> add(@RequestBody @Valid final Invoice invoice,
+                                       final Principal principal) {
 
-        final var entity = invoiceService.add(DEFAULT_TENANT, invoice);
+        final var tenant = getUserTenant(principal);
+        final var entity = invoiceService.add(tenant, invoice);
 
         final var response = InvoiceTransformer.toWeb(entity);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
@@ -67,9 +76,11 @@ public class InvoiceController extends BaseController {
 
     @PutMapping("/{id}")
     public ResponseEntity<Invoice> update(@PathVariable @NotBlank final String id,
-                                          @RequestBody @Valid final Invoice invoice) {
+                                          @RequestBody @Valid final Invoice invoice,
+                                          final Principal principal) {
 
-        final var entity = invoiceService.update(DEFAULT_TENANT, id, invoice);
+        final var tenant = getUserTenant(principal);
+        final var entity = invoiceService.update(tenant, id, invoice);
 
         final var response = InvoiceTransformer.toWeb(entity);
         return new ResponseEntity<>(response, HttpStatus.OK);

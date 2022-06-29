@@ -17,7 +17,7 @@ public final class ContactTransformer {
     public static Contact toWeb(final ContactEntity contactEntity) {
 
         final var selfLink = linkTo(methodOn(ContactController.class)
-                .getById(contactEntity.getId()))
+                .getById(contactEntity.getId(), null))
                 .withSelfRel();
 
         final var active = ActiveStatus.of(contactEntity.getActive())

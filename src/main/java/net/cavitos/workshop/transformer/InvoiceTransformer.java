@@ -21,11 +21,11 @@ public final class InvoiceTransformer {
     public static Invoice toWeb(final InvoiceEntity entity) {
 
         final var selfLink = linkTo(methodOn(InvoiceController.class)
-                .getById(entity.getId()))
+                .getById(entity.getId(), null))
                 .withSelfRel();
 
         final var detailsLink = linkTo(methodOn(InvoiceController.class)
-                .getById(entity.getId()))
+                .getById(entity.getId(), null))
                 .slash("details")
                 .withRel("invoiceDetails");
 
