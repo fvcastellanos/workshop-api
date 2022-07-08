@@ -23,6 +23,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 import java.security.Principal;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static net.cavitos.workshop.web.controller.Route.CONTACTS_RESOURCE;
@@ -59,7 +60,7 @@ public class ContactController extends BaseController {
         final var response = new PageImpl<>(providers, Pageable.ofSize(size), contactPage.getTotalElements());
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-
+    
     @GetMapping("/{id}")
     public ResponseEntity<Contact> getById(@PathVariable @NotEmpty final String id,
                                            final Principal principal) {

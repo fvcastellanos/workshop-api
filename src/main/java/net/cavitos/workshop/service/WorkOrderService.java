@@ -21,6 +21,7 @@ import java.util.UUID;
 
 import static net.cavitos.workshop.domain.model.status.WorkOrderStatus.IN_PROGRESS;
 import static net.cavitos.workshop.factory.BusinessExceptionFactory.createBusinessException;
+import static net.cavitos.workshop.factory.DateTimeFactory.buildInstantFrom;
 
 @Service
 public class WorkOrderService {
@@ -43,17 +44,17 @@ public class WorkOrderService {
 
     public Page<WorkOrderEntity> search(final String tenant,
                                         final String number,
-                                        final String contactName,
+                                        final String plateNumber,
                                         final String status,
                                         int page,
                                         int size) {
 
-        LOGGER.info("Search for work orders with number={}, contact_name={}, status={} for tenant={}", number,
-                contactName, status, tenant);
+        LOGGER.info("Search for work orders with number={}, plate_number={}, status={} for tenant={}", number,
+                plateNumber, status, tenant);
 
         final var pageable = PageRequest.of(page, size);
-        return workOrderRepository.findByContactEntityNameContainsIgnoreCaseAndNumberContainsIgnoreCaseAndStatusAndTenant(contactName,
-                number, status, tenant, pageable);
+        return workOrderRepository.findByNumberContainsIgnoreCaseAndStatusContainsIgnoreCaseAndPlateNumberContainsIgnoreCaseAndTenant(number,
+                status, plateNumber, tenant, pageable);
     }
 
     public WorkOrderEntity findById(final String tenant, final String id) {
@@ -86,6 +87,7 @@ public class WorkOrderService {
                 .carLineEntity(carLineEntity)
                 .contactEntity(contactEntity)
                 .status(IN_PROGRESS.value())
+                .orderDate(buildInstantFrom(workOrder.getOrderDate()))
                 .odometerMeasurement(workOrder.getOdometerMeasurement())
                 .odometerValue(workOrder.getOdometerValue())
                 .gasAmount(workOrder.getGasAmount())

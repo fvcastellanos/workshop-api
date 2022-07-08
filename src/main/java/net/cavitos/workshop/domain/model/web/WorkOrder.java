@@ -5,13 +5,17 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import net.cavitos.workshop.domain.model.status.WorkOrderStatus;
+import net.cavitos.workshop.domain.model.validator.Date;
 import net.cavitos.workshop.domain.model.validator.ValueOfEnum;
 import net.cavitos.workshop.domain.model.web.common.CommonCarLine;
 import net.cavitos.workshop.domain.model.web.common.CommonContact;
-
 import org.springframework.hateoas.RepresentationModel;
 
-import javax.validation.constraints.*;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 @Getter
 @Setter
@@ -42,6 +46,10 @@ public class WorkOrder extends RepresentationModel<WorkOrder> {
     @NotEmpty
     @Size(max = 30)
     private String plateNumber;
+
+    @Date
+    @NotBlank
+    private String orderDate;
 
     @NotNull
     private CommonCarLine carLine;

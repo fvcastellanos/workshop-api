@@ -39,14 +39,14 @@ public class WorkOrderController extends BaseController {
 
     @GetMapping
     public ResponseEntity<Page<WorkOrder>> search(@RequestParam(defaultValue = "") final String number,
-                                                  @RequestParam(defaultValue = "") final String contactName,
-                                                  @RequestParam(defaultValue = "P") final String status,
+                                                  @RequestParam(defaultValue = "") final String plateNumber,
+                                                  @RequestParam(defaultValue = "") final String status,
                                                   @RequestParam(defaultValue = DEFAULT_PAGE) final int page,
                                                   @RequestParam(defaultValue = DEFAULT_SIZE) final int size,
                                                   final Principal principal) {
 
         final var tenant = getUserTenant(principal);
-        final var workOrderPage = workOrderService.search(tenant, number, contactName, status,
+        final var workOrderPage = workOrderService.search(tenant, number, plateNumber, status,
                 page, size);
 
         final var workOrders = workOrderPage.stream()

@@ -9,11 +9,11 @@ import java.util.Optional;
 
 public interface WorkOrderRepository extends PagingAndSortingRepository<WorkOrderEntity, String> {
 
-    Page<WorkOrderEntity> findByContactEntityNameContainsIgnoreCaseAndNumberContainsIgnoreCaseAndStatusAndTenant(String contactName,
-                                                                                                                 String number,
-                                                                                                                 String status,
-                                                                                                                 String tenant,
-                                                                                                                 Pageable pageable);
+    Page<WorkOrderEntity> findByNumberContainsIgnoreCaseAndStatusContainsIgnoreCaseAndPlateNumberContainsIgnoreCaseAndTenant(String number,
+                                                                                                                             String status,
+                                                                                                                             String plateNumber,
+                                                                                                                             String tenant,
+                                                                                                                             Pageable pageable);
 
     Optional<WorkOrderEntity> findByNumberEqualsIgnoreCaseAndTenant(String number, String tenant);
 
