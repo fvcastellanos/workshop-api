@@ -4,10 +4,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class WorkshopApiApplication {
+public class WorkshopApi {
 
 	public static void main(String[] args) {
-		SpringApplication.run(WorkshopApiApplication.class, args);
+		SpringApplication.run(WorkshopApi.class, args);
 	}
 
 }

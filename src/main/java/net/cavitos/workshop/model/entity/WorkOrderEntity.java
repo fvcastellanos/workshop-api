@@ -49,6 +49,9 @@ public class WorkOrderEntity {
     @Size(max = 100)
     private String number;
 
+    @NotNull
+    private Instant orderDate;
+
     @NotEmpty
     @Size(max = 1)
     private String status;

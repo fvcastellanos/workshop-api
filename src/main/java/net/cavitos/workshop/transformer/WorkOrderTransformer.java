@@ -10,6 +10,7 @@ import net.cavitos.workshop.model.entity.WorkOrderEntity;
 import net.cavitos.workshop.web.controller.WorkOrderController;
 
 import static java.util.Objects.nonNull;
+import static net.cavitos.workshop.factory.DateTimeFactory.buildStringFromInstant;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
@@ -30,6 +31,7 @@ public final class WorkOrderTransformer {
         final var workOrder = new WorkOrder();
         workOrder.setNumber(entity.getNumber());
         workOrder.setStatus(status);
+        workOrder.setOrderDate(buildStringFromInstant(entity.getOrderDate()));
         workOrder.setOdometerMeasurement(entity.getOdometerMeasurement());
         workOrder.setOdometerValue(entity.getOdometerValue());
         workOrder.setGasAmount(entity.getGasAmount());

@@ -21,6 +21,7 @@ import java.util.UUID;
 
 import static net.cavitos.workshop.domain.model.status.WorkOrderStatus.IN_PROGRESS;
 import static net.cavitos.workshop.factory.BusinessExceptionFactory.createBusinessException;
+import static net.cavitos.workshop.factory.DateTimeFactory.buildInstantFrom;
 
 @Service
 public class WorkOrderService {
@@ -86,6 +87,7 @@ public class WorkOrderService {
                 .carLineEntity(carLineEntity)
                 .contactEntity(contactEntity)
                 .status(IN_PROGRESS.value())
+                .orderDate(buildInstantFrom(workOrder.getOrderDate()))
                 .odometerMeasurement(workOrder.getOdometerMeasurement())
                 .odometerValue(workOrder.getOdometerValue())
                 .gasAmount(workOrder.getGasAmount())
