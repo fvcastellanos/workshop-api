@@ -60,6 +60,18 @@ public class ContactController extends BaseController {
         final var response = new PageImpl<>(providers, Pageable.ofSize(size), contactPage.getTotalElements());
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+    @GetMapping(value = "/search")
+    public ResponseEntity<Page<Contact>> search(@RequestParam(defaultValue = "") @Size(max = 150) final String text,
+                                                @RequestParam(defaultValue = "1") final int active,
+                                                @RequestParam(defaultValue = DEFAULT_PAGE) final int page,
+                                                @RequestParam(defaultValue = DEFAULT_SIZE) final int size,
+                                                final Principal principal) {
+
+        contactService.foo();
+
+        return null;
+    }
     
     @GetMapping("/{id}")
     public ResponseEntity<Contact> getById(@PathVariable @NotEmpty final String id,

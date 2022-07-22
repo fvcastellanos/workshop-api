@@ -16,5 +16,11 @@ public interface ContactRepository extends PagingAndSortingRepository<ContactEnt
                                                                                                        int active,
                                                                                                        Pageable pageable);
 
+    Page<ContactEntity> findByTenantAndActiveAndCodeContainsIgnoreCaseOrNameContainsIgnoreCase(String tenant,
+                                                                                               int active,
+                                                                                               String code,
+                                                                                               String name,
+                                                                                               Pageable pageable);
+
     Optional<ContactEntity> findByCodeEqualsIgnoreCaseAndTenant(String code, String tenant);
 }

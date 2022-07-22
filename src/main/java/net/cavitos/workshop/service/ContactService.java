@@ -5,6 +5,7 @@ import net.cavitos.workshop.domain.model.type.ContactType;
 import net.cavitos.workshop.domain.model.web.Contact;
 import net.cavitos.workshop.model.entity.ContactEntity;
 import net.cavitos.workshop.model.repository.ContactRepository;
+import net.cavitos.workshop.search.ContactSearch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,11 +26,20 @@ public class ContactService {
     private static final Logger LOGGER = LoggerFactory.getLogger(ContactService.class);
 
     private final ContactRepository contactRepository;
+    private final ContactSearch contactSearch;
 
     @Autowired
-    public ContactService(final ContactRepository contactRepository) {
+    public ContactService(final ContactRepository contactRepository,
+                          final ContactSearch contactSearch) {
 
         this.contactRepository = contactRepository;
+        this.contactSearch = contactSearch;
+    }
+
+    public void foo() {
+
+        contactSearch.search("quin", "ACTIVE", 1, 250);
+
     }
 
     public Page<ContactEntity> getAll(final String tenant,
@@ -70,7 +80,6 @@ public class ContactService {
 
         verifyExistingCodeTypeForTenant(tenant, contact);
 
-
         final var providerEntity = ContactEntity.builder()
                 .id(UUID.randomUUID().toString())
                 .code(contact.getCode())
@@ -85,6 +94,7 @@ public class ContactService {
                 .updated(Instant.now())
                 .build();
 
+        contactSearch.upsert(tenant, contact);
         contactRepository.save(providerEntity);
 
         return providerEntity;
@@ -123,6 +133,7 @@ public class ContactService {
         providerEntity.setActive(active);
         providerEntity.setUpdated(Instant.now());
 
+        contactSearch.upsert(tenant, contact);
         contactRepository.save(providerEntity);
 
         return providerEntity;

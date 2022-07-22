@@ -19,8 +19,6 @@ public class DataSourceConfiguration {
         final var configuration = new HikariConfig();
         configuration.setJdbcUrl(url);
 
-
         return new HikariDataSource(configuration);
-
     }
 }
