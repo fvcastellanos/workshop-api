@@ -26,4 +26,6 @@ public class CarLine extends RepresentationModel<CarLine> {
 
     @ValueOfEnum(enumType = ActiveStatus.class, message = "Invalid type, allowed values: ACTIVE|INACTIVE")
     private String active;
+
+    private CarBrand carBrand;
 }

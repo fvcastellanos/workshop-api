@@ -32,20 +32,17 @@ public class ContactService {
         this.contactRepository = contactRepository;
     }
 
-    public Page<ContactEntity> getAll(final String tenant,
-                                      final String code,
+    public Page<ContactEntity> search(final String tenant,
                                       final String type,
-                                      final String name,
                                       final int active,
+                                      final String text,
                                       final int page,
                                       final int size) {
 
-        LOGGER.info("Retrieve all contacts for tenant={} with code={}, type={} name={}, active={}", tenant, code, type,
-                name, active);
+        LOGGER.info("Retrieve all contacts for tenant={} with text={}, type={}, active={}", tenant, text, type, active);
 
         final var pageable = PageRequest.of(page, size);
-        return contactRepository.findByTenantAndCodeContainsIgnoreCaseAndTypeAndNameContainsIgnoreCaseAndActive(tenant, code, type, name,
-                active, pageable);
+        return contactRepository.search(tenant, active, type, "%" + text + "%", pageable);
     }
 
     public ContactEntity getById(final String tenant, final String id) {
@@ -70,7 +67,6 @@ public class ContactService {
 
         verifyExistingCodeTypeForTenant(tenant, contact);
 
-
         final var providerEntity = ContactEntity.builder()
                 .id(UUID.randomUUID().toString())
                 .code(contact.getCode())
@@ -94,10 +90,10 @@ public class ContactService {
 
         LOGGER.info("trying to update contact_id={} for tenant={}", id, tenant);
 
-        final var providerEntity = contactRepository.findById(id)
+        final var contactEntity = contactRepository.findById(id)
                 .orElseThrow(() -> createBusinessException(HttpStatus.NOT_FOUND, "Contact not found"));
 
-        if (!providerEntity.getTenant().equalsIgnoreCase(tenant)) {
+        if (!contactEntity.getTenant().equalsIgnoreCase(tenant)) {
 
             LOGGER.error("contact_id={} is not assigned to tenant={}", id, tenant);
             throw createBusinessException(HttpStatus.NOT_FOUND, "Contact not found");
@@ -106,26 +102,34 @@ public class ContactService {
         final var type = ContactType.valueOf(contact.getType())
                 .value();
 
-        if (!providerEntity.getCode().equalsIgnoreCase(contact.getCode()) || !providerEntity.getType().equalsIgnoreCase(type)) {
+        if (!contactEntity.getCode().equalsIgnoreCase(contact.getCode()) || !contactEntity.getType().equalsIgnoreCase(type)) {
 
-            verifyExistingCodeTypeForTenant(tenant, contact);
+            contactRepository.findByCodeEqualsIgnoreCaseAndTenant(contact.getCode(), tenant)
+                    .ifPresent(existingContact -> {
+
+                        if (!existingContact.getId().equalsIgnoreCase(contactEntity.getId())) {
+
+                            throw createBusinessException(HttpStatus.UNPROCESSABLE_ENTITY, "Another contact is using the code=%s for type=%s",
+                                    contact.getCode(), contact.getType());
+                        }
+            });
         }
 
         final var active = ActiveStatus.valueOf(contact.getActive())
                         .value();
 
-        providerEntity.setName(contact.getName());
-        providerEntity.setCode(contact.getCode());
-        providerEntity.setType(buildContactTypeFrom(contact.getType()));
-        providerEntity.setDescription(contact.getDescription());
-        providerEntity.setContact(contact.getContact());
-        providerEntity.setTaxId(contact.getTaxId());
-        providerEntity.setActive(active);
-        providerEntity.setUpdated(Instant.now());
+        contactEntity.setName(contact.getName());
+        contactEntity.setCode(contact.getCode());
+        contactEntity.setType(buildContactTypeFrom(contact.getType()));
+        contactEntity.setDescription(contact.getDescription());
+        contactEntity.setContact(contact.getContact());
+        contactEntity.setTaxId(contact.getTaxId());
+        contactEntity.setActive(active);
+        contactEntity.setUpdated(Instant.now());
 
-        contactRepository.save(providerEntity);
+        contactRepository.save(contactEntity);
 
-        return providerEntity;
+        return contactEntity;
     }
 
     // ----------------------------------------------------------------------------------------------------

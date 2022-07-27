@@ -4,6 +4,7 @@ import net.cavitos.workshop.model.entity.CarBrandEntity;
 import net.cavitos.workshop.model.entity.CarLineEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
 import java.util.Optional;
@@ -15,6 +16,13 @@ public interface CarLineRepository extends PagingAndSortingRepository<CarLineEnt
                                                                                   int active,
                                                                                   String name,
                                                                                   Pageable pageable);
+
+    @Query("select carLine from CarLineEntity carLine where carLine.tenant = :tenant and carLine.active = :active " +
+            "and upper(carLine.name) like upper(:text)")
+    Page<CarLineEntity> search(String tenant,
+                               String text,
+                               int active,
+                               Pageable pageable);
 
     Optional<CarLineEntity> findByCarBrandAndNameAndTenant(CarBrandEntity carBrandEntity, String name, String tenant);
 

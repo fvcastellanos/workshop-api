@@ -43,18 +43,15 @@ public class WorkOrderService {
     }
 
     public Page<WorkOrderEntity> search(final String tenant,
-                                        final String number,
-                                        final String plateNumber,
+                                        final String text,
                                         final String status,
                                         int page,
                                         int size) {
 
-        LOGGER.info("Search for work orders with number={}, plate_number={}, status={} for tenant={}", number,
-                plateNumber, status, tenant);
+        LOGGER.info("Search for work orders with text={}, status={} for tenant={}", text, status, tenant);
 
         final var pageable = PageRequest.of(page, size);
-        return workOrderRepository.findByNumberContainsIgnoreCaseAndStatusContainsIgnoreCaseAndPlateNumberContainsIgnoreCaseAndTenant(number,
-                status, plateNumber, tenant, pageable);
+        return workOrderRepository.search(tenant, status, text, pageable);
     }
 
     public WorkOrderEntity findById(final String tenant, final String id) {

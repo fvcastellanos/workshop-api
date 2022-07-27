@@ -42,25 +42,24 @@ public class ContactController extends BaseController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<Contact>> getByTenant(@RequestParam(defaultValue = "") @Size(max = 50) final String code,
-                                                     @RequestParam(defaultValue = "P") @Size(max = 1) final String type,
-                                                     @RequestParam(defaultValue = "") @Size(max = 150) final String name,
-                                                     @RequestParam(defaultValue = "1") final int active,
-                                                     @RequestParam(defaultValue = DEFAULT_PAGE) final int page,
-                                                     @RequestParam(defaultValue = DEFAULT_SIZE) final int size,
-                                                     final Principal principal) {
+    public ResponseEntity<Page<Contact>> search(@RequestParam(defaultValue = "") @Size(max = 50) final String text,
+                                                @RequestParam(defaultValue = "%") @Size(max = 1) final String type,
+                                                @RequestParam(defaultValue = "1") final int active,
+                                                @RequestParam(defaultValue = DEFAULT_PAGE) final int page,
+                                                @RequestParam(defaultValue = DEFAULT_SIZE) final int size,
+                                                final Principal principal) {
 
         final var tenant = getUserTenant(principal);
-        final var contactPage = contactService.getAll(tenant, code, type, name, active, page, size);
+        final var contactPage = contactService.search(tenant, type, active, text, page, size);
 
-        final var providers = contactPage.stream()
+        final var contacts = contactPage.stream()
                 .map(ContactTransformer::toWeb)
                 .collect(Collectors.toList());
 
-        final var response = new PageImpl<>(providers, Pageable.ofSize(size), contactPage.getTotalElements());
+        final var response = new PageImpl<>(contacts, Pageable.ofSize(size), contactPage.getTotalElements());
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
-    
+
     @GetMapping("/{id}")
     public ResponseEntity<Contact> getById(@PathVariable @NotEmpty final String id,
                                            final Principal principal) {

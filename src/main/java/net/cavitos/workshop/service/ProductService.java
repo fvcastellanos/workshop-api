@@ -32,20 +32,18 @@ public class ProductService {
         this.productRepository = productRepository;
     }
 
-    public Page<ProductEntity> searchBy(final String tenant,
-                                        final String type,
-                                        final String code,
-                                        final String name,
-                                        final int active,
-                                        final int page,
-                                        final int size) {
+    public Page<ProductEntity> search(final String tenant,
+                                      final String type,
+                                      final String text,
+                                      final int active,
+                                      final int page,
+                                      final int size) {
 
-        LOGGER.info("Retrieve all products for tenant={} with code={}, type={} name={}, active={}", tenant, code, type,
-                name, active);
+        LOGGER.info("Retrieve all products for tenant={} with text={}, type={},active={}", tenant, text, type, active);
 
         final var pageable = PageRequest.of(page, size);
-        return productRepository.findByTypeAndCodeContainsIgnoreCaseAndNameContainsIgnoreCaseAndActiveAndTenant(type, code, name, active,
-                tenant, pageable);
+
+        return productRepository.search("%" + text + "%", type, active, tenant, pageable);
     }
 
     public ProductEntity findById(final String tenant, final String id) {
