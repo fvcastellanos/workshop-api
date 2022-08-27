@@ -14,12 +14,6 @@ public interface WorkOrderRepository extends PagingAndSortingRepository<WorkOrde
             "and (UPPER(workOrder.number) like UPPER(:text) or UPPER(workOrder.plateNumber) like UPPER(:text))")
     Page<WorkOrderEntity> search(String tenant, String status, String text, Pageable pageable);
 
-    Page<WorkOrderEntity> findByNumberContainsIgnoreCaseAndStatusContainsIgnoreCaseAndPlateNumberContainsIgnoreCaseAndTenant(String number,
-                                                                                                                             String status,
-                                                                                                                             String plateNumber,
-                                                                                                                             String tenant,
-                                                                                                                             Pageable pageable);
-
     Optional<WorkOrderEntity> findByNumberEqualsIgnoreCaseAndTenant(String number, String tenant);
 
     Optional<WorkOrderEntity> findByIdAndTenant(String id, String tenant);

@@ -102,7 +102,7 @@ public class InvoiceService {
         var contactEntity = entity.getContactEntity();
         final var contact = invoice.getContact();
 
-        if (!contactEntity.getCode().equalsIgnoreCase(contact.getCode())) {
+        if (!contactEntity.getCode().equalsIgnoreCase(contact.getId())) {
 
             contactEntity = findContactEntity(tenant, contact);
         }
@@ -133,7 +133,7 @@ public class InvoiceService {
     // ------------------------------------------------------------------------------------------------------
     private ContactEntity findContactEntity(final String tenant, final CommonContact contact) {
 
-        return contactRepository.findByCodeEqualsIgnoreCaseAndTenant(contact.getCode(), tenant)
+        return contactRepository.findByIdAndTenant(contact.getId(), tenant)
                 .orElseThrow(() -> createBusinessException(HttpStatus.UNPROCESSABLE_ENTITY, "Contact not found"));
     }
 
@@ -141,7 +141,7 @@ public class InvoiceService {
 
         final var contact = invoice.getContact();
         final var existingInvoiceHolder = invoiceRepository.findBySuffixEqualsIgnoreCaseAndNumberEqualsIgnoreCaseAndContactEntityCodeEqualsIgnoreCaseAndTenant(invoice.getSuffix(),
-                invoice.getNumber(), contact.getCode(), tenant);
+                invoice.getNumber(), contact.getId(), tenant);
 
         if (existingInvoiceHolder.isPresent()) {
 

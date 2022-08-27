@@ -58,7 +58,7 @@ public final class WorkOrderTransformer {
     private static CommonContact buildWorkOrderContact(final ContactEntity contactEntity) {
 
         final var contact = new CommonContact();
-        contact.setCode(contactEntity.getCode());
+        contact.setId(contactEntity.getId());
         contact.setType(contactEntity.getType());
         contact.setName(contactEntity.getName());
 

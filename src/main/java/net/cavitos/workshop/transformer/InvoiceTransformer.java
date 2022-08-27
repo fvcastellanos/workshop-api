@@ -57,7 +57,7 @@ public final class InvoiceTransformer {
 
         final var contact = new CommonContact();
         contact.setType(entity.getType());
-        contact.setCode(entity.getCode());
+        contact.setId(entity.getCode());
         contact.setName(entity.getName());
 
         return contact;

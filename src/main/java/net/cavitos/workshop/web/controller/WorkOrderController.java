@@ -45,7 +45,7 @@ public class WorkOrderController extends BaseController {
                                                   final Principal principal) {
 
         final var tenant = getUserTenant(principal);
-        final var workOrderPage = workOrderService.search(tenant, status, text, page, size);
+        final var workOrderPage = workOrderService.search(tenant, text, status, page, size);
 
         final var workOrders = workOrderPage.stream()
                 .map(WorkOrderTransformer::toWeb)

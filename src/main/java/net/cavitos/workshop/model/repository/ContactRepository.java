@@ -11,7 +11,7 @@ import java.util.Optional;
 
 public interface ContactRepository extends PagingAndSortingRepository<ContactEntity, String> {
 
-    Optional<ContactEntity> findByCodeEqualsIgnoreCaseAndTenant(String code, String tenant);
+    Optional<ContactEntity> findByIdAndTenant(String id, String tenant);
 
     @Query("select contact from ContactEntity contact where contact.tenant = :tenant and contact.active = :active and " +
             "contact.type like :type and (UPPER(contact.code) like UPPER(:text) or UPPER(contact.name) like UPPER(:text))")

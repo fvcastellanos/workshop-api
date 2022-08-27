@@ -104,7 +104,7 @@ public class ContactService {
 
         if (!contactEntity.getCode().equalsIgnoreCase(contact.getCode()) || !contactEntity.getType().equalsIgnoreCase(type)) {
 
-            contactRepository.findByCodeEqualsIgnoreCaseAndTenant(contact.getCode(), tenant)
+            contactRepository.findByIdAndTenant(contact.getCode(), tenant)
                     .ifPresent(existingContact -> {
 
                         if (!existingContact.getId().equalsIgnoreCase(contactEntity.getId())) {
@@ -136,7 +136,7 @@ public class ContactService {
 
     private void verifyExistingCodeTypeForTenant(final String tenant, final Contact contact) {
 
-        final var existingContactHolder = contactRepository.findByCodeEqualsIgnoreCaseAndTenant(contact.getCode(),
+        final var existingContactHolder = contactRepository.findByIdAndTenant(contact.getCode(),
                 tenant);
 
         if (existingContactHolder.isPresent()) {

@@ -51,7 +51,7 @@ public class WorkOrderService {
         LOGGER.info("Search for work orders with text={}, status={} for tenant={}", text, status, tenant);
 
         final var pageable = PageRequest.of(page, size);
-        return workOrderRepository.search(tenant, status, text, pageable);
+        return workOrderRepository.search(tenant, status, "%" + text + "%", pageable);
     }
 
     public WorkOrderEntity findById(final String tenant, final String id) {
@@ -156,7 +156,7 @@ public class WorkOrderService {
     private ContactEntity getContact(final String tenant, final WorkOrder workOrder) {
 
         final var contact = workOrder.getContact();
-        return contactRepository.findByCodeEqualsIgnoreCaseAndTenant(contact.getCode(), tenant)
+        return contactRepository.findByIdAndTenant(contact.getId(), tenant)
                 .orElseThrow(() -> createBusinessException(HttpStatus.UNPROCESSABLE_ENTITY, "Contact not found"));
     }
 
