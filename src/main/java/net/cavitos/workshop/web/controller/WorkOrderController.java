@@ -92,6 +92,8 @@ public class WorkOrderController extends BaseController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    // --------------------------------------------------------------------------------------------
+
     @GetMapping("/{id}/details")
     public ResponseEntity<List<WorkOrderDetail>> getDetails(@PathVariable @NotEmpty final String id,
                                                             final Principal principal) {
@@ -104,5 +106,13 @@ public class WorkOrderController extends BaseController {
                 .collect(Collectors.toList());
 
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PostMapping("/{id}/details")
+    public ResponseEntity<WorkOrderDetail> addDetail(@PathVariable @NotEmpty final String id,
+                                                     @RequestBody final WorkOrderDetail workOrderDetail,
+                                                     final Principal principal) {
+
+        return null;
     }
 }
