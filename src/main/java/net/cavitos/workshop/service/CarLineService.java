@@ -53,6 +53,18 @@ public class CarLineService {
         return carLineRepository.findByCarBrandAndTenantAndActiveAndNameContainsIgnoreCase(carBrandEntity, tenant, active, name, pageable);
     }
 
+    public Page<CarLineEntity> search(final String tenant,
+                                      final String text,
+                                      final int active,
+                                      final int page,
+                                      final int size) {
+
+        LOGGER.info("Retrieve all car lines associated with tenant={}, active = {} and text={}", tenant, active, text);
+
+        final var pageable = PageRequest.of(page, size);
+        return carLineRepository.search(tenant, "%" + text + "%", active, pageable);
+    }
+
     public CarLineEntity findById(final String tenant,
                                   final String carBrandId,
                                   final String id) {

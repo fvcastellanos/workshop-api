@@ -16,7 +16,7 @@ public class CommonContact {
 
     @NotEmpty
     @Size(max = 50)
-    private String code;
+    private String id;
 
     private String name;
     private String type;

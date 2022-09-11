@@ -4,6 +4,7 @@ import net.cavitos.workshop.domain.model.status.WorkOrderStatus;
 import net.cavitos.workshop.domain.model.web.WorkOrder;
 import net.cavitos.workshop.model.entity.CarLineEntity;
 import net.cavitos.workshop.model.entity.ContactEntity;
+import net.cavitos.workshop.model.entity.WorkOrderDetailEntity;
 import net.cavitos.workshop.model.entity.WorkOrderEntity;
 import net.cavitos.workshop.model.repository.CarLineRepository;
 import net.cavitos.workshop.model.repository.ContactRepository;
@@ -17,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.UUID;
 
 import static net.cavitos.workshop.domain.model.status.WorkOrderStatus.IN_PROGRESS;
@@ -43,18 +45,15 @@ public class WorkOrderService {
     }
 
     public Page<WorkOrderEntity> search(final String tenant,
-                                        final String number,
-                                        final String plateNumber,
+                                        final String text,
                                         final String status,
                                         int page,
                                         int size) {
 
-        LOGGER.info("Search for work orders with number={}, plate_number={}, status={} for tenant={}", number,
-                plateNumber, status, tenant);
+        LOGGER.info("Search for work orders with text={}, status={} for tenant={}", text, status, tenant);
 
         final var pageable = PageRequest.of(page, size);
-        return workOrderRepository.findByNumberContainsIgnoreCaseAndStatusContainsIgnoreCaseAndPlateNumberContainsIgnoreCaseAndTenant(number,
-                status, plateNumber, tenant, pageable);
+        return workOrderRepository.search(tenant, status, "%" + text + "%", pageable);
     }
 
     public WorkOrderEntity findById(final String tenant, final String id) {
@@ -137,6 +136,15 @@ public class WorkOrderService {
 
     // ----------------------------------------------------------------------------------------------------
 
+    public List<WorkOrderDetailEntity> getOrderDetails(final String tenant, final String orderId) {
+
+        LOGGER.info("retrieve order details for order_id={} - tenant: {}", orderId, tenant);
+
+        return workOrderRepository.getOrderDetails(orderId);
+    }
+
+    // ----------------------------------------------------------------------------------------------------
+
     private void verifyWorkOrderNumberAlreadyExists(final String tenant, final WorkOrder workOrder) {
 
         final var workOrderHolder = workOrderRepository.findByNumberEqualsIgnoreCaseAndTenant(workOrder.getNumber(),
@@ -159,7 +167,7 @@ public class WorkOrderService {
     private ContactEntity getContact(final String tenant, final WorkOrder workOrder) {
 
         final var contact = workOrder.getContact();
-        return contactRepository.findByCodeEqualsIgnoreCaseAndTenant(contact.getCode(), tenant)
+        return contactRepository.findByIdAndTenant(contact.getId(), tenant)
                 .orElseThrow(() -> createBusinessException(HttpStatus.UNPROCESSABLE_ENTITY, "Contact not found"));
     }
 

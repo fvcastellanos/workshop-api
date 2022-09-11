@@ -1,8 +1,10 @@
 package net.cavitos.workshop.web.controller;
 
 import net.cavitos.workshop.domain.model.web.WorkOrder;
+import net.cavitos.workshop.domain.model.web.WorkOrderDetail;
 import net.cavitos.workshop.security.service.UserService;
 import net.cavitos.workshop.service.WorkOrderService;
+import net.cavitos.workshop.transformer.WorkOrderDetailTransformer;
 import net.cavitos.workshop.transformer.WorkOrderTransformer;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -21,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import java.security.Principal;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static net.cavitos.workshop.web.controller.Route.WORK_ORDERS_RESOURCE;
@@ -38,16 +41,14 @@ public class WorkOrderController extends BaseController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<WorkOrder>> search(@RequestParam(defaultValue = "") final String number,
-                                                  @RequestParam(defaultValue = "") final String plateNumber,
-                                                  @RequestParam(defaultValue = "") final String status,
+    public ResponseEntity<Page<WorkOrder>> search(@RequestParam(defaultValue = "") final String text,
+                                                  @RequestParam(defaultValue = "%") final String status,
                                                   @RequestParam(defaultValue = DEFAULT_PAGE) final int page,
                                                   @RequestParam(defaultValue = DEFAULT_SIZE) final int size,
                                                   final Principal principal) {
 
         final var tenant = getUserTenant(principal);
-        final var workOrderPage = workOrderService.search(tenant, number, plateNumber, status,
-                page, size);
+        final var workOrderPage = workOrderService.search(tenant, text, status, page, size);
 
         final var workOrders = workOrderPage.stream()
                 .map(WorkOrderTransformer::toWeb)
@@ -88,6 +89,20 @@ public class WorkOrderController extends BaseController {
         final var entity = workOrderService.update(tenant, id, workOrder);
 
         final var response = WorkOrderTransformer.toWeb(entity);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}/details")
+    public ResponseEntity<List<WorkOrderDetail>> getDetails(@PathVariable @NotEmpty final String id,
+                                                            final Principal principal) {
+
+        final var tenant = getUserTenant(principal);
+        final var details = workOrderService.getOrderDetails(tenant, id);
+
+        final var response = details.stream()
+                .map(WorkOrderDetailTransformer::toWeb)
+                .collect(Collectors.toList());
+
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }
