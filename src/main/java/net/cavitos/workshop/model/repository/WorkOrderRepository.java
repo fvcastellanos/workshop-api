@@ -19,7 +19,4 @@ public interface WorkOrderRepository extends PagingAndSortingRepository<WorkOrde
     Optional<WorkOrderEntity> findByNumberEqualsIgnoreCaseAndTenant(String number, String tenant);
 
     Optional<WorkOrderEntity> findByIdAndTenant(String id, String tenant);
-
-    @Query("select orderDetail from WorkOrderDetailEntity orderDetail where orderDetail.workOrderEntity.id = :orderId")
-    List<WorkOrderDetailEntity> getOrderDetails(String orderId);
 }

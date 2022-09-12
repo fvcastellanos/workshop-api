@@ -3,8 +3,10 @@ package net.cavitos.workshop.model.repository;
 import net.cavitos.workshop.model.entity.ProductEntity;
 import net.cavitos.workshop.model.entity.WorkOrderDetailEntity;
 import net.cavitos.workshop.model.entity.WorkOrderEntity;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface WorkOrderDetailRepository extends PagingAndSortingRepository<WorkOrderDetailEntity, String> {
@@ -12,4 +14,7 @@ public interface WorkOrderDetailRepository extends PagingAndSortingRepository<Wo
     Optional<WorkOrderDetailEntity> findByWorkOrderEntityAndProductEntityAndTenant(WorkOrderEntity workOrderEntity,
                                                                                    ProductEntity productEntity,
                                                                                    String tenant);
+    @Query("select orderDetail from WorkOrderDetailEntity orderDetail where orderDetail.workOrderEntity.id = :orderId")
+    List<WorkOrderDetailEntity> getOrderDetails(String orderId);
+
 }

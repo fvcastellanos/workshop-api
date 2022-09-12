@@ -12,6 +12,7 @@ public class WorkOrderDetailTransformer {
 
     public static WorkOrderDetail toWeb(final WorkOrderDetailEntity entity) {
 
+        final var workOrderEntity = entity.getWorkOrderEntity();
         final var productEntity = entity.getProductEntity();
         final var invoiceEntity = entity.getInvoiceDetailEntity()
                 .getInvoiceEntity();
@@ -28,6 +29,7 @@ public class WorkOrderDetailTransformer {
 
         final var detail = new WorkOrderDetail();
         detail.setId(entity.getId());
+        detail.setOrderId(workOrderEntity.getId());
         detail.setQuantity(entity.getQuantity());
         detail.setUnitPrice(entity.getUnitPrice());
         detail.setProduct(product);

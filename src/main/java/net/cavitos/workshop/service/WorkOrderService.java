@@ -4,7 +4,6 @@ import net.cavitos.workshop.domain.model.status.WorkOrderStatus;
 import net.cavitos.workshop.domain.model.web.WorkOrder;
 import net.cavitos.workshop.model.entity.CarLineEntity;
 import net.cavitos.workshop.model.entity.ContactEntity;
-import net.cavitos.workshop.model.entity.WorkOrderDetailEntity;
 import net.cavitos.workshop.model.entity.WorkOrderEntity;
 import net.cavitos.workshop.model.repository.CarLineRepository;
 import net.cavitos.workshop.model.repository.ContactRepository;
@@ -18,7 +17,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.util.List;
 import java.util.UUID;
 
 import static net.cavitos.workshop.domain.model.status.WorkOrderStatus.IN_PROGRESS;
@@ -132,15 +130,6 @@ public class WorkOrderService {
         workOrderRepository.save(entity);
 
         return entity;
-    }
-
-    // ----------------------------------------------------------------------------------------------------
-
-    public List<WorkOrderDetailEntity> getOrderDetails(final String tenant, final String orderId) {
-
-        LOGGER.info("retrieve order details for order_id={} - tenant: {}", orderId, tenant);
-
-        return workOrderRepository.getOrderDetails(orderId);
     }
 
     // ----------------------------------------------------------------------------------------------------

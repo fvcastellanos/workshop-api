@@ -3,6 +3,7 @@ package net.cavitos.workshop.web.controller;
 import net.cavitos.workshop.domain.model.web.WorkOrder;
 import net.cavitos.workshop.domain.model.web.WorkOrderDetail;
 import net.cavitos.workshop.security.service.UserService;
+import net.cavitos.workshop.service.WorkOrderDetailService;
 import net.cavitos.workshop.service.WorkOrderService;
 import net.cavitos.workshop.transformer.WorkOrderDetailTransformer;
 import net.cavitos.workshop.transformer.WorkOrderTransformer;
@@ -34,10 +35,15 @@ public class WorkOrderController extends BaseController {
 
     private final WorkOrderService workOrderService;
 
-    public WorkOrderController(final WorkOrderService workOrderService, final UserService userService) {
+    private final WorkOrderDetailService workOrderDetailService;
+
+    public WorkOrderController(final WorkOrderService workOrderService,
+                               final WorkOrderDetailService workOrderDetailService,
+                               final UserService userService) {
 
         super(userService);
         this.workOrderService = workOrderService;
+        this.workOrderDetailService = workOrderDetailService;
     }
 
     @GetMapping
@@ -99,7 +105,7 @@ public class WorkOrderController extends BaseController {
                                                             final Principal principal) {
 
         final var tenant = getUserTenant(principal);
-        final var details = workOrderService.getOrderDetails(tenant, id);
+        final var details = workOrderDetailService.getOrderDetails(tenant, id);
 
         final var response = details.stream()
                 .map(WorkOrderDetailTransformer::toWeb)
@@ -113,6 +119,10 @@ public class WorkOrderController extends BaseController {
                                                      @RequestBody final WorkOrderDetail workOrderDetail,
                                                      final Principal principal) {
 
-        return null;
+        final var tenant = getUserTenant(principal);
+        final var detail = workOrderDetailService.addOrderDetail(tenant, id, workOrderDetail);
+        final var response = WorkOrderDetailTransformer.toWeb(detail);
+
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 }

@@ -18,12 +18,17 @@ import javax.validation.constraints.Size;
 @EqualsAndHashCode
 public class WorkOrderDetail {
 
-    @NotBlank
     @Size(max = 50)
     private String id;
 
-    private CommonInvoice invoice;
+    @NotBlank
+    @Size(max = 50)
+    private String orderId;
 
+    @Size(max = 50)
+    private String invoiceDetailId;
+
+    @NotNull
     private CommonProduct product;
 
     @Min(0)
