@@ -14,18 +14,12 @@ public class WorkOrderDetailTransformer {
 
         final var workOrderEntity = entity.getWorkOrderEntity();
         final var productEntity = entity.getProductEntity();
-        final var invoiceEntity = entity.getInvoiceDetailEntity()
-                .getInvoiceEntity();
+        final var invoiceDetailEntity = entity.getInvoiceDetailEntity();
 
         final var product = new CommonProduct();
         product.setCode(productEntity.getCode());
         product.setType(productEntity.getType());
         product.setName(productEntity.getType());
-
-        final var invoice = new CommonInvoice();
-        invoice.setNumber(invoiceEntity.getNumber());
-        invoice.setType(invoiceEntity.getType());
-        invoice.setSuffix(invoiceEntity.getSuffix());
 
         final var detail = new WorkOrderDetail();
         detail.setId(entity.getId());
@@ -33,7 +27,7 @@ public class WorkOrderDetailTransformer {
         detail.setQuantity(entity.getQuantity());
         detail.setUnitPrice(entity.getUnitPrice());
         detail.setProduct(product);
-        detail.setInvoice(invoice);
+        detail.setInvoiceDetailId(invoiceDetailEntity.getId());
 
         return detail;
     }

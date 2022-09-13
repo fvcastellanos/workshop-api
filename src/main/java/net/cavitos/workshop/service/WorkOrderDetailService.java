@@ -72,6 +72,19 @@ public class WorkOrderDetailService {
 
     public void deleteOrderDetail(final String workOrderId, final String workOrderDetailId, final String tenant) {
 
+        LOGGER.info("delete custom order detail for order_id={} and tenant={}", workOrderId, tenant);
 
+        final var workOrderDetailEntity = workOrderDetailRepository.findByIdAndTenant(workOrderDetailId, tenant)
+                .orElseThrow(() -> createBusinessException(HttpStatus.NOT_FOUND, "Work Order Detail not found for tenant"));
+
+        workOrderRepository.findByIdAndTenant(workOrderId, tenant)
+                .orElseThrow(() -> createBusinessException(HttpStatus.NOT_FOUND, "Work Order not found for tenant"));
+
+        if (workOrderDetailEntity.getInvoiceDetailEntity() != null) {
+
+            throw createBusinessException(HttpStatus.UNPROCESSABLE_ENTITY, "Work Order Detail has an invoice associated");
+        }
+
+        workOrderDetailRepository.delete(workOrderDetailEntity);
     }
 }

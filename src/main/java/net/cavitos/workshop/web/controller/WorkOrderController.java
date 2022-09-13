@@ -12,14 +12,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
@@ -124,5 +117,17 @@ public class WorkOrderController extends BaseController {
         final var response = WorkOrderDetailTransformer.toWeb(detail);
 
         return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
+    @DeleteMapping("/{id}/details/{detailId}")
+    public ResponseEntity<Void> deleteDetail(@PathVariable @NotEmpty final String id,
+                                             @PathVariable @NotEmpty final String detailId,
+                                             final Principal principal) {
+
+        final var tenant = getUserTenant(principal);
+
+        workOrderDetailService.deleteOrderDetail(id, detailId, tenant);
+
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
