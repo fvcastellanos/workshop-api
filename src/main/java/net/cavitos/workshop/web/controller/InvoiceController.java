@@ -33,16 +33,14 @@ public class InvoiceController extends BaseController {
 
     @GetMapping
     public ResponseEntity<Page<Invoice>> search(@RequestParam(defaultValue = "P") final String type,
-                                                @RequestParam(defaultValue = "") final String contactName,
-                                                @RequestParam(defaultValue = "") final String number,
+                                                @RequestParam(defaultValue = "") final String text,
                                                 @RequestParam(defaultValue = "A") final String status,
                                                 @RequestParam(defaultValue = DEFAULT_PAGE) final int page,
                                                 @RequestParam(defaultValue = DEFAULT_SIZE) final int size,
                                                 Principal principal) {
 
         final var tenant = getUserTenant(principal);
-        final var invoicePage = invoiceService.search(tenant, type, contactName, number, status,
-                page, size);
+        final var invoicePage = invoiceService.search(tenant, type, status, text, page, size);
 
         final var invoices = invoicePage.stream()
                 .map(InvoiceTransformer::toWeb)
