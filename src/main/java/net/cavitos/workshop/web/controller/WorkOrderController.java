@@ -3,6 +3,7 @@ package net.cavitos.workshop.web.controller;
 import net.cavitos.workshop.domain.model.web.WorkOrder;
 import net.cavitos.workshop.domain.model.web.WorkOrderDetail;
 import net.cavitos.workshop.security.service.UserService;
+import net.cavitos.workshop.service.WorkOrderDetailService;
 import net.cavitos.workshop.service.WorkOrderService;
 import net.cavitos.workshop.transformer.WorkOrderDetailTransformer;
 import net.cavitos.workshop.transformer.WorkOrderTransformer;
@@ -11,14 +12,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
@@ -34,10 +28,15 @@ public class WorkOrderController extends BaseController {
 
     private final WorkOrderService workOrderService;
 
-    public WorkOrderController(final WorkOrderService workOrderService, final UserService userService) {
+    private final WorkOrderDetailService workOrderDetailService;
+
+    public WorkOrderController(final WorkOrderService workOrderService,
+                               final WorkOrderDetailService workOrderDetailService,
+                               final UserService userService) {
 
         super(userService);
         this.workOrderService = workOrderService;
+        this.workOrderDetailService = workOrderDetailService;
     }
 
     @GetMapping
@@ -92,17 +91,43 @@ public class WorkOrderController extends BaseController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    // --------------------------------------------------------------------------------------------
+
     @GetMapping("/{id}/details")
     public ResponseEntity<List<WorkOrderDetail>> getDetails(@PathVariable @NotEmpty final String id,
                                                             final Principal principal) {
 
         final var tenant = getUserTenant(principal);
-        final var details = workOrderService.getOrderDetails(tenant, id);
+        final var details = workOrderDetailService.getOrderDetails(tenant, id);
 
         final var response = details.stream()
                 .map(WorkOrderDetailTransformer::toWeb)
                 .collect(Collectors.toList());
 
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PostMapping("/{id}/details")
+    public ResponseEntity<WorkOrderDetail> addDetail(@PathVariable @NotEmpty final String id,
+                                                     @RequestBody final WorkOrderDetail workOrderDetail,
+                                                     final Principal principal) {
+
+        final var tenant = getUserTenant(principal);
+        final var detail = workOrderDetailService.addOrderDetail(tenant, id, workOrderDetail);
+        final var response = WorkOrderDetailTransformer.toWeb(detail);
+
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
+    @DeleteMapping("/{id}/details/{detailId}")
+    public ResponseEntity<Void> deleteDetail(@PathVariable @NotEmpty final String id,
+                                             @PathVariable @NotEmpty final String detailId,
+                                             final Principal principal) {
+
+        final var tenant = getUserTenant(principal);
+
+        workOrderDetailService.deleteOrderDetail(id, detailId, tenant);
+
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
