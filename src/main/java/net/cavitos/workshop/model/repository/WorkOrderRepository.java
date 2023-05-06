@@ -1,13 +1,11 @@
 package net.cavitos.workshop.model.repository;
 
-import net.cavitos.workshop.model.entity.WorkOrderDetailEntity;
 import net.cavitos.workshop.model.entity.WorkOrderEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface WorkOrderRepository extends PagingAndSortingRepository<WorkOrderEntity, String> {
