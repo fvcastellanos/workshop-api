@@ -15,12 +15,11 @@ import net.cavitos.workshop.model.repository.WorkOrderRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.UUID;
 
 import static net.cavitos.workshop.factory.BusinessExceptionFactory.createBusinessException;
@@ -50,12 +49,11 @@ public class InvoiceDetailService {
         this.invoiceDetailObservable = invoiceDetailObservable;
     }
 
-    public Page<InvoiceDetailEntity> getInvoiceDetails(final String invoiceId, final String tenant, final int page, final int size) {
+    public List<InvoiceDetailEntity> getInvoiceDetails(final String invoiceId, final String tenant) {
 
         LOGGER.info("Retrieve invoice details for invoice_id={} and tenant={}", invoiceId, tenant);
 
-        final var pageable = PageRequest.of(page, size);
-        return invoiceDetailRepository.findByInvoiceEntityIdAndTenant(invoiceId, tenant, pageable);
+        return invoiceDetailRepository.getInvoiceDetails(invoiceId);
     }
 
     @Transactional

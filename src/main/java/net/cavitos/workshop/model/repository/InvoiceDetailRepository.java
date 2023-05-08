@@ -1,10 +1,10 @@
 package net.cavitos.workshop.model.repository;
 
 import net.cavitos.workshop.model.entity.InvoiceDetailEntity;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface InvoiceDetailRepository extends PagingAndSortingRepository<InvoiceDetailEntity, String> {
@@ -15,5 +15,6 @@ public interface InvoiceDetailRepository extends PagingAndSortingRepository<Invo
 
     Optional<InvoiceDetailEntity> findByIdAndTenant(String id, String tenant);
 
-    Page<InvoiceDetailEntity> findByInvoiceEntityIdAndTenant(String invoiceId, String tenant, Pageable pageable);
+    @Query("select invoiceDetail from InvoiceDetailEntity invoiceDetail where invoiceDetail.invoiceEntity.id = :invoiceId")
+    List<InvoiceDetailEntity> getInvoiceDetails(String invoiceId);
 }

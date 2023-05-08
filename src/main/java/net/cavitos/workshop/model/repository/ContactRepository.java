@@ -13,8 +13,15 @@ public interface ContactRepository extends PagingAndSortingRepository<ContactEnt
 
     Optional<ContactEntity> findByIdAndTenant(String id, String tenant);
 
-    @Query("select contact from ContactEntity contact where contact.tenant = :tenant and contact.active = :active and " +
-            "contact.type like :type and (UPPER(contact.code) like UPPER(:text) or UPPER(contact.name) like UPPER(:text))")
+    @Query("select contact " + 
+           "from ContactEntity contact " +
+           "where contact.tenant = :tenant " + 
+           " and contact.active = :active " +
+           " and contact.type like :type " + 
+           " and (UPPER(contact.code) like UPPER(:text) " +
+           "       or UPPER(contact.name) like UPPER(:text) " +
+           "       or UPPER(contact.taxId) like UPPER(:text) " +
+           "     )")
     Page<ContactEntity> search(@Param("tenant") String tenant, @Param("active") int active, @Param("type") String type,
                                @Param("text") String text, Pageable pageable);
 }

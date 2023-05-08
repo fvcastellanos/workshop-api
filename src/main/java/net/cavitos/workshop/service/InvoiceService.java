@@ -48,7 +48,7 @@ public class InvoiceService {
 
         final var pageable = PageRequest.of(page, size);
 
-        return invoiceRepository.search(text, type, status, tenant, pageable);
+        return invoiceRepository.search("%" + text + "%", type, status, tenant, pageable);
     }
 
     public InvoiceEntity findById(final String tenant, final String id) {

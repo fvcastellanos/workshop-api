@@ -61,6 +61,7 @@ public final class WorkOrderTransformer {
         contact.setId(contactEntity.getId());
         contact.setType(contactEntity.getType());
         contact.setName(contactEntity.getName());
+        contact.setTaxId(contactEntity.getTaxId());
 
         return contact;
     }
