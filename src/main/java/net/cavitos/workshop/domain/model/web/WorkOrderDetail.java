@@ -4,7 +4,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import net.cavitos.workshop.domain.model.web.common.CommonInvoice;
 import net.cavitos.workshop.domain.model.web.common.CommonProduct;
 
 import javax.validation.constraints.Min;

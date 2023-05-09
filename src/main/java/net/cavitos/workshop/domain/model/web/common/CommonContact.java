@@ -20,4 +20,5 @@ public class CommonContact {
 
     private String name;
     private String type;
+    private String taxId;
 }

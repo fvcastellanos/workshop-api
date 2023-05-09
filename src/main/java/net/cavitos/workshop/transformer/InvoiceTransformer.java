@@ -35,6 +35,7 @@ public final class InvoiceTransformer {
 
         final var invoice = new Invoice();
         invoice.setType(type);
+        invoice.setSuffix(entity.getSuffix());
         invoice.setNumber(entity.getNumber());
         invoice.setStatus(status.name());
         invoice.setImageUrl(entity.getImageUrl());
@@ -59,6 +60,7 @@ public final class InvoiceTransformer {
         contact.setType(entity.getType());
         contact.setId(entity.getCode());
         contact.setName(entity.getName());
+        contact.setTaxId(entity.getTaxId());
 
         return contact;
     }

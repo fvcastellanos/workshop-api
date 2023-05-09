@@ -38,18 +38,17 @@ public class InvoiceService {
 
     public Page<InvoiceEntity> search(final String tenant,
                                       final String type,
-                                      final String contactName,
-                                      final String number,
                                       final String status,
+                                      final String text,
                                       final int page,
                                       final int size) {
 
-        LOGGER.info("Search invoices with type={}, contact_name={}, invoice_number={}, status={} for tenant={}",
-                type, contactName, number, status, tenant);
+        LOGGER.info("Search invoices with type={}, status={}, text={} for tenant={}",
+                type, status, text, tenant);
 
         final var pageable = PageRequest.of(page, size);
-        return invoiceRepository.findByContactEntityNameContainsIgnoreCaseAndNumberContainsIgnoreCaseAndTypeAndStatusAndTenant(contactName,
-                number, type, status, tenant, pageable);
+
+        return invoiceRepository.search("%" + text + "%", type, status, tenant, pageable);
     }
 
     public InvoiceEntity findById(final String tenant, final String id) {

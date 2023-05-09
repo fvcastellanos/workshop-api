@@ -5,8 +5,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import net.cavitos.workshop.domain.model.web.common.CommonProduct;
-import org.springframework.hateoas.RepresentationModel;
-
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -14,8 +12,11 @@ import javax.validation.constraints.Size;
 @Getter
 @Setter
 @ToString
-@EqualsAndHashCode(callSuper = true)
-public class InvoiceDetail extends RepresentationModel<InvoiceDetail> {
+@EqualsAndHashCode
+public class InvoiceDetail {
+
+    @Size(max = 50)
+    private String id;
 
     @NotNull
     private CommonProduct product;
