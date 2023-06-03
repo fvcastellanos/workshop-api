@@ -4,18 +4,16 @@ import net.cavitos.workshop.domain.exception.BusinessException;
 import net.cavitos.workshop.domain.model.status.ActiveStatus;
 import net.cavitos.workshop.domain.model.web.CarBrand;
 import net.cavitos.workshop.model.entity.CarBrandEntity;
+import net.cavitos.workshop.model.generator.TimeBasedGenerator;
 import net.cavitos.workshop.model.repository.CarBrandRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.util.UUID;
-
 import static net.cavitos.workshop.domain.model.status.ActiveStatus.ACTIVE;
 import static net.cavitos.workshop.factory.BusinessExceptionFactory.createBusinessException;
 
@@ -26,7 +24,6 @@ public class CarBrandService {
 
     private final CarBrandRepository carBrandRepository;
 
-    @Autowired
     public CarBrandService(final CarBrandRepository carBrandRepository) {
 
         this.carBrandRepository = carBrandRepository;
@@ -78,7 +75,7 @@ public class CarBrandService {
         }
 
         var entity = CarBrandEntity.builder()
-                .id(UUID.randomUUID().toString())
+                .id(TimeBasedGenerator.generateTimedUUID())
                 .name(carBrand.getName().toUpperCase())
                 .description(carBrand.getDescription())
                 .tenant(tenant)

@@ -5,20 +5,18 @@ import net.cavitos.workshop.domain.model.web.WorkOrder;
 import net.cavitos.workshop.model.entity.CarLineEntity;
 import net.cavitos.workshop.model.entity.ContactEntity;
 import net.cavitos.workshop.model.entity.WorkOrderEntity;
+import net.cavitos.workshop.model.generator.TimeBasedGenerator;
 import net.cavitos.workshop.model.repository.CarLineRepository;
 import net.cavitos.workshop.model.repository.ContactRepository;
 import net.cavitos.workshop.model.repository.WorkOrderRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.util.UUID;
-
 import static net.cavitos.workshop.domain.model.status.WorkOrderStatus.IN_PROGRESS;
 import static net.cavitos.workshop.factory.BusinessExceptionFactory.createBusinessException;
 import static net.cavitos.workshop.factory.DateTimeFactory.buildInstantFrom;
@@ -32,7 +30,6 @@ public class WorkOrderService {
     private final CarLineRepository carLineRepository;
     private final ContactRepository contactRepository;
 
-    @Autowired
     public WorkOrderService(final WorkOrderRepository workOrderRepository,
                             final CarLineRepository carLineRepository,
                             final ContactRepository contactRepository) {
@@ -80,7 +77,7 @@ public class WorkOrderService {
         final var contactEntity = getContact(tenant, workOrder);
 
         final var entity = WorkOrderEntity.builder()
-                .id(UUID.randomUUID().toString())
+                .id(TimeBasedGenerator.generateTimedUUID())
                 .carLineEntity(carLineEntity)
                 .contactEntity(contactEntity)
                 .status(IN_PROGRESS.value())
