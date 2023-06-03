@@ -6,6 +6,7 @@ import net.cavitos.workshop.domain.model.web.Invoice;
 import net.cavitos.workshop.domain.model.web.common.CommonContact;
 import net.cavitos.workshop.model.entity.ContactEntity;
 import net.cavitos.workshop.model.entity.InvoiceEntity;
+import net.cavitos.workshop.model.generator.TimeBasedGenerator;
 import net.cavitos.workshop.model.repository.ContactRepository;
 import net.cavitos.workshop.model.repository.InvoiceRepository;
 import org.slf4j.Logger;
@@ -14,8 +15,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-
-import java.util.UUID;
 
 import static net.cavitos.workshop.factory.BusinessExceptionFactory.createBusinessException;
 import static net.cavitos.workshop.factory.DateTimeFactory.buildInstantFrom;
@@ -73,7 +72,7 @@ public class InvoiceService {
         final var effectiveDate = buildInstantFrom(invoice.getEffectiveDate());
 
         var entity = InvoiceEntity.builder()
-                .id(UUID.randomUUID().toString())
+                .id(TimeBasedGenerator.generateTimedUUID())
                 .contactEntity(contactEntity)
                 .suffix(invoice.getSuffix())
                 .number(invoice.getNumber())

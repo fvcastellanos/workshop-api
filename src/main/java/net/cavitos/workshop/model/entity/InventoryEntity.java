@@ -2,6 +2,7 @@ package net.cavitos.workshop.model.entity;
 
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
 import javax.validation.constraints.Min;
@@ -58,6 +59,8 @@ public class InventoryEntity {
     @CreatedDate
     private Instant created;
 
+    @NotNull
+    @LastModifiedDate
     private Instant updated;
 
     @NotBlank

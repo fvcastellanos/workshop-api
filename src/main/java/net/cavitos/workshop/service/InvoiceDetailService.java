@@ -8,6 +8,7 @@ import net.cavitos.workshop.model.entity.InvoiceDetailEntity;
 import net.cavitos.workshop.model.entity.InvoiceEntity;
 import net.cavitos.workshop.model.entity.ProductEntity;
 import net.cavitos.workshop.model.entity.WorkOrderEntity;
+import net.cavitos.workshop.model.generator.TimeBasedGenerator;
 import net.cavitos.workshop.model.repository.InvoiceDetailRepository;
 import net.cavitos.workshop.model.repository.InvoiceRepository;
 import net.cavitos.workshop.model.repository.ProductRepository;
@@ -20,8 +21,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.UUID;
-
 import static net.cavitos.workshop.factory.BusinessExceptionFactory.createBusinessException;
 import static net.cavitos.workshop.factory.DateTimeFactory.getUTCNow;
 
@@ -85,7 +84,7 @@ public class InvoiceDetailService {
         }
 
         final var entity = InvoiceDetailEntity.builder()
-                .id(UUID.randomUUID().toString())
+                .id(TimeBasedGenerator.generateTimedUUID())
                 .productEntity(productEntity)
                 .invoiceEntity(invoiceEntity)
                 .workOrderEntity(workOrderEntity)

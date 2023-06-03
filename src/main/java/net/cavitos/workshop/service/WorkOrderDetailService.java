@@ -2,19 +2,17 @@ package net.cavitos.workshop.service;
 
 import net.cavitos.workshop.domain.model.web.WorkOrderDetail;
 import net.cavitos.workshop.model.entity.WorkOrderDetailEntity;
+import net.cavitos.workshop.model.generator.TimeBasedGenerator;
 import net.cavitos.workshop.model.repository.ProductRepository;
 import net.cavitos.workshop.model.repository.WorkOrderDetailRepository;
 import net.cavitos.workshop.model.repository.WorkOrderRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.List;
-import java.util.UUID;
-
 import static net.cavitos.workshop.factory.BusinessExceptionFactory.createBusinessException;
 
 @Service
@@ -28,7 +26,6 @@ public class WorkOrderDetailService {
 
     private final ProductRepository productRepository;
 
-    @Autowired
     public WorkOrderDetailService(final WorkOrderRepository workOrderRepository,
                                   final WorkOrderDetailRepository workOrderDetailRepository,
                                   final ProductRepository productRepository) {
@@ -60,7 +57,7 @@ public class WorkOrderDetailService {
                 .orElseThrow(() -> createBusinessException(HttpStatus.UNPROCESSABLE_ENTITY, "Product code not found"));
 
         final var entity = WorkOrderDetailEntity.builder()
-                .id(UUID.randomUUID().toString())
+                .id(TimeBasedGenerator.generateTimedUUID())
                 .workOrderEntity(workOrderEntity)
                 .productEntity(productEntity)
                 .quantity(workOrderDetail.getQuantity())

@@ -85,6 +85,7 @@ public class InventoryInvoiceDetailObserver implements InvoiceDetailObserver {
                     .tenant(tenant)
                     .description(MOVEMENT_DESCRIPTION)
                     .created(getUTCNow())
+                    .updated(getUTCNow())
                     .build();
 
             inventoryRepository.save(movement);
@@ -126,12 +127,6 @@ public class InventoryInvoiceDetailObserver implements InvoiceDetailObserver {
     }
 
     // --------------------------------------------------------------------------------------------------
-
-//    private Optional<InventoryEntity> findInventoryMovement(final String productEntityId, final String invoiceDetailEntityId, final String tenant) {
-//
-//        return inventoryRepository.findByProductEntityIdAndInvoiceDetailEntityIdAndOperationTypeAndTenant(productEntityId,
-//                invoiceDetailEntityId, INPUT_OPERATION_TYPE, tenant);
-//    }
 
     private Optional<InventoryEntity> findInventoryMovement(final ProductEntity productEntity,
                                                             final InvoiceDetailEntity invoiceDetailEntity,
