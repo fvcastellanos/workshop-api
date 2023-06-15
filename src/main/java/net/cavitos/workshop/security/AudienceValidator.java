@@ -1,6 +1,5 @@
 package net.cavitos.workshop.security;
 
-import org.springframework.security.oauth2.core.AbstractOAuth2Token;
 import org.springframework.security.oauth2.core.OAuth2Error;
 import org.springframework.security.oauth2.core.OAuth2ErrorCodes;
 import org.springframework.security.oauth2.core.OAuth2TokenValidator;
@@ -30,6 +29,5 @@ class AudienceValidator implements OAuth2TokenValidator<Jwt> {
 
         var oAuth2Error= new OAuth2Error(OAuth2ErrorCodes.INVALID_TOKEN);
         return OAuth2TokenValidatorResult.failure(oAuth2Error);
-
     }
 }

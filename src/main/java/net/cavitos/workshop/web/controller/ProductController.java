@@ -33,7 +33,6 @@ public class ProductController extends BaseController {
 
     private final ProductService productService;
 
-    @Autowired
     public ProductController(final ProductService productService, final UserService userService) {
 
         super(userService);

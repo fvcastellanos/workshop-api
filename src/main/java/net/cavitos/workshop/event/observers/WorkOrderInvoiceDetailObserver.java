@@ -22,7 +22,6 @@ public class WorkOrderInvoiceDetailObserver implements InvoiceDetailObserver {
 
     private final WorkOrderDetailRepository workOrderDetailRepository;
 
-    @Autowired
     public WorkOrderInvoiceDetailObserver(final WorkOrderDetailRepository workOrderDetailRepository) {
 
         this.workOrderDetailRepository = workOrderDetailRepository;

@@ -37,7 +37,6 @@ public class CarBrandController extends BaseController {
     private final CarBrandService carBrandService;
     private final CarLineService carLineService;
 
-    @Autowired
     public CarBrandController(final CarBrandService carBrandService,
                               final CarLineService carLineService,
                               final UserService userService) {

@@ -27,7 +27,6 @@ public class InventoryInvoiceDetailObserver implements InvoiceDetailObserver {
 
     private final InventoryRepository inventoryRepository;
 
-    @Autowired
     public InventoryInvoiceDetailObserver(final InventoryRepository inventoryRepository) {
 
         this.inventoryRepository = inventoryRepository;

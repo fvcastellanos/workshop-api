@@ -34,7 +34,6 @@ public class ContactController extends BaseController {
 
     private final ContactService contactService;
 
-    @Autowired
     public ContactController(final ContactService contactService, final UserService userService) {
 
         super(userService);

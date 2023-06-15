@@ -1,6 +1,5 @@
 package net.cavitos.workshop.domain.model.error;
 
-import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;

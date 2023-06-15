@@ -5,15 +5,9 @@ import javax.validation.ConstraintValidatorContext;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.time.format.FormatStyle;
 import java.util.Objects;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class DateValidator implements ConstraintValidator<Date, String> {
-
-    private final String DATE_PATTERN = "^\\d{2}/\\d{2}/\\d{4}$";
-    private final Pattern PATTERN = Pattern.compile(DATE_PATTERN);
 
     @Override
     public void initialize(final Date constraintAnnotation) {
