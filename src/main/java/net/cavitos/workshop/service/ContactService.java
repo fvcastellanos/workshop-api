@@ -65,7 +65,7 @@ public class ContactService {
         verifyExistingCodeTypeForTenant(tenant, contact);
 
         final var providerEntity = ContactEntity.builder()
-                .id(TimeBasedGenerator.generateTimedUUID())
+                .id(TimeBasedGenerator.generateTimeBasedId())
                 .code(contact.getCode())
                 .type(buildContactTypeFrom(contact.getType()))
                 .name(contact.getName())

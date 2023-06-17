@@ -84,7 +84,7 @@ public class InvoiceDetailService {
         }
 
         final var entity = InvoiceDetailEntity.builder()
-                .id(TimeBasedGenerator.generateTimedUUID())
+                .id(TimeBasedGenerator.generateTimeBasedId())
                 .productEntity(productEntity)
                 .invoiceEntity(invoiceEntity)
                 .workOrderEntity(workOrderEntity)

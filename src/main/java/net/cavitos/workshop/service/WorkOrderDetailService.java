@@ -57,7 +57,7 @@ public class WorkOrderDetailService {
                 .orElseThrow(() -> createBusinessException(HttpStatus.UNPROCESSABLE_ENTITY, "Product code not found"));
 
         final var entity = WorkOrderDetailEntity.builder()
-                .id(TimeBasedGenerator.generateTimedUUID())
+                .id(TimeBasedGenerator.generateTimeBasedId())
                 .workOrderEntity(workOrderEntity)
                 .productEntity(productEntity)
                 .quantity(workOrderDetail.getQuantity())
