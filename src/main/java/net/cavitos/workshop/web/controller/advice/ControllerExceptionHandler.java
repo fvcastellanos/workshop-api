@@ -67,7 +67,6 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
 
     // ------------------------------------------------------------------------------------------------
 
-    @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException exception,
                                                                   HttpHeaders headers,
                                                                   HttpStatus status,

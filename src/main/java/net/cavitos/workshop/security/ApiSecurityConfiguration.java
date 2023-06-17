@@ -43,14 +43,15 @@ public class ApiSecurityConfiguration {
 
         http.cors(withDefaults())
                 .authorizeHttpRequests(requests -> requests
-                        .mvcMatchers(HttpMethod.GET, "/actuator/**")
+                        .requestMatchers(HttpMethod.GET, "/actuator/**")
                             .permitAll() // GET requests don't need auth
                         .anyRequest()
                         .authenticated()                
                 )
                 .oauth2ResourceServer(server -> server
-                        .jwt()
-                        .decoder(jwtDecoder()));
+                        .jwt(jwtConfigurer ->
+                                jwtConfigurer.decoder(jwtDecoder())
+                        ));
 
         return http.build();
     }

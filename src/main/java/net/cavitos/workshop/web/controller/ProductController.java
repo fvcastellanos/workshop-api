@@ -1,10 +1,11 @@
 package net.cavitos.workshop.web.controller;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotEmpty;
 import net.cavitos.workshop.domain.model.web.Product;
 import net.cavitos.workshop.security.service.UserService;
 import net.cavitos.workshop.service.ProductService;
 import net.cavitos.workshop.transformer.ProductTransformer;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -18,9 +19,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotEmpty;
 
 import java.security.Principal;
 import java.util.stream.Collectors;

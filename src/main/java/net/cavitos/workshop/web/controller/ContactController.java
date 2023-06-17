@@ -1,10 +1,12 @@
 package net.cavitos.workshop.web.controller;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Size;
 import net.cavitos.workshop.domain.model.web.Contact;
 import net.cavitos.workshop.security.service.UserService;
 import net.cavitos.workshop.service.ContactService;
 import net.cavitos.workshop.transformer.ContactTransformer;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -19,11 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Size;
 import java.security.Principal;
-import java.util.List;
 import java.util.stream.Collectors;
 
 import static net.cavitos.workshop.web.controller.Route.CONTACTS_RESOURCE;

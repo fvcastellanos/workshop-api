@@ -1,5 +1,7 @@
 package net.cavitos.workshop.web.controller;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import net.cavitos.workshop.domain.model.web.CarBrand;
 import net.cavitos.workshop.domain.model.web.CarLine;
 import net.cavitos.workshop.security.service.UserService;
@@ -7,7 +9,6 @@ import net.cavitos.workshop.service.CarBrandService;
 import net.cavitos.workshop.service.CarLineService;
 import net.cavitos.workshop.transformer.CarBrandTransformer;
 import net.cavitos.workshop.transformer.CarLineTransformer;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -22,8 +23,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotBlank;
 import java.security.Principal;
 import java.util.stream.Collectors;
 

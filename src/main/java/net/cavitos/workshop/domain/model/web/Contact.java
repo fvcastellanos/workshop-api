@@ -9,8 +9,8 @@ import net.cavitos.workshop.domain.model.type.ContactType;
 import net.cavitos.workshop.domain.model.validator.ValueOfEnum;
 import org.springframework.hateoas.RepresentationModel;
 
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.Size;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Size;
 
 @Getter
 @Setter
