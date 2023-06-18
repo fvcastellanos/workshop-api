@@ -103,7 +103,7 @@ public class CarLineService {
         }
 
         final var entity = CarLineEntity.builder()
-                .id(TimeBasedGenerator.generateTimedUUID())
+                .id(TimeBasedGenerator.generateTimeBasedId())
                 .carBrand(carBrandEntity)
                 .name(carLineName)
                 .description(carLine.getDescription())

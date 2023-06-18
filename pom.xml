@@ -5,12 +5,12 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.6.6</version>
+		<version>3.1.0</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>net.cavitos.workshop</groupId>
 	<artifactId>workshop-api</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.0-SNAPSHOT</version>
 	<name>Workshop API</name>
 	<description>API to manage a Small Workshop</description>
 	<properties>
@@ -19,6 +19,7 @@
 		<hibernate.bean-validator.version>7.0.4.Final</hibernate.bean-validator.version>
 		<java.version>17</java.version>
         <java-uuid-generator.version>4.1.1</java-uuid-generator.version>
+		<ksuid.version>1.1.2</ksuid.version>
 		<lombok.version>1.18.22</lombok.version>
 		<vavr.version>0.10.4</vavr.version>		
 	</properties>
@@ -59,10 +60,13 @@
 			<groupId>org.flywaydb</groupId>
 			<artifactId>flyway-core</artifactId>
 		</dependency>
-
 		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
+			<groupId>org.flywaydb</groupId>
+			<artifactId>flyway-mysql</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.mysql</groupId>
+			<artifactId>mysql-connector-j</artifactId>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
@@ -90,6 +94,11 @@
             <artifactId>java-uuid-generator</artifactId>
             <version>${java-uuid-generator.version}</version>
         </dependency>
+		<dependency>
+			<groupId>com.github.ksuid</groupId>
+			<artifactId>ksuid</artifactId>
+			<version>${ksuid.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>

@@ -4,11 +4,13 @@ import net.cavitos.workshop.model.entity.InvoiceEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
 import java.util.Optional;
 
-public interface InvoiceRepository extends PagingAndSortingRepository<InvoiceEntity, String> {
+public interface InvoiceRepository extends CrudRepository<InvoiceEntity, String>,
+                                           PagingAndSortingRepository<InvoiceEntity, String> {
 
     @Query("select invoice from InvoiceEntity invoice " + 
            " where invoice.tenant = :tenant " + 

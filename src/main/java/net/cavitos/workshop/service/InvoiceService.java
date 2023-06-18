@@ -72,7 +72,7 @@ public class InvoiceService {
         final var effectiveDate = buildInstantFrom(invoice.getEffectiveDate());
 
         var entity = InvoiceEntity.builder()
-                .id(TimeBasedGenerator.generateTimedUUID())
+                .id(TimeBasedGenerator.generateTimeBasedId())
                 .contactEntity(contactEntity)
                 .suffix(invoice.getSuffix())
                 .number(invoice.getNumber())

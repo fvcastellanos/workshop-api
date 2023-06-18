@@ -75,7 +75,7 @@ public class CarBrandService {
         }
 
         var entity = CarBrandEntity.builder()
-                .id(TimeBasedGenerator.generateTimedUUID())
+                .id(TimeBasedGenerator.generateTimeBasedId())
                 .name(carBrand.getName().toUpperCase())
                 .description(carBrand.getDescription())
                 .tenant(tenant)

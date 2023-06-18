@@ -77,7 +77,7 @@ public class WorkOrderService {
         final var contactEntity = getContact(tenant, workOrder);
 
         final var entity = WorkOrderEntity.builder()
-                .id(TimeBasedGenerator.generateTimedUUID())
+                .id(TimeBasedGenerator.generateTimeBasedId())
                 .carLineEntity(carLineEntity)
                 .contactEntity(contactEntity)
                 .status(IN_PROGRESS.value())

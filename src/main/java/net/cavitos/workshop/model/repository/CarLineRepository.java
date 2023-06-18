@@ -5,11 +5,13 @@ import net.cavitos.workshop.model.entity.CarLineEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.PagingAndSortingRepository;
 
 import java.util.Optional;
 
-public interface CarLineRepository extends PagingAndSortingRepository<CarLineEntity, String> {
+public interface CarLineRepository extends CrudRepository<CarLineEntity, String>,
+                                           PagingAndSortingRepository<CarLineEntity, String> {
 
     Page<CarLineEntity> findByCarBrandAndTenantAndActiveAndNameContainsIgnoreCase(CarBrandEntity carBrandEntity,
                                                                                   String tenant,

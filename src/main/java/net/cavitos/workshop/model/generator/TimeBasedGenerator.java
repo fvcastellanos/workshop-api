@@ -1,16 +1,15 @@
 package net.cavitos.workshop.model.generator;
 
-import com.fasterxml.uuid.Generators;
+import com.github.ksuid.Ksuid;
 
 public class TimeBasedGenerator {
 
     private TimeBasedGenerator() {        
     }
     
-    public static String generateTimedUUID() {
+    public static String generateTimeBasedId() {
 
-        return Generators.timeBasedGenerator()
-            .generate()
-            .toString();
+        return Ksuid.newKsuid()
+                .toString();
     }
 }

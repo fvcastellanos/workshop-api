@@ -66,7 +66,7 @@ public class ProductService {
         verifyExistingCodeAndTypeForTenant(tenant, product);
 
         var entity = ProductEntity.builder()
-                .id(TimeBasedGenerator.generateTimedUUID())
+                .id(TimeBasedGenerator.generateTimeBasedId())
                 .type(buildTypeFor(product.getType()))
                 .name(product.getName())
                 .code(product.getCode())
