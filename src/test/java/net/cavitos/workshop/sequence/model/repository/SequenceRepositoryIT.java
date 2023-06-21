@@ -1,18 +1,15 @@
-package net.cavitos.workshop.repository;
+package net.cavitos.workshop.sequence.model.repository;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.annotation.Transactional;
 
-import net.cavitos.workshop.model.repository.SequenceRepository;
-
 @Transactional
 @SpringBootTest
-public class SequenceRepositoryTest {
+public class SequenceRepositoryIT {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -35,5 +32,4 @@ public class SequenceRepositoryTest {
             .hasFieldOrProperty("id")
             .hasFieldOrProperty("updated");
     }
-    
 }

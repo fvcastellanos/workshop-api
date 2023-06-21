@@ -1,4 +1,4 @@
-package net.cavitos.workshop.model.entity;
+package net.cavitos.workshop.sequence.model.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;

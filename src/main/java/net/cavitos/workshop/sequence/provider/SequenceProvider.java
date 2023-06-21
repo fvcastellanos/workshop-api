@@ -2,11 +2,10 @@ package net.cavitos.workshop.sequence.provider;
 
 import dev.failsafe.Failsafe;
 import dev.failsafe.RetryPolicy;
-import jakarta.persistence.EntityManager;
 import net.cavitos.workshop.domain.exception.BusinessException;
 import net.cavitos.workshop.factory.BusinessExceptionFactory;
 import net.cavitos.workshop.factory.DateTimeFactory;
-import net.cavitos.workshop.model.repository.SequenceRepository;
+import net.cavitos.workshop.sequence.model.repository.SequenceRepository;
 import net.cavitos.workshop.sequence.domain.SequenceType;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;

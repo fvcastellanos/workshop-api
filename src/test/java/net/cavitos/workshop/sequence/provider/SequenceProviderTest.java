@@ -1,26 +1,41 @@
 package net.cavitos.workshop.sequence.provider;
 
+import net.cavitos.workshop.domain.exception.BusinessException;
+import net.cavitos.workshop.factory.BusinessExceptionFactory;
+import net.cavitos.workshop.sequence.domain.SequenceType;
+import net.cavitos.workshop.sequence.model.repository.SequenceRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import net.cavitos.workshop.sequence.domain.SequenceType;
+import static org.mockito.Mockito.*;
 
-@Transactional
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 public class SequenceProviderTest {
 
-    @Autowired
+    @Mock
+    private SequenceRepository sequenceRepository;
+
+    @InjectMocks
     private SequenceProvider sequenceProvider;
 
     @Test
-    void testSequenceProviderNext() {
+    void testRetry() {
 
-        final var sequence = sequenceProvider.calculateNext(SequenceType.CUSTOMER);
+        final var sequenceType = SequenceType.CUSTOMER;
 
-        Assertions.assertThat(sequence)
-            .isEqualTo("C-00001");
+        when(sequenceRepository.findByPrefix(sequenceType.getPrefix()))
+                .thenThrow(BusinessExceptionFactory.createBusinessException("Test Exception"));
+
+        Assertions.assertThatThrownBy(() -> sequenceProvider.calculateNext(sequenceType))
+                .isInstanceOf(BusinessException.class)
+                .hasMessage("Unable to generate next sequence value for prefix: C");
+
+        // Expect 4 calls (1 original call plus 3 retries)
+        verify(sequenceRepository, times(4))
+                .findByPrefix(sequenceType.getPrefix());
     }
 }

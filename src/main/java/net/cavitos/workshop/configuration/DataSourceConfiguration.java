@@ -12,7 +12,10 @@ import javax.sql.DataSource;
 
 @Configuration
 @EnableJpaAuditing
-@EnableJpaRepositories(basePackages = "net.cavitos.workshop.model.repository")
+@EnableJpaRepositories(basePackages = {
+        "net.cavitos.workshop.model.repository",
+        "net.cavitos.workshop.sequence.model.repository"
+})
 public class DataSourceConfiguration {
     
     @Bean
