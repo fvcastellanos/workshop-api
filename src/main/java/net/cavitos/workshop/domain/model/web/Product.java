@@ -19,7 +19,6 @@ import jakarta.validation.constraints.Size;
 @EqualsAndHashCode(callSuper = true)
 public class Product extends RepresentationModel<Product> {
 
-    @NotEmpty
     @Size(max = 50)
     private String code;
 

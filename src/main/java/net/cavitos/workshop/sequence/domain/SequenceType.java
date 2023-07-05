@@ -3,7 +3,9 @@ package net.cavitos.workshop.sequence.domain;
 public enum SequenceType {
 
     CUSTOMER("C"),
-    PROVIDER("P");
+    PROVIDER("P"),
+    PRODUCT("PR"),
+    UNKNOWN("U");
 
     private final String prefix;
 
