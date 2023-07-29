@@ -6,6 +6,8 @@ import net.cavitos.workshop.domain.model.web.Contact;
 import net.cavitos.workshop.model.entity.ContactEntity;
 import net.cavitos.workshop.model.generator.TimeBasedGenerator;
 import net.cavitos.workshop.model.repository.ContactRepository;
+import net.cavitos.workshop.sequence.domain.SequenceType;
+import net.cavitos.workshop.sequence.provider.SequenceProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -23,10 +25,13 @@ public class ContactService {
     private static final Logger LOGGER = LoggerFactory.getLogger(ContactService.class);
 
     private final ContactRepository contactRepository;
+    private final SequenceProvider sequenceProvider;
 
-    public ContactService(final ContactRepository contactRepository) {
+    public ContactService(final ContactRepository contactRepository,
+                          final SequenceProvider sequenceProvider) {
 
         this.contactRepository = contactRepository;
+        this.sequenceProvider = sequenceProvider;
     }
 
     public Page<ContactEntity> search(final String tenant,
@@ -60,13 +65,13 @@ public class ContactService {
 
     public ContactEntity add(final String tenant, final Contact contact) {
 
-        LOGGER.info("trying to add a new contact with name={}, type={} for tenant={}", contact.getName(), contact.getType(), tenant);
+        LOGGER.info("Trying to add a new contact with name={}, type={} for tenant={}", contact.getName(), contact.getType(), tenant);
 
         verifyExistingCodeTypeForTenant(tenant, contact);
 
         final var providerEntity = ContactEntity.builder()
                 .id(TimeBasedGenerator.generateTimeBasedId())
-                .code(contact.getCode())
+                .code(calculateCode(contact.getType()))
                 .type(buildContactTypeFrom(contact.getType()))
                 .name(contact.getName())
                 .description(contact.getDescription())
@@ -99,25 +104,18 @@ public class ContactService {
         final var type = ContactType.valueOf(contact.getType())
                 .value();
 
-        if (!contactEntity.getCode().equalsIgnoreCase(contact.getCode()) || !contactEntity.getType().equalsIgnoreCase(type)) {
+        var code = contactEntity.getCode();
+        if (!type.equalsIgnoreCase(contact.getType())) {
 
-            contactRepository.findByIdAndTenant(contact.getCode(), tenant)
-                    .ifPresent(existingContact -> {
-
-                        if (!existingContact.getId().equalsIgnoreCase(contactEntity.getId())) {
-
-                            throw createBusinessException(HttpStatus.UNPROCESSABLE_ENTITY, "Another contact is using the code=%s for type=%s",
-                                    contact.getCode(), contact.getType());
-                        }
-            });
+            code = calculateCode(contact.getType());
         }
 
         final var active = ActiveStatus.valueOf(contact.getActive())
                         .value();
 
         contactEntity.setName(contact.getName());
-        contactEntity.setCode(contact.getCode());
         contactEntity.setType(buildContactTypeFrom(contact.getType()));
+        contactEntity.setCode(code);
         contactEntity.setDescription(contact.getDescription());
         contactEntity.setContact(contact.getContact());
         contactEntity.setTaxId(contact.getTaxId());
@@ -148,5 +146,16 @@ public class ContactService {
 
         return ContactType.valueOf(value)
                 .value();
+    }
+
+    private String calculateCode(final String type) {
+
+        final var contactType = ContactType.valueOf(type);
+
+        return switch (contactType) {
+            case CUSTOMER -> sequenceProvider.calculateNext(SequenceType.CUSTOMER);
+            case PROVIDER -> sequenceProvider.calculateNext(SequenceType.PROVIDER);
+            default -> sequenceProvider.calculateNext(SequenceType.UNKNOWN);
+        };
     }
 }

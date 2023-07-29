@@ -1,11 +1,14 @@
 package net.cavitos.workshop.service;
 
 import net.cavitos.workshop.domain.model.status.ActiveStatus;
+import net.cavitos.workshop.domain.model.type.ContactType;
 import net.cavitos.workshop.domain.model.type.ProductType;
 import net.cavitos.workshop.domain.model.web.Product;
 import net.cavitos.workshop.model.entity.ProductEntity;
 import net.cavitos.workshop.model.generator.TimeBasedGenerator;
 import net.cavitos.workshop.model.repository.ProductRepository;
+import net.cavitos.workshop.sequence.domain.SequenceType;
+import net.cavitos.workshop.sequence.provider.SequenceProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -24,9 +27,13 @@ public class ProductService {
 
     private final ProductRepository productRepository;
 
-    public ProductService(final ProductRepository productRepository) {
+    private final SequenceProvider sequenceProvider;
+
+    public ProductService(final ProductRepository productRepository,
+                          final SequenceProvider sequenceProvider) {
 
         this.productRepository = productRepository;
+        this.sequenceProvider = sequenceProvider;
     }
 
     public Page<ProductEntity> search(final String tenant,
@@ -69,7 +76,7 @@ public class ProductService {
                 .id(TimeBasedGenerator.generateTimeBasedId())
                 .type(buildTypeFor(product.getType()))
                 .name(product.getName())
-                .code(product.getCode())
+                .code(sequenceProvider.calculateNext(SequenceType.PRODUCT))
                 .description(product.getDescription())
                 .minimalQuantity(product.getMinimalQuantity())
                 .tenant(tenant)
@@ -99,9 +106,10 @@ public class ProductService {
         var productType = ProductType.valueOf(product.getType())
                 .value();
 
-        if (!entity.getCode().equalsIgnoreCase(product.getCode()) || !entity.getType().equalsIgnoreCase(productType)) {
+        var code = entity.getCode();
+        if (!productType.equalsIgnoreCase(product.getType())) {
 
-            verifyExistingCodeAndTypeForTenant(tenant, product);
+            code = calculateCode(product.getType());
         }
 
         final var active = ActiveStatus.valueOf(product.getActive())
@@ -109,7 +117,7 @@ public class ProductService {
 
         entity.setActive(active);
         entity.setName(product.getName());
-        entity.setCode(product.getCode());
+        entity.setCode(code);
         entity.setDescription(product.getDescription());
         entity.setType(buildTypeFor(product.getType()));
         entity.setMinimalQuantity(product.getMinimalQuantity());
@@ -139,4 +147,16 @@ public class ProductService {
         return ProductType.valueOf(value)
                 .value();
     }
+
+    private String calculateCode(final String type) {
+
+        final var productType = ProductType.valueOf(type);
+
+        return switch (productType) {
+            case PRODUCT -> sequenceProvider.calculateNext(SequenceType.PRODUCT);
+            case SERVICE -> sequenceProvider.calculateNext(SequenceType.SERVICE);
+            default -> sequenceProvider.calculateNext(SequenceType.UNKNOWN);
+        };
+    }
+
 }

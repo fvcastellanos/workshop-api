@@ -18,7 +18,6 @@ import jakarta.validation.constraints.Size;
 @EqualsAndHashCode(callSuper = true)
 public class Contact extends RepresentationModel<Contact> {
 
-    @NotEmpty
     @Size(max = 50)
     private String code;
 
