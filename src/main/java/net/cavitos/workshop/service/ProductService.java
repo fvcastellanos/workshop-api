@@ -1,6 +1,7 @@
 package net.cavitos.workshop.service;
 
 import net.cavitos.workshop.domain.model.status.ActiveStatus;
+import net.cavitos.workshop.domain.model.type.ContactType;
 import net.cavitos.workshop.domain.model.type.ProductType;
 import net.cavitos.workshop.domain.model.web.Product;
 import net.cavitos.workshop.model.entity.ProductEntity;
@@ -105,9 +106,10 @@ public class ProductService {
         var productType = ProductType.valueOf(product.getType())
                 .value();
 
-        if (!entity.getCode().equalsIgnoreCase(product.getCode()) || !entity.getType().equalsIgnoreCase(productType)) {
+        var code = entity.getCode();
+        if (!productType.equalsIgnoreCase(product.getType())) {
 
-            verifyExistingCodeAndTypeForTenant(tenant, product);
+            code = calculateCode(product.getType());
         }
 
         final var active = ActiveStatus.valueOf(product.getActive())
@@ -115,6 +117,7 @@ public class ProductService {
 
         entity.setActive(active);
         entity.setName(product.getName());
+        entity.setCode(code);
         entity.setDescription(product.getDescription());
         entity.setType(buildTypeFor(product.getType()));
         entity.setMinimalQuantity(product.getMinimalQuantity());
@@ -144,4 +147,16 @@ public class ProductService {
         return ProductType.valueOf(value)
                 .value();
     }
+
+    private String calculateCode(final String type) {
+
+        final var productType = ProductType.valueOf(type);
+
+        return switch (productType) {
+            case PRODUCT -> sequenceProvider.calculateNext(SequenceType.PRODUCT);
+            case SERVICE -> sequenceProvider.calculateNext(SequenceType.SERVICE);
+            default -> sequenceProvider.calculateNext(SequenceType.UNKNOWN);
+        };
+    }
+
 }

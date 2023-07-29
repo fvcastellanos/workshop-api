@@ -5,6 +5,7 @@ public enum SequenceType {
     CUSTOMER("C"),
     PROVIDER("P"),
     PRODUCT("PR"),
+    SERVICE("SR"),
     UNKNOWN("U");
 
     private final String prefix;
