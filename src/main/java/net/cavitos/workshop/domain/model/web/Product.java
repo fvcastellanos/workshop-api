@@ -7,6 +7,7 @@ import lombok.ToString;
 import net.cavitos.workshop.domain.model.status.ActiveStatus;
 import net.cavitos.workshop.domain.model.type.ProductType;
 import net.cavitos.workshop.domain.model.validator.ValueOfEnum;
+import net.cavitos.workshop.domain.model.web.common.CommonProductCategory;
 import org.springframework.hateoas.RepresentationModel;
 
 import jakarta.validation.constraints.NotEmpty;
@@ -38,4 +39,7 @@ public class Product extends RepresentationModel<Product> {
 
     @ValueOfEnum(enumType = ActiveStatus.class, message = "Invalid type, allowed values: ACTIVE|INACTIVE")
     private String active;
+
+    @NotNull
+    private CommonProductCategory category;
 }
