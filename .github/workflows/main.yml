@@ -1,0 +1,37 @@
+name: WorkShop API Build
+
+on:
+  push:
+    branches:
+      - feature/*
+
+jobs:
+  build-and-test:
+    name: Build and Test with Maven
+    runs-on: ubuntu-latest
+
+    services:
+      mysql:
+        image: mysql:8
+        env:
+          MYSQL_ROOT_PASSWORD: test-root
+          MYSQL_DATABASE: workshop
+        ports:
+          - 3306:3306
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Java
+        uses: actions/setup-java@v2
+        with:
+          java-version: '17'
+
+      - name: Build with Maven
+        run: mvn clean install
+
+      - name: Run Tests with Maven
+        run: mvn test verify
+        env:
+          DATASOURCE_URL: jdbc:mysql://root:test-root@localhost:3306/workshop
