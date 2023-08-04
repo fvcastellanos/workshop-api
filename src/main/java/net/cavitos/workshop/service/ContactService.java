@@ -105,7 +105,7 @@ public class ContactService {
                 .value();
 
         var code = contactEntity.getCode();
-        if (!type.equalsIgnoreCase(contact.getType())) {
+        if (!type.equalsIgnoreCase(contactEntity.getType())) {
 
             code = calculateCode(contact.getType());
         }

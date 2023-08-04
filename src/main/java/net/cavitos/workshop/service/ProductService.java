@@ -118,7 +118,7 @@ public class ProductService {
                 .value();
 
         var code = entity.getCode();
-        if (!productType.equalsIgnoreCase(product.getType())) {
+        if (!productType.equalsIgnoreCase(entity.getType())) {
 
             code = calculateCode(product.getType());
         }
