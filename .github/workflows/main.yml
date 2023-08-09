@@ -36,3 +36,6 @@ jobs:
         run: mvn test verify
         env:
           DATASOURCE_URL: jdbc:mysql://root:test-root@localhost:3306/workshop
+          AUTH0_AUDIENCE: test
+          AUTH0_JWT_ISSUER: test
+          WORKSHOP_CORS_ORIGINS: test
