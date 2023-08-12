@@ -1,11 +1,11 @@
-name: WorkShop API Build
+name: Build feature branch
 
 on:
-  workflow_dispatch:
-    
   push:
     branches:
       - feature/*
+
+  workflow_dispatch:
 
 jobs:
   build-and-test:
