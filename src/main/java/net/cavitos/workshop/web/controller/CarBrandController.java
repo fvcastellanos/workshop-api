@@ -153,8 +153,8 @@ public class CarBrandController extends BaseController {
 
     @PostMapping("/{carBrandId}" + CAR_LINES_RESOURCE)
     public ResponseEntity<CarLine> addLine(@PathVariable @NotBlank final String carBrandId,
-                                       @Valid @RequestBody final CarLine carLine,
-                                       final Principal principal) {
+                                           @Valid @RequestBody final CarLine carLine,
+                                           final Principal principal) {
 
         final var tenant = getUserTenant(principal);
         final var entity = carLineService.add(tenant, carBrandId, carLine);

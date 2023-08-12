@@ -1,5 +1,7 @@
 package net.cavitos.workshop.model.entity;
 
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -63,4 +65,8 @@ public class ProductEntity {
     @NotEmpty
     @Size(max = 50)
     private String tenant;
+
+    @ManyToOne
+    @JoinColumn(name = "product_category_id")
+    private ProductCategoryEntity productCategoryEntity;
 }

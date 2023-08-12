@@ -3,8 +3,13 @@ package net.cavitos.workshop.transformer;
 import net.cavitos.workshop.domain.model.status.ActiveStatus;
 import net.cavitos.workshop.domain.model.type.ProductType;
 import net.cavitos.workshop.domain.model.web.Product;
+import net.cavitos.workshop.domain.model.web.common.CommonProductCategory;
+import net.cavitos.workshop.model.entity.ProductCategoryEntity;
 import net.cavitos.workshop.model.entity.ProductEntity;
+import net.cavitos.workshop.web.controller.ProductCategoryController;
 import net.cavitos.workshop.web.controller.ProductController;
+
+import java.util.Objects;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -20,6 +25,24 @@ public final class ProductTransformer {
                 .getById(productEntity.getId(), null))
                 .withSelfRel();
 
+        final var product = getProduct(productEntity);
+        product.add(selfLink);
+
+        final var productCategoryEntity = productEntity.getProductCategoryEntity();
+
+        if (Objects.nonNull(productCategoryEntity)) {
+
+            final var categoryLink = linkTo(methodOn(ProductCategoryController.class)
+                    .getById(productEntity.getProductCategoryEntity().getId(), null))
+                    .withRel("category");
+
+            product.add(categoryLink);
+        }
+
+        return product;
+    }
+
+    private static Product getProduct(ProductEntity productEntity) {
         final var active = ActiveStatus.of(productEntity.getActive())
                 .name();
 
@@ -34,8 +57,21 @@ public final class ProductTransformer {
         product.setActive(active);
         product.setMinimalQuantity(productEntity.getMinimalQuantity());
 
-        product.add(selfLink);
+        final var productCategoryEntity = productEntity.getProductCategoryEntity();
+        if (Objects.nonNull(productCategoryEntity)) {
+
+            product.setCategory(buildCategory(productCategoryEntity));
+        }
 
         return product;
+    }
+
+    private static CommonProductCategory buildCategory(ProductCategoryEntity productCategoryEntity) {
+
+        final var category = new CommonProductCategory();
+        category.setId(productCategoryEntity.getId());
+        category.setName(productCategoryEntity.getName());
+
+        return  category;
     }
 }

@@ -8,6 +8,7 @@ public final class Route {
     public static final String INVOICES_RESOURCE = "/invoices";
     public static final String INVOICE_DETAILS_RESOURCE = "/details";
     public static final String PRODUCTS_RESOURCE = "/products";
+    public static final String PRODUCT_CATEGORIES_RESOURCE = "/product-categories";
     public static final String WORK_ORDERS_RESOURCE = "/work-orders";
 
     private Route() {

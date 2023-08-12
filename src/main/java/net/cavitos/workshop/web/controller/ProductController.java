@@ -40,13 +40,14 @@ public class ProductController extends BaseController {
     @GetMapping
     public ResponseEntity<Page<Product>> search(@RequestParam(defaultValue = "") final String text,
                                                 @RequestParam(defaultValue = "P") final String type,
+                                                @RequestParam(defaultValue = "%") final String category,
                                                 @RequestParam(defaultValue = "1") final int active,
                                                 @RequestParam(defaultValue = DEFAULT_SIZE) final int size,
                                                 @RequestParam(defaultValue = DEFAULT_PAGE) final int page,
                                                 final Principal principal) {
 
         final var tenant = getUserTenant(principal);
-        final var productPage = productService.search(tenant, type, text, active, page, size);
+        final var productPage = productService.search(tenant, type, category, text, active, page, size);
 
         final var products = productPage.stream()
                 .map(ProductTransformer::toWeb)

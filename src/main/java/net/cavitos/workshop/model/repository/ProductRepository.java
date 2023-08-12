@@ -12,10 +12,19 @@ import java.util.Optional;
 public interface ProductRepository extends CrudRepository<ProductEntity, String>,
                                            PagingAndSortingRepository<ProductEntity, String> {
 
-    @Query("select product from ProductEntity product where product.tenant = :tenant and product.active = :active and " +
-            "product.type like :type and (UPPER(product.code) like UPPER(:text) or UPPER(product.name) like UPPER(:text))")
+    @Query("""
+                select product
+                from ProductEntity product
+                where
+                    product.tenant = :tenant
+                    and product.active = :active
+                    and product.type like :type
+                    and product.productCategoryEntity.id like :category
+                    and (UPPER(product.code) like UPPER(:text) or UPPER(product.name) like UPPER(:text))
+            """)
     Page<ProductEntity> search(String text,
                                String type,
+                               String category,
                                int active,
                                String tenant,
                                Pageable pageable);
