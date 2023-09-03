@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import net.cavitos.workshop.domain.model.web.WorkOrder;
 import net.cavitos.workshop.domain.model.web.WorkOrderDetail;
+import net.cavitos.workshop.domain.model.web.WorkOrderPartial;
 import net.cavitos.workshop.security.service.UserService;
 import net.cavitos.workshop.service.WorkOrderDetailService;
 import net.cavitos.workshop.service.WorkOrderService;
@@ -14,15 +15,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.List;
@@ -94,6 +87,18 @@ public class WorkOrderController extends BaseController {
 
         final var tenant = getUserTenant(principal);
         final var entity = workOrderService.update(tenant, id, workOrder);
+
+        final var response = WorkOrderTransformer.toWeb(entity);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<WorkOrder> updateStatus(@PathVariable @NotEmpty final String id,
+                                                  @RequestBody @Valid final WorkOrderPartial workOrderPartial,
+                                                  final Principal principal) {
+
+        final var tenant = getUserTenant(principal);
+        final var entity = workOrderService.updateStatus(tenant, id, workOrderPartial);
 
         final var response = WorkOrderTransformer.toWeb(entity);
         return new ResponseEntity<>(response, HttpStatus.OK);

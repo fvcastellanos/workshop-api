@@ -2,6 +2,7 @@ package net.cavitos.workshop.service;
 
 import net.cavitos.workshop.domain.model.status.WorkOrderStatus;
 import net.cavitos.workshop.domain.model.web.WorkOrder;
+import net.cavitos.workshop.domain.model.web.WorkOrderPartial;
 import net.cavitos.workshop.model.entity.CarLineEntity;
 import net.cavitos.workshop.model.entity.ContactEntity;
 import net.cavitos.workshop.model.entity.WorkOrderEntity;
@@ -127,6 +128,17 @@ public class WorkOrderService {
         workOrderRepository.save(entity);
 
         return entity;
+    }
+
+    public WorkOrderEntity updateStatus(final String tenant, final String id, final WorkOrderPartial workOrderPartial) {
+
+        final var workOrder = findById(tenant, id);
+
+        workOrder.setStatus(buildWorkOrderStatusFrom(workOrderPartial.getStatus()));
+
+        workOrderRepository.save(workOrder);
+
+        return workOrder;
     }
 
     // ----------------------------------------------------------------------------------------------------
