@@ -1,8 +1,11 @@
 package net.cavitos.workshop.service;
 
+import com.google.common.eventbus.EventBus;
 import net.cavitos.workshop.domain.model.web.InvoiceDetail;
 import net.cavitos.workshop.domain.model.web.common.CommonProduct;
+import net.cavitos.workshop.event.listener.InventoryInvoiceDetailListener;
 import net.cavitos.workshop.event.model.EventType;
+import net.cavitos.workshop.event.model.InvoiceDetailEvent;
 import net.cavitos.workshop.event.subject.InvoiceDetailObservable;
 import net.cavitos.workshop.model.entity.InvoiceDetailEntity;
 import net.cavitos.workshop.model.entity.InvoiceEntity;
@@ -35,17 +38,21 @@ public class InvoiceDetailService {
     private final WorkOrderRepository workOrderRepository;
     private final InvoiceDetailObservable invoiceDetailObservable;
 
+    private final EventBus eventBus;
+
     public InvoiceDetailService(final InvoiceDetailRepository invoiceDetailRepository,
                                 final ProductRepository productRepository,
                                 final InvoiceRepository invoiceRepository,
                                 final WorkOrderRepository workOrderRepository,
-                                final InvoiceDetailObservable invoiceDetailObservable) {
+                                final InvoiceDetailObservable invoiceDetailObservable,
+                                final EventBus eventBus) {
 
         this.invoiceDetailRepository = invoiceDetailRepository;
         this.productRepository = productRepository;
         this.invoiceRepository = invoiceRepository;
         this.workOrderRepository = workOrderRepository;
         this.invoiceDetailObservable = invoiceDetailObservable;
+        this.eventBus = eventBus;
     }
 
     public List<InvoiceDetailEntity> getInvoiceDetails(final String invoiceId, final String tenant) {
@@ -98,6 +105,13 @@ public class InvoiceDetailService {
         invoiceDetailRepository.save(entity);
         invoiceDetailObservable.createEvent(EventType.ADD, entity);
         invoiceDetailObservable.notifyObservers();
+
+        final var event = InvoiceDetailEvent.builder()
+                .eventType(EventType.ADD)
+                .invoiceDetailEntity(entity)
+                .build();
+
+        eventBus.post(event);
 
         return entity;
     }
