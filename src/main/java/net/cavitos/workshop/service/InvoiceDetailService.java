@@ -120,6 +120,22 @@ public class InvoiceDetailService {
         if (!productEntity.getCode().equalsIgnoreCase(product.getCode())) {
 
             productEntity = findProductEntity(tenant, product);
+
+            final var invoiceHolder = invoiceDetailRepository.findByInvoiceEntityIdAndProductEntityIdAndTenant(invoiceId,
+                    productEntity.getId(), tenant);
+
+            final var productId = productEntity.getId();
+            invoiceHolder.ifPresent(detail -> {
+
+                if (!detail.getId().equalsIgnoreCase(invoiceDetailId)) {
+
+                    LOGGER.error("product_id={} already exists for invoice_id={} and tenant={}", productId,
+                            invoiceId, tenant);
+
+                    throw createBusinessException(HttpStatus.UNPROCESSABLE_ENTITY, "Product already exists");
+                }
+
+            });
         }
 
         WorkOrderEntity workOrderEntity = null;
