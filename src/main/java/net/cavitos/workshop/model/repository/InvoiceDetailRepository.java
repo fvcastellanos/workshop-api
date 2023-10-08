@@ -17,6 +17,12 @@ public interface InvoiceDetailRepository extends CrudRepository<InvoiceDetailEnt
 
     Optional<InvoiceDetailEntity> findByIdAndTenant(String id, String tenant);
 
-    @Query("select invoiceDetail from InvoiceDetailEntity invoiceDetail where invoiceDetail.invoiceEntity.id = :invoiceId")
+    @Query(
+            """
+                select invoiceDetail
+                from InvoiceDetailEntity invoiceDetail
+                where invoiceDetail.invoiceEntity.id = :invoiceId
+            """
+    )
     List<InvoiceDetailEntity> getInvoiceDetails(String invoiceId);
 }
