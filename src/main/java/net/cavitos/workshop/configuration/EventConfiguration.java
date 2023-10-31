@@ -1,7 +1,7 @@
 package net.cavitos.workshop.configuration;
 
 import com.google.common.eventbus.EventBus;
-import net.cavitos.workshop.event.listener.InventoryInvoiceDetailListener;
+import net.cavitos.workshop.event.listener.InvoiceDetailInventoryListener;
 import net.cavitos.workshop.event.observers.InventoryInvoiceDetailObserver;
 import net.cavitos.workshop.event.observers.WorkOrderInvoiceDetailObserver;
 import net.cavitos.workshop.event.subject.InvoiceDetailObservable;
@@ -23,11 +23,11 @@ public class EventConfiguration {
     }
 
     @Bean
-    public EventBus eventBus(final InventoryInvoiceDetailListener inventoryInvoiceDetailListener) {
+    public EventBus eventBus(final InvoiceDetailInventoryListener invoiceDetailInventoryListener) {
 
         final var eventBus = new EventBus("Application Event Bus");
 
-        eventBus.register(inventoryInvoiceDetailListener);
+        eventBus.register(invoiceDetailInventoryListener);
 
         return eventBus;
     }

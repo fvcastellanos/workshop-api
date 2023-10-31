@@ -4,6 +4,7 @@ import net.cavitos.workshop.domain.model.type.ProductType;
 import net.cavitos.workshop.domain.model.web.InvoiceDetail;
 import net.cavitos.workshop.domain.model.web.common.CommonProduct;
 import net.cavitos.workshop.model.entity.InvoiceDetailEntity;
+
 import java.util.Objects;
 
 public final class InvoiceDetailTransformer {
@@ -28,6 +29,7 @@ public final class InvoiceDetailTransformer {
         detail.setId(entity.getId());
         detail.setQuantity(entity.getQuantity());
         detail.setUnitPrice(entity.getUnitPrice());
+        detail.setDiscountAmount(entity.getDiscountAmount());
         detail.setTotal(entity.getQuantity() * entity.getUnitPrice());
         detail.setProduct(product);
 

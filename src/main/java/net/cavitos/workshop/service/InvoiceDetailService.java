@@ -1,12 +1,9 @@
 package net.cavitos.workshop.service;
 
-import com.google.common.eventbus.EventBus;
 import net.cavitos.workshop.domain.model.web.InvoiceDetail;
 import net.cavitos.workshop.domain.model.web.common.CommonProduct;
-import net.cavitos.workshop.event.listener.InventoryInvoiceDetailListener;
 import net.cavitos.workshop.event.model.EventType;
 import net.cavitos.workshop.event.model.InvoiceDetailEvent;
-import net.cavitos.workshop.event.subject.InvoiceDetailObservable;
 import net.cavitos.workshop.model.entity.InvoiceDetailEntity;
 import net.cavitos.workshop.model.entity.InvoiceEntity;
 import net.cavitos.workshop.model.entity.ProductEntity;
@@ -19,11 +16,13 @@ import net.cavitos.workshop.model.repository.WorkOrderRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+
 import static net.cavitos.workshop.factory.BusinessExceptionFactory.createBusinessException;
 import static net.cavitos.workshop.factory.DateTimeFactory.getUTCNow;
 
@@ -36,23 +35,20 @@ public class InvoiceDetailService {
     private final ProductRepository productRepository;
     private final InvoiceRepository invoiceRepository;
     private final WorkOrderRepository workOrderRepository;
-    private final InvoiceDetailObservable invoiceDetailObservable;
 
-    private final EventBus eventBus;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
     public InvoiceDetailService(final InvoiceDetailRepository invoiceDetailRepository,
                                 final ProductRepository productRepository,
                                 final InvoiceRepository invoiceRepository,
                                 final WorkOrderRepository workOrderRepository,
-                                final InvoiceDetailObservable invoiceDetailObservable,
-                                final EventBus eventBus) {
+                                final ApplicationEventPublisher applicationEventPublisher) {
 
         this.invoiceDetailRepository = invoiceDetailRepository;
         this.productRepository = productRepository;
         this.invoiceRepository = invoiceRepository;
         this.workOrderRepository = workOrderRepository;
-        this.invoiceDetailObservable = invoiceDetailObservable;
-        this.eventBus = eventBus;
+        this.applicationEventPublisher = applicationEventPublisher;
     }
 
     public List<InvoiceDetailEntity> getInvoiceDetails(final String invoiceId, final String tenant) {
@@ -97,21 +93,15 @@ public class InvoiceDetailService {
                 .workOrderEntity(workOrderEntity)
                 .quantity(invoiceDetail.getQuantity())
                 .unitPrice(invoiceDetail.getUnitPrice())
+                .discountAmount(invoiceDetail.getDiscountAmount())
                 .tenant(tenant)
                 .created(getUTCNow())
                 .build();
 
 
         invoiceDetailRepository.save(entity);
-        invoiceDetailObservable.createEvent(EventType.ADD, entity);
-        invoiceDetailObservable.notifyObservers();
 
-        final var event = InvoiceDetailEvent.builder()
-                .eventType(EventType.ADD)
-                .invoiceDetailEntity(entity)
-                .build();
-
-        eventBus.post(event);
+        applicationEventPublisher.publishEvent(buildInvoiceDetailEventFor(EventType.ADD, entity));
 
         return entity;
     }
@@ -163,11 +153,11 @@ public class InvoiceDetailService {
         invoiceDetailEntity.setProductEntity(productEntity);
         invoiceDetailEntity.setQuantity(invoiceDetail.getQuantity());
         invoiceDetailEntity.setUnitPrice(invoiceDetail.getUnitPrice());
+        invoiceDetailEntity.setDiscountAmount(invoiceDetail.getDiscountAmount());
 
         invoiceDetailRepository.save(invoiceDetailEntity);
 
-        invoiceDetailObservable.createEvent(EventType.UPDATE, invoiceDetailEntity);
-        invoiceDetailObservable.notifyObservers();
+        applicationEventPublisher.publishEvent(buildInvoiceDetailEventFor(EventType.UPDATE, invoiceDetailEntity));
 
         return invoiceDetailEntity;
     }
@@ -181,8 +171,8 @@ public class InvoiceDetailService {
                 .orElseThrow(() -> createBusinessException(HttpStatus.NOT_FOUND, "Invoice Detail not found"));
 
         invoiceDetailRepository.delete(invoiceDetailEntity);
-        invoiceDetailObservable.createEvent(EventType.DELETE, invoiceDetailEntity);
-        invoiceDetailObservable.notifyObservers();
+
+        applicationEventPublisher.publishEvent(buildInvoiceDetailEventFor(EventType.DELETE, invoiceDetailEntity));
     }
 
     // --------------------------------------------------------------------------------------------------------
@@ -197,5 +187,14 @@ public class InvoiceDetailService {
 
         return invoiceRepository.findByIdAndTenant(invoiceId, tenant)
                 .orElseThrow(() -> createBusinessException(HttpStatus.NOT_FOUND, "Invoice not found"));
+    }
+
+    private InvoiceDetailEvent buildInvoiceDetailEventFor(final EventType eventType,
+                                                          final InvoiceDetailEntity entity) {
+
+        return InvoiceDetailEvent.builder()
+                .eventType(eventType)
+                .invoiceDetailEntity(entity)
+                .build();
     }
 }
