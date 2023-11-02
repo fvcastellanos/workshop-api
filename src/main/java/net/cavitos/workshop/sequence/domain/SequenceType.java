@@ -6,6 +6,7 @@ public enum SequenceType {
     PROVIDER("P"),
     PRODUCT("PR"),
     SERVICE("SR"),
+    INVENTORY_MOVEMENT("MI"),
     UNKNOWN("U");
 
     private final String prefix;

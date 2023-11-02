@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import net.cavitos.workshop.domain.model.validator.Date;
 import net.cavitos.workshop.domain.model.web.InventoryMovement;
+import net.cavitos.workshop.domain.model.web.InventoryMovementType;
 import net.cavitos.workshop.security.service.UserService;
 import net.cavitos.workshop.service.InventoryMovementService;
 import net.cavitos.workshop.transformer.InventoryMovementTransformer;

@@ -8,7 +8,8 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import net.cavitos.workshop.domain.model.type.InventoryMovementType;
+import net.cavitos.workshop.domain.model.type.InventoryOperationType;
+import net.cavitos.workshop.domain.model.validator.Date;
 import net.cavitos.workshop.domain.model.validator.ValueOfEnum;
 import net.cavitos.workshop.domain.model.web.common.CommonProduct;
 import org.springframework.hateoas.RepresentationModel;
@@ -26,8 +27,12 @@ public class InventoryMovement extends RepresentationModel<InventoryMovement> {
     private CommonProduct product;
 
     @NotEmpty
-    @ValueOfEnum(enumType = InventoryMovementType.class, message = "Invalid type, allowed values: INPUT|OUTPUT")
+    @ValueOfEnum(enumType = InventoryOperationType.class, message = "Invalid type, allowed values: INPUT|OUTPUT")
     private String operationType;
+
+    @Date
+    @NotEmpty
+    private String operationDate;
 
     @Size(max = 50)
     private String invoiceDetailId;

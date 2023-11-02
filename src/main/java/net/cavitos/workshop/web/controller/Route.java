@@ -10,6 +10,7 @@ public final class Route {
     public static final String PRODUCT_CATEGORIES_RESOURCE = "/product-categories";
     public static final String WORK_ORDERS_RESOURCE = "/work-orders";
     public static final String INVENTORY_MOVEMENTS_RESOURCE = "/inventory-movements";
+    public static final String INVENTORY_MOVEMENT_TYPES = "/inventory-movement-types";
 
     private Route() {
     }

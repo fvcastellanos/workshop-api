@@ -1,8 +1,6 @@
 package net.cavitos.workshop.domain.model.type;
 
-import java.util.Locale;
-
-public enum InventoryMovementType {
+public enum InventoryOperationType {
 
     INPUT("I"),
     OUTPUT("O"),
@@ -11,7 +9,7 @@ public enum InventoryMovementType {
 
     private final String type;
 
-    InventoryMovementType(final String type) {
+    InventoryOperationType(final String type) {
 
         this.type = type;
     }
@@ -21,7 +19,7 @@ public enum InventoryMovementType {
         return type;
     }
 
-    public static InventoryMovementType of(final String type) {
+    public static InventoryOperationType of(final String type) {
 
         return "I".equalsIgnoreCase(type) ? INPUT
                 : OUTPUT;

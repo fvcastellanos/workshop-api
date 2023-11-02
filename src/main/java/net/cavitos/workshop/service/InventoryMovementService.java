@@ -1,6 +1,6 @@
 package net.cavitos.workshop.service;
 
-import net.cavitos.workshop.domain.model.type.InventoryMovementType;
+import net.cavitos.workshop.domain.model.type.InventoryOperationType;
 import net.cavitos.workshop.domain.model.web.InventoryMovement;
 import net.cavitos.workshop.model.entity.InventoryEntity;
 import net.cavitos.workshop.model.repository.InventoryRepository;
@@ -65,7 +65,7 @@ public class InventoryMovementService {
                 .orElseThrow(() -> createBusinessException(HttpStatus.UNPROCESSABLE_ENTITY, "Product not found"));
 
         final var total = (movement.getUnitPrice() * movement.getQuantity()) - movement.getDiscountAmount();
-        final var operationType = InventoryMovementType.valueOf(movement.getOperationType())
+        final var operationType = InventoryOperationType.valueOf(movement.getOperationType())
                 .type();
 
         final var entity = InventoryEntity.builder()

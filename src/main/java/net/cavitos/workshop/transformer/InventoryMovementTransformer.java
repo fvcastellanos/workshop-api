@@ -5,12 +5,18 @@ import net.cavitos.workshop.domain.model.web.common.CommonProduct;
 import net.cavitos.workshop.model.entity.InventoryEntity;
 import net.cavitos.workshop.web.controller.InventoryMovementController;
 
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 public class InventoryMovementTransformer {
 
     public static InventoryMovement toWeb(final InventoryEntity entity) {
+
+        final var dateFormatter = DateTimeFormatter.ISO_LOCAL_DATE
+                .withZone(ZoneId.systemDefault());
 
         final var product = entity.getProductEntity();
         final var invoiceDetail = entity.getInvoiceDetailEntity();
@@ -31,6 +37,7 @@ public class InventoryMovementTransformer {
         movement.setDiscountAmount(entity.getDiscountAmount());
         movement.setOperationType(entity.getOperationType());
         movement.setInvoiceDetailId(invoiceDetail.getId());
+        movement.setOperationDate(dateFormatter.format(entity.getOperationDate()));
         movement.setDescription(entity.getDescription());
         movement.setProduct(commonProduct);
 
