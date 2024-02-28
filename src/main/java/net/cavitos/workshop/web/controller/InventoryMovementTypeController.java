@@ -1,5 +1,7 @@
 package net.cavitos.workshop.web.controller;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import net.cavitos.workshop.domain.model.web.InventoryMovementType;
 import net.cavitos.workshop.security.service.UserService;
 import net.cavitos.workshop.service.InventoryMovementTypeService;
@@ -28,6 +30,7 @@ public class InventoryMovementTypeController extends BaseController {
 
     @GetMapping
     public ResponseEntity<Page<InventoryMovementType>> search(@RequestParam(defaultValue = "1") final int active,
+                                                              @RequestParam(defaultValue = "%") final String type,
                                                               @RequestParam(defaultValue = "%") final String text,
                                                               @RequestParam(defaultValue = DEFAULT_PAGE) final int page,
                                                               @RequestParam(defaultValue = DEFAULT_SIZE) final int size,
@@ -35,7 +38,7 @@ public class InventoryMovementTypeController extends BaseController {
 
         final var tenant = getUserTenant(principal);
 
-        final var movementTypePage = inventoryMovementTypeService.search(active, text, tenant, page, size);
+        final var movementTypePage = inventoryMovementTypeService.search(active, type, text, tenant, page, size);
 
         final var movementTypes = movementTypePage.stream()
                 .map(InventoryMovementTypeTransformer::toWeb)
@@ -52,6 +55,31 @@ public class InventoryMovementTypeController extends BaseController {
         final var tenant = getUserTenant(principal);
 
         final var entity = inventoryMovementTypeService.getById(id, tenant);
+        final var response = InventoryMovementTypeTransformer.toWeb(entity);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PostMapping
+    public ResponseEntity<InventoryMovementType> add(@RequestBody @Valid final InventoryMovementType inventoryMovementType,
+                                                     final Principal principal) {
+
+        final var tenant = getUserTenant(principal);
+
+        final var entity = inventoryMovementTypeService.add(inventoryMovementType, tenant);
+        final var response = InventoryMovementTypeTransformer.toWeb(entity);
+
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<InventoryMovementType> update(@PathVariable @NotBlank final String id,
+                                                        @RequestBody @Valid final InventoryMovementType inventoryMovementType,
+                                                        final Principal principal) {
+
+        final var tenant = getUserTenant(principal);
+
+        final var entity = inventoryMovementTypeService.update(id, inventoryMovementType, tenant);
         final var response = InventoryMovementTypeTransformer.toWeb(entity);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
