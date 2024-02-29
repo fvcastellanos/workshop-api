@@ -17,7 +17,6 @@ import org.springframework.hateoas.RepresentationModel;
 @EqualsAndHashCode(callSuper = true)
 public class InventoryMovementType extends RepresentationModel<InventoryMovementType> {
 
-    @NotBlank
     @Size(max = 50)
     private String code;
 
@@ -28,9 +27,11 @@ public class InventoryMovementType extends RepresentationModel<InventoryMovement
     @Size(max = 300)
     private String description;
 
+    @NotBlank
     @ValueOfEnum(enumType = InventoryOperationType.class, message = "Invalid type, allowed values: INPUT|OUTPUT")
     private String type;
 
+    @NotBlank
     @ValueOfEnum(enumType = ActiveStatus.class, message = "Invalid type, allowed values: ACTIVE|INACTIVE")
     private String active;
 }

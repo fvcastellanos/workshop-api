@@ -2,6 +2,7 @@ package net.cavitos.workshop.service;
 
 import net.cavitos.workshop.domain.exception.BusinessException;
 import net.cavitos.workshop.domain.model.status.ActiveStatus;
+import net.cavitos.workshop.domain.model.type.InventoryOperationType;
 import net.cavitos.workshop.domain.model.web.InventoryMovementType;
 import net.cavitos.workshop.factory.BusinessExceptionFactory;
 import net.cavitos.workshop.model.entity.InventoryMovementTypeEntity;
@@ -72,12 +73,17 @@ public class InventoryMovementTypeService {
         final var active = ActiveStatus.valueOf(inventoryMovementType.getActive())
                 .value();
 
+        final var movementType = InventoryOperationType.valueOf(inventoryMovementType.getType())
+                .type();
+
         final var entity = InventoryMovementTypeEntity.builder()
                 .id(TimeBasedGenerator.generateTimeBasedId())
                 .code(code)
                 .active(active)
+                .type(movementType)
                 .name(inventoryMovementType.getName())
-                .description(inventoryMovementType.getActive())
+                .description(inventoryMovementType.getDescription())
+                .tenant(tenant)
                 .created(Instant.now())
                 .build();
 
@@ -95,20 +101,28 @@ public class InventoryMovementTypeService {
                 .orElseThrow(() -> BusinessExceptionFactory.createBusinessException(HttpStatus.NOT_FOUND,
                         "Inventory Movement Type not found"));
 
-        inventoryMovementTypeRepository.findByNameAndTenant(inventoryMovementType.getName(), tenant)
-                .ifPresent(movement -> {
+        if (!inventoryMovementType.getName().equalsIgnoreCase(entity.getName())) {
 
-                    if (movement.getId().equalsIgnoreCase(entity.getId())) {
+            inventoryMovementTypeRepository.findByNameAndTenant(inventoryMovementType.getName(), tenant)
+                    .ifPresent(movement -> {
 
-                        throw BusinessExceptionFactory.createBusinessException("Movement Type already exists");
-                    }
-                });
+                        if (movement.getId().equalsIgnoreCase(entity.getId())) {
+
+                            throw BusinessExceptionFactory.createBusinessException(HttpStatus.UNPROCESSABLE_ENTITY,
+                                    "Movement Type already exists");
+                        }
+                    });
+        }
 
         final var active = ActiveStatus.valueOf(inventoryMovementType.getActive())
                 .value();
 
+        final var movementType = InventoryOperationType.valueOf(inventoryMovementType.getType())
+                .type();
+
         entity.setType(inventoryMovementType.getType());
         entity.setName(inventoryMovementType.getName());
+        entity.setType(movementType);
         entity.setDescription(inventoryMovementType.getDescription());
         entity.setActive(active);
 
