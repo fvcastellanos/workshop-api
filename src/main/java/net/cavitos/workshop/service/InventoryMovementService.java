@@ -65,12 +65,9 @@ public class InventoryMovementService {
                 .orElseThrow(() -> createBusinessException(HttpStatus.UNPROCESSABLE_ENTITY, "Product not found"));
 
         final var total = (movement.getUnitPrice() * movement.getQuantity()) - movement.getDiscountAmount();
-        final var operationType = InventoryOperationType.valueOf(movement.getOperationType())
-                .type();
 
         final var entity = InventoryEntity.builder()
                 .tenant(tenant)
-                .operationType(operationType)
                 .productEntity(productEntity)
                 .description(movement.getDescription())
                 .quantity(movement.getQuantity())

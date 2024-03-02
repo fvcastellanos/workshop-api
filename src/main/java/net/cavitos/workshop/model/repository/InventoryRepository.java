@@ -1,6 +1,7 @@
 package net.cavitos.workshop.model.repository;
 
 import net.cavitos.workshop.model.entity.InventoryEntity;
+import net.cavitos.workshop.model.entity.InventoryMovementTypeEntity;
 import net.cavitos.workshop.model.entity.InvoiceDetailEntity;
 import net.cavitos.workshop.model.entity.ProductEntity;
 import org.springframework.data.domain.Page;
@@ -19,7 +20,7 @@ public interface InventoryRepository extends CrudRepository<InventoryEntity, Str
             """
                 select inventory from InventoryEntity inventory
                 where inventory.tenant = :tenant
-                    and UPPER(inventory.operationType) like UPPER(:operationType)
+                    and UPPER(inventory.inventoryMovementTypeEntity.type) like UPPER(:operationType)
                     and inventory.created >= :initialDate
                     and inventory.created <= :finalDate
             """
@@ -30,10 +31,10 @@ public interface InventoryRepository extends CrudRepository<InventoryEntity, Str
                                  String tenant,
                                  Pageable pageable);
 
-    Optional<InventoryEntity> findByProductEntityAndInvoiceDetailEntityAndOperationTypeAndTenant(ProductEntity productEntity,
-                                                                                                 InvoiceDetailEntity invoiceDetailEntity,
-                                                                                                 String operationType,
-                                                                                                 String tenant);
+    Optional<InventoryEntity> findByProductEntityAndInvoiceDetailEntityAndInventoryMovementTypeEntityAndTenant(ProductEntity productEntity,
+                                                                                                               InvoiceDetailEntity invoiceDetailEntity,
+                                                                                                               InventoryMovementTypeEntity inventoryMovementType,
+                                                                                                               String tenant);
 
     Optional<InventoryEntity> findByIdAndTenant(String id, String tenant);
 }

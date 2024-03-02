@@ -31,4 +31,6 @@ public interface InventoryMovementTypeRepository extends CrudRepository<Inventor
     Optional<InventoryMovementTypeEntity> findByIdAndTenant(String id, String tenant);
 
     Optional<InventoryMovementTypeEntity> findByNameAndTenant(String name, String tenant);
+
+    Optional<InventoryMovementTypeEntity> findByCodeAndTenant(String code, String tenant);
 }

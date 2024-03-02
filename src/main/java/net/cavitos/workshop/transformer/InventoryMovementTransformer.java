@@ -1,6 +1,7 @@
 package net.cavitos.workshop.transformer;
 
 import net.cavitos.workshop.domain.model.web.InventoryMovement;
+import net.cavitos.workshop.domain.model.web.common.CommonOperationType;
 import net.cavitos.workshop.domain.model.web.common.CommonProduct;
 import net.cavitos.workshop.model.entity.InventoryEntity;
 import net.cavitos.workshop.web.controller.InventoryMovementController;
@@ -20,6 +21,7 @@ public class InventoryMovementTransformer {
 
         final var product = entity.getProductEntity();
         final var invoiceDetail = entity.getInvoiceDetailEntity();
+        final var operationType = entity.getInventoryMovementTypeEntity();
 
         final var selfLink = linkTo(methodOn(InventoryMovementController.class)
                 .getById(entity.getId(), null))
@@ -30,12 +32,16 @@ public class InventoryMovementTransformer {
         commonProduct.setName(product.getName());
         commonProduct.setType(product.getType());
 
+        final var commonOperationType = new CommonOperationType();
+        commonOperationType.setCode(operationType.getCode());
+        commonOperationType.setName(operationType.getName());
+
         final var movement = new InventoryMovement();
         movement.setId(entity.getId());
         movement.setQuantity(entity.getQuantity());
         movement.setUnitPrice(entity.getUnitPrice());
         movement.setDiscountAmount(entity.getDiscountAmount());
-        movement.setOperationType(entity.getOperationType());
+        movement.setOperationType(commonOperationType);
         movement.setInvoiceDetailId(invoiceDetail.getId());
         movement.setOperationDate(dateFormatter.format(entity.getOperationDate()));
         movement.setDescription(entity.getDescription());
