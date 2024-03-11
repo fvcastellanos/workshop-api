@@ -5,7 +5,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import net.cavitos.workshop.domain.model.validator.Date;
 import net.cavitos.workshop.domain.model.web.InventoryMovement;
-import net.cavitos.workshop.domain.model.web.InventoryMovementType;
 import net.cavitos.workshop.security.service.UserService;
 import net.cavitos.workshop.service.InventoryMovementService;
 import net.cavitos.workshop.transformer.InventoryMovementTransformer;
@@ -14,19 +13,11 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.time.Instant;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 
@@ -47,6 +38,7 @@ public class InventoryMovementController extends BaseController {
 
     @GetMapping
     public ResponseEntity<Page<InventoryMovement>> search(@RequestParam(defaultValue = "%") final String type,
+                                                          @RequestParam(defaultValue = "%") final String operationTypeCode,
                                                           @Valid @Date @RequestParam final String initialDate,
                                                           @Valid @Date @RequestParam final String finalDate,
                                                           @RequestParam(defaultValue = DEFAULT_PAGE) final int page,
@@ -55,7 +47,7 @@ public class InventoryMovementController extends BaseController {
 
         final var tenant = getUserTenant(principal);
 
-        final var movementPage = inventoryMovementService.search(type, parseISODate(initialDate),
+        final var movementPage = inventoryMovementService.search(type, operationTypeCode, parseISODate(initialDate),
                 parseISODate(finalDate), tenant, page, size);
 
         final var movements = movementPage.stream()

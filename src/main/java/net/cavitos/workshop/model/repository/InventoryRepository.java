@@ -21,11 +21,13 @@ public interface InventoryRepository extends CrudRepository<InventoryEntity, Str
                 select inventory from InventoryEntity inventory
                 where inventory.tenant = :tenant
                     and UPPER(inventory.inventoryMovementTypeEntity.type) like UPPER(:operationType)
+                    and UPPER(inventory.inventoryMovementTypeEntity.code) like UPPER(:operationTypeCode)
                     and inventory.created >= :initialDate
                     and inventory.created <= :finalDate
             """
     )
     Page<InventoryEntity> search(String operationType,
+                                 String operationTypeCode,
                                  Instant initialDate,
                                  Instant finalDate,
                                  String tenant,

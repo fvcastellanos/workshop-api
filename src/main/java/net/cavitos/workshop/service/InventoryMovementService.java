@@ -34,6 +34,7 @@ public class InventoryMovementService {
     }
 
     public Page<InventoryEntity> search(final String operationType,
+                                        final String operationTypeCode,
                                         final Instant initialDate,
                                         final Instant finalDate,
                                         final String tenant,
@@ -45,7 +46,7 @@ public class InventoryMovementService {
 
         final var pageable = PageRequest.of(page, size);
 
-        return inventoryRepository.search(operationType, initialDate, finalDate, tenant, pageable);
+        return inventoryRepository.search(operationType, operationTypeCode, initialDate, finalDate, tenant, pageable);
     }
 
     public InventoryEntity findById(final String id, final String tenant) {
