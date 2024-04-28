@@ -2,6 +2,7 @@ package net.cavitos.workshop.web.controller;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import net.cavitos.workshop.domain.model.web.CarBrand;
 import net.cavitos.workshop.domain.model.web.CarLine;
 import net.cavitos.workshop.security.service.UserService;
@@ -135,7 +136,7 @@ public class CarBrandController extends BaseController {
 
     @GetMapping(CAR_LINES_RESOURCE + "/search")
     public ResponseEntity<Page<CarLine>> searchLines(@RequestParam(defaultValue = "") @NotBlank final String text,
-                                                     @RequestParam(defaultValue = "1") @NotBlank final int active,
+                                                     @RequestParam(defaultValue = "1") @NotNull final int active,
                                                      @RequestParam(defaultValue = DEFAULT_PAGE) final int page,
                                                      @RequestParam(defaultValue = DEFAULT_SIZE) final int size,
                                                      final Principal principal) {
