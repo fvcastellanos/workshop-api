@@ -105,9 +105,9 @@ public class InvoiceController extends BaseController {
 
     @GetMapping("/{id}/details")
     public ResponseEntity<List<InvoiceDetail>> getDetails(@PathVariable @NotEmpty final String id,
-                                                       @RequestParam(defaultValue = DEFAULT_PAGE) final int page,
-                                                       @RequestParam(defaultValue = DEFAULT_SIZE) final int size,
-                                                       final Principal principal) {
+                                                          @RequestParam(defaultValue = DEFAULT_PAGE) final int page,
+                                                          @RequestParam(defaultValue = DEFAULT_SIZE) final int size,
+                                                          final Principal principal) {
 
         final var tenant = getUserTenant(principal);
         final var details = invoiceDetailService.getInvoiceDetails(id, tenant);
@@ -121,8 +121,8 @@ public class InvoiceController extends BaseController {
 
     @PostMapping("/{id}/details")
     public ResponseEntity<InvoiceDetail> addDetail(@PathVariable @NotEmpty final String id,
-                                             @RequestBody @Valid final InvoiceDetail invoiceDetail,
-                                             final Principal principal) {
+                                                   @RequestBody @Valid final InvoiceDetail invoiceDetail,
+                                                   final Principal principal) {
 
         final var tenant = getUserTenant(principal);
         final var entity = invoiceDetailService.add(tenant, id, invoiceDetail);
@@ -133,9 +133,9 @@ public class InvoiceController extends BaseController {
 
     @PutMapping("/{id}/details/{detailId}")
     public ResponseEntity<InvoiceDetail> updateDetail(@PathVariable @NotEmpty final String id,
-                                                @PathVariable @NotEmpty final String detailId,
-                                                @RequestBody @Valid final InvoiceDetail invoiceDetail,
-                                                final Principal principal) {
+                                                      @PathVariable @NotEmpty final String detailId,
+                                                      @RequestBody @Valid final InvoiceDetail invoiceDetail,
+                                                      final Principal principal) {
 
         final var tenant = getUserTenant(principal);
         final var entity = invoiceDetailService.update(tenant, id, detailId, invoiceDetail);
@@ -146,8 +146,8 @@ public class InvoiceController extends BaseController {
 
     @DeleteMapping("/{id}/details/{detailId}")
     public ResponseEntity<Void> deleteDetail(@PathVariable @NotEmpty final String id,
-                                       @PathVariable @NotEmpty final String detailId,
-                                       final Principal principal) {
+                                             @PathVariable @NotEmpty final String detailId,
+                                             final Principal principal) {
 
         final var tenant = getUserTenant(principal);
         invoiceDetailService.delete(tenant, id, detailId);
