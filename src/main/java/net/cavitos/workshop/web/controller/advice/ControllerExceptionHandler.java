@@ -10,18 +10,22 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.Nullable;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
-@ControllerAdvice
+import static java.util.Objects.nonNull;
+
+@RestControllerAdvice
 public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ControllerExceptionHandler.class);    
@@ -56,6 +60,42 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
         return handleExceptionInternal(exception, error, buildHttpHeaders(), HttpStatus.BAD_REQUEST, request);
     }
 
+    @Override
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException exception,
+                                                                  HttpHeaders headers,
+                                                                  HttpStatusCode status,
+                                                                  WebRequest request) {
+
+        LOGGER.error("unable to process request because a validation exception - ", exception);
+
+        final var error = new ValidationErrorResponse();
+        error.setMessage("Request validation failed");
+
+        var errors = exception.getFieldErrors()
+                .stream()
+                .map(fieldError -> {
+
+                    var fError = new FieldError();
+
+                    fError.setFieldName(fieldError.getField());
+
+                    if (nonNull(fieldError.getRejectedValue())) {
+
+                        fError.setValue(fieldError.getRejectedValue().toString());
+                    }
+
+                    fError.setError(fieldError.getDefaultMessage());
+
+                    return fError;
+                }).toList();
+
+        error.setErrors(errors);
+
+        return handleExceptionInternal(exception, error, buildHttpHeaders(), HttpStatus.BAD_REQUEST, request);
+
+//        return this.handleExceptionInternal(exception, (Object)null, headers, status, request);
+    }
+
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<Object> handleAuthenticationException(AuthenticationException exception, WebRequest request) {
 
@@ -80,7 +120,7 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
         var fieldErrors = exception.getFieldErrors().stream()
                 .map(fError -> {
 
-                    final var value = Objects.nonNull(fError.getRejectedValue()) ? fError.getRejectedValue().toString()
+                    final var value = nonNull(fError.getRejectedValue()) ? fError.getRejectedValue().toString()
                             : "null";
 
                     final var fieldError = new FieldError();
