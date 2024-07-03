@@ -9,6 +9,7 @@ import net.cavitos.workshop.web.controller.InventoryMovementController;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 
+import static java.util.Objects.nonNull;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
@@ -42,7 +43,11 @@ public class InventoryMovementTransformer {
         movement.setUnitPrice(entity.getUnitPrice());
         movement.setDiscountAmount(entity.getDiscountAmount());
         movement.setOperationType(commonOperationType);
-        movement.setInvoiceDetailId(invoiceDetail.getId());
+
+        if (nonNull(invoiceDetail)) {
+            movement.setInvoiceDetailId(invoiceDetail.getId());
+        }
+
         movement.setOperationDate(dateFormatter.format(entity.getOperationDate()));
         movement.setDescription(entity.getDescription());
         movement.setProduct(commonProduct);

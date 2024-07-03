@@ -3,6 +3,8 @@ package net.cavitos.workshop.service;
 import net.cavitos.workshop.domain.model.type.InventoryOperationType;
 import net.cavitos.workshop.domain.model.web.InventoryMovement;
 import net.cavitos.workshop.model.entity.InventoryEntity;
+import net.cavitos.workshop.model.generator.TimeBasedGenerator;
+import net.cavitos.workshop.model.repository.InventoryMovementTypeRepository;
 import net.cavitos.workshop.model.repository.InventoryRepository;
 import net.cavitos.workshop.model.repository.ProductRepository;
 import org.slf4j.Logger;
@@ -14,6 +16,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneOffset;
 
 import static net.cavitos.workshop.factory.BusinessExceptionFactory.createBusinessException;
 
@@ -26,11 +30,15 @@ public class InventoryMovementService {
 
     private final ProductRepository productRepository;
 
+    private final InventoryMovementTypeRepository inventoryMovementTypeRepository;
+
     public InventoryMovementService(final InventoryRepository inventoryRepository,
-                                    final ProductRepository productRepository) {
+                                    final ProductRepository productRepository,
+                                    final InventoryMovementTypeRepository inventoryMovementTypeRepository) {
 
         this.inventoryRepository = inventoryRepository;
         this.productRepository = productRepository;
+        this.inventoryMovementTypeRepository = inventoryMovementTypeRepository;
     }
 
     public Page<InventoryEntity> search(final String operationType,
@@ -65,17 +73,31 @@ public class InventoryMovementService {
         final var productEntity = productRepository.findByCodeEqualsIgnoreCaseAndTenant(product.getCode(), tenant)
                 .orElseThrow(() -> createBusinessException(HttpStatus.UNPROCESSABLE_ENTITY, "Product not found"));
 
+        final var operationTypeCode = movement.getOperationType()
+                .getCode();
+
+        final var operationType = inventoryMovementTypeRepository.findByCodeAndTenant(operationTypeCode, tenant)
+                .orElseThrow(() -> createBusinessException(HttpStatus.UNPROCESSABLE_ENTITY, "Inventory Movement Type not found"));
+
         final var total = (movement.getUnitPrice() * movement.getQuantity()) - movement.getDiscountAmount();
 
+        final var operationDate = LocalDate.parse(movement.getOperationDate())
+                .atStartOfDay()
+                .toInstant(ZoneOffset.UTC);
+
         final var entity = InventoryEntity.builder()
+                .id(TimeBasedGenerator.generateTimeBasedId())
                 .tenant(tenant)
                 .productEntity(productEntity)
                 .description(movement.getDescription())
                 .quantity(movement.getQuantity())
                 .unitPrice(movement.getUnitPrice())
                 .discountAmount(movement.getDiscountAmount())
+                .operationDate(operationDate)
+                .inventoryMovementTypeEntity(operationType)
                 .total(total)
                 .created(Instant.now())
+                .updated(Instant.now())
                 .build();
 
         return inventoryRepository.save(entity);
