@@ -82,6 +82,19 @@ public class InventoryMovementController extends BaseController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<InventoryMovement> update(@PathVariable @NotBlank final String id,
+                                                    @RequestBody @Valid final InventoryMovement inventoryMovement,
+                                                    final Principal principal) {
+
+        final var tenant = getUserTenant(principal);
+        final var entity = inventoryMovementService.update(tenant, id, inventoryMovement);
+
+        final var response = InventoryMovementTransformer.toWeb(entity);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
     @DeleteMapping
     public ResponseEntity<Void> delete(@PathVariable @NotEmpty final String id,
                                        final Principal principal) {

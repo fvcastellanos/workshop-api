@@ -79,6 +79,14 @@ public class InventoryMovementService {
         final var operationType = inventoryMovementTypeRepository.findByCodeAndTenant(operationTypeCode, tenant)
                 .orElseThrow(() -> createBusinessException(HttpStatus.UNPROCESSABLE_ENTITY, "Inventory Movement Type not found"));
 
+        final var inventoryMovementHolder =
+        inventoryRepository.findByProductEntityAndInvoiceDetailEntityAndInventoryMovementTypeEntityAndTenant(productEntity,
+                null, operationType, tenant);
+
+        if (inventoryMovementHolder.isPresent()) {
+            throw createBusinessException(HttpStatus.UNPROCESSABLE_ENTITY, "Inventory Movement already exists");
+        }
+
         final var total = (movement.getUnitPrice() * movement.getQuantity()) - movement.getDiscountAmount();
 
         final var operationDate = LocalDate.parse(movement.getOperationDate())
@@ -99,6 +107,36 @@ public class InventoryMovementService {
                 .created(Instant.now())
                 .updated(Instant.now())
                 .build();
+
+        return inventoryRepository.save(entity);
+    }
+
+    public InventoryEntity update(final String tenant, final String id, final InventoryMovement movement) {
+
+        LOGGER.info("Update inventory movement for tenant: {}", tenant);
+
+        final var entity = inventoryRepository.findByIdAndTenant(id, tenant)
+                .orElseThrow(() -> createBusinessException(HttpStatus.NOT_FOUND, "Inventory Movement not found"));
+
+        final var product = movement.getProduct();
+
+        final var productEntity = productRepository.findByCodeEqualsIgnoreCaseAndTenant(product.getCode(), tenant)
+                .orElseThrow(() -> createBusinessException(HttpStatus.UNPROCESSABLE_ENTITY, "Product not found"));
+
+        final var operationTypeCode = movement.getOperationType()
+                .getCode();
+
+        final var operationType = inventoryMovementTypeRepository.findByCodeAndTenant(operationTypeCode, tenant)
+                .orElseThrow(() -> createBusinessException(HttpStatus.UNPROCESSABLE_ENTITY, "Inventory Movement Type not found"));
+
+        entity.setUpdated(Instant.now());
+        entity.setDescription(movement.getDescription());
+        entity.setQuantity(movement.getQuantity());
+        entity.setDiscountAmount(movement.getDiscountAmount());
+        entity.setUnitPrice(movement.getUnitPrice());
+        entity.setProductEntity(productEntity);
+        entity.setInventoryMovementTypeEntity(operationType);
+//        entity.setInvoiceDetailEntity(null);
 
         return inventoryRepository.save(entity);
     }
