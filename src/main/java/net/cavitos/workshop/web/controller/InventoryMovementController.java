@@ -95,7 +95,7 @@ public class InventoryMovementController extends BaseController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @DeleteMapping
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable @NotEmpty final String id,
                                        final Principal principal) {
 
