@@ -26,7 +26,6 @@ public class InvoiceDetailInventoryListener {
     private static final Logger LOGGER = LoggerFactory.getLogger(InvoiceDetailInventoryListener.class);
 
     private static final String INVENTORY_PRODUCT_TYPE = "P";
-    private static final String INPUT_OPERATION_TYPE = "I";
     private static final String MOVEMENT_DESCRIPTION = "Inventory automatic movement triggered by invoice detail event";
 
     private final InventoryRepository inventoryRepository;

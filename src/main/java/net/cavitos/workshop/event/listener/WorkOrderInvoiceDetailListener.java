@@ -1,49 +1,43 @@
-package net.cavitos.workshop.event.observers;
+package net.cavitos.workshop.event.listener;
 
-import net.cavitos.workshop.event.model.EventType;
+import net.cavitos.workshop.event.model.InvoiceDetailEvent;
 import net.cavitos.workshop.model.entity.InvoiceDetailEntity;
 import net.cavitos.workshop.model.entity.WorkOrderDetailEntity;
+import net.cavitos.workshop.model.generator.TimeBasedGenerator;
 import net.cavitos.workshop.model.repository.WorkOrderDetailRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Objects;
-import java.util.UUID;
-
 import static net.cavitos.workshop.factory.DateTimeFactory.getUTCNow;
 
-//@Component
-public class WorkOrderInvoiceDetailObserver implements InvoiceDetailObserver {
+@Component
+public class WorkOrderInvoiceDetailListener {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(WorkOrderInvoiceDetailObserver.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(WorkOrderInvoiceDetailListener.class);
 
     private final WorkOrderDetailRepository workOrderDetailRepository;
 
-    public WorkOrderInvoiceDetailObserver(final WorkOrderDetailRepository workOrderDetailRepository) {
-
+    public WorkOrderInvoiceDetailListener(final WorkOrderDetailRepository workOrderDetailRepository) {
         this.workOrderDetailRepository = workOrderDetailRepository;
     }
 
-    @Override
-    @Transactional
-    public void update(EventType eventType, InvoiceDetailEntity invoiceDetailEntity) {
+    @EventListener(InvoiceDetailEvent.class)
+    public void handleEvent(InvoiceDetailEvent invoiceDetailEvent) {
 
-        if (Objects.nonNull(invoiceDetailEntity) && Objects.nonNull(invoiceDetailEntity.getWorkOrderEntity())) {
+        LOGGER.info("Invoice Detail Event of type={} with invoice_detail_id={}",
+                invoiceDetailEvent.getEventType(), invoiceDetailEvent.getInvoiceDetailEntity().getId());
 
-            switch (eventType) {
-                case ADD -> addWorkOrderDetailFor(invoiceDetailEntity);
-                case UPDATE -> updateWorkOrderDetailFor(invoiceDetailEntity);
-                case DELETE -> deleteWorkOrderDetailFor(invoiceDetailEntity);
-            }
+        final var eventType = invoiceDetailEvent.getEventType();
+        final var invoiceDetailEntity = invoiceDetailEvent.getInvoiceDetailEntity();
+
+        switch (eventType) {
+            case ADD -> addWorkOrderDetailFor(invoiceDetailEntity);
+            case UPDATE -> updateWorkOrderDetailFor(invoiceDetailEntity);
+            case DELETE -> deleteWorkOrderDetailFor(invoiceDetailEntity);
         }
-    }
-
-    @Override
-    public String getName() {
-        return "WorkOrderInvoiceDetailObserver";
     }
 
     // --------------------------------------------------------------------------------------------------------
@@ -56,11 +50,11 @@ public class WorkOrderInvoiceDetailObserver implements InvoiceDetailObserver {
         final var tenant = invoiceDetailEntity.getTenant();
 
         workOrderDetailRepository.findByWorkOrderEntityAndProductEntityAndTenant(workOrderEntity, productEntity, tenant)
-                        .ifPresent(workOrderDetailEntity -> {
+                .ifPresent(workOrderDetailEntity -> {
 
-                            LOGGER.info("work_order_detail={} found, deleting it for tenant={}", workOrderDetailEntity, tenant);
-                            workOrderDetailRepository.delete(workOrderDetailEntity);
-                        });
+                    LOGGER.info("work_order_detail={} found, deleting it for tenant={}", workOrderDetailEntity, tenant);
+                    workOrderDetailRepository.delete(workOrderDetailEntity);
+                });
     }
 
     @Transactional
@@ -77,14 +71,14 @@ public class WorkOrderInvoiceDetailObserver implements InvoiceDetailObserver {
 
         if (detailHolder.isPresent()) {
 
-            LOGGER.error("Work order detail already found for work_order_number={} and tenant={}", workOrderEntity.getNumber(),
-                    tenant);
+            LOGGER.error("Work order detail already found for work_order_number={} and tenant={}",
+                    workOrderEntity.getNumber(), tenant);
 
             return;
         }
 
         final var detail = WorkOrderDetailEntity.builder()
-                .id(UUID.randomUUID().toString())
+                .id(TimeBasedGenerator.generateTimeBasedId())
                 .invoiceDetailEntity(invoiceDetailEntity)
                 .productEntity(productEntity)
                 .workOrderEntity(workOrderEntity)
