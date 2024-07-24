@@ -8,20 +8,28 @@ import net.cavitos.workshop.domain.model.web.response.error.ErrorResponse;
 import net.cavitos.workshop.domain.model.web.response.error.ValidationErrorResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.MessageSourceResolvable;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.Nullable;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.method.annotation.HandlerMethodValidationException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
-@ControllerAdvice
+import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
+
+@RestControllerAdvice
 public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ControllerExceptionHandler.class);    
@@ -65,35 +73,78 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
         return handleExceptionInternal(exception, error, buildHttpHeaders(), HttpStatus.FORBIDDEN, request);
     }
 
+    @Override
+    protected ResponseEntity<Object> handleHandlerMethodValidationException(HandlerMethodValidationException exception, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+
+        LOGGER.error("validation failure - ", exception);
+
+        var error = new ValidationErrorResponse();
+        error.setMessage("Request validation failed");
+
+        var errors = exception.getAllValidationResults()
+                .stream()
+                .flatMap(result -> {
+
+                    final var fieldValue = result.getArgument();
+
+                    return result.getResolvableErrors()
+                            .stream()
+                            .map(resolvable -> {
+
+                                final var fieldError = new FieldError();
+
+                                var names = resolvable.getCodes();
+                                if (nonNull(names) && names.length >= 2) {
+
+                                    fieldError.setFieldName(names[1]);
+                                }
+
+                                fieldError.setValue(nonNull(fieldValue) ? fieldValue.toString() : "");
+                                fieldError.setError(resolvable.getDefaultMessage());
+
+                                return fieldError;
+                            });
+                }).toList();
+
+        error.setErrors(errors);
+
+        return handleExceptionInternal(exception, error, buildHttpHeaders(), HttpStatus.BAD_REQUEST, request);
+    }
+
     // ------------------------------------------------------------------------------------------------
 
+    @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException exception,
                                                                   HttpHeaders headers,
-                                                                  HttpStatus status,
+                                                                  HttpStatusCode status,
                                                                   WebRequest request) {
 
-        LOGGER.error("unable to process request because a validation exception - {}", exception.getMessage());
+        LOGGER.error("unable to process request because a validation exception - ", exception);
 
         final var error = new ValidationErrorResponse();
         error.setMessage("Request validation failed");
 
-        var fieldErrors = exception.getFieldErrors().stream()
-                .map(fError -> {
+        var errors = exception.getFieldErrors()
+                .stream()
+                .map(fieldError -> {
 
-                    final var value = Objects.nonNull(fError.getRejectedValue()) ? fError.getRejectedValue().toString()
-                            : "null";
+                    var fError = new FieldError();
 
-                    final var fieldError = new FieldError();
-                    fieldError.setError(fError.getDefaultMessage());
-                    fieldError.setFieldName(fError.getField());
-                    fieldError.setValue(value);
+                    fError.setFieldName(fieldError.getField());
 
-                    return fieldError;
-                }).collect(Collectors.toList());
+                    if (nonNull(fieldError.getRejectedValue())) {
 
-        error.setErrors(fieldErrors);
+                        fError.setValue(fieldError.getRejectedValue().toString());
+                    }
 
-        return handleExceptionInternal(exception, error, headers, status, request);
+                    fError.setError(fieldError.getDefaultMessage());
+
+                    return fError;
+                }).toList();
+
+        error.setErrors(errors);
+
+        return handleExceptionInternal(exception, error, buildHttpHeaders(), HttpStatus.BAD_REQUEST, request);
     }
 
     // ------------------------------------------------------------------------------------------------

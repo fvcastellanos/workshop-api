@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.1.0</version>
+		<version>3.2.3</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>net.cavitos.workshop</groupId>
@@ -16,12 +16,13 @@
 	<properties>
 	    <apache.commons-lang3.version>3.12.0</apache.commons-lang3.version>
 		<failsafe.version>3.3.1</failsafe.version>
+		<flyway.version>9.21.0</flyway.version>
 		<guava.version>31.1-jre</guava.version>
 		<hibernate.bean-validator.version>7.0.4.Final</hibernate.bean-validator.version>
-		<java.version>17</java.version>
+		<java.version>21</java.version>
         <java-uuid-generator.version>4.1.1</java-uuid-generator.version>
 		<ksuid.version>1.1.2</ksuid.version>
-		<lombok.version>1.18.22</lombok.version>
+		<lombok.version>1.18.30</lombok.version>
 		<maven-surefire-plugin.version>3.0.0</maven-surefire-plugin.version>
 		<maven-failsafe-plugin.version>3.0.0</maven-failsafe-plugin.version>
 		<vavr.version>0.10.4</vavr.version>		
@@ -62,10 +63,12 @@
 		<dependency>
 			<groupId>org.flywaydb</groupId>
 			<artifactId>flyway-core</artifactId>
+			<version>${flyway.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.flywaydb</groupId>
 			<artifactId>flyway-mysql</artifactId>
+			<version>${flyway.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.mysql</groupId>
@@ -126,7 +129,7 @@
 			<plugin>
                 <groupId>org.flywaydb</groupId>
                 <artifactId>flyway-maven-plugin</artifactId>
-                <version>8.5.5</version>
+                <version>${flyway.version}</version>
                 <configuration>
                     <url>${DATASOURCE_URL}</url>
                 </configuration>

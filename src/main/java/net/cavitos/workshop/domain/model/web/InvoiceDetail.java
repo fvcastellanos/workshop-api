@@ -32,5 +32,8 @@ public class InvoiceDetail {
     @Min(value = 0)
     private double unitPrice;
 
+    @Min(value = 0)
+    private double discountAmount;
+
     private double total;
 }

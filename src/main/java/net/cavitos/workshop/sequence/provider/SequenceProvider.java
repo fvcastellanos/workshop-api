@@ -5,8 +5,8 @@ import dev.failsafe.RetryPolicy;
 import net.cavitos.workshop.domain.exception.BusinessException;
 import net.cavitos.workshop.factory.BusinessExceptionFactory;
 import net.cavitos.workshop.factory.DateTimeFactory;
-import net.cavitos.workshop.sequence.model.repository.SequenceRepository;
 import net.cavitos.workshop.sequence.domain.SequenceType;
+import net.cavitos.workshop.sequence.model.repository.SequenceRepository;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,12 +34,19 @@ public class SequenceProvider {
     public String calculateNext(final SequenceType sequenceType) {
 
         return Failsafe.with(buildRetryPolicy())
-                .get(() -> calculateNext(sequenceType, PAD_SIZE));
+                .get(() -> calculateNextValue(sequenceType, PAD_SIZE));
+    }
+
+    @Transactional
+    public String calculateNext(final SequenceType sequenceType, final int padSize) {
+
+        return Failsafe.with(buildRetryPolicy())
+                .get(() -> calculateNextValue(sequenceType, padSize));
     }
 
     // ------------------------------------------------------------------------------------
 
-    private String calculateNext(final SequenceType sequenceType, final int padSize) {
+    private String calculateNextValue(final SequenceType sequenceType, final int padSize) {
 
         try {
             final var entity = sequenceRepository.findByPrefix(sequenceType.getPrefix())

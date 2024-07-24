@@ -19,7 +19,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Documented
 @Constraint(validatedBy = DateValidator.class)
 public @interface Date {
-    String message() default "must match valid date MM/dd/yyyy";
+    String message() default "must match valid date yyyy-MM-dd";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
 }

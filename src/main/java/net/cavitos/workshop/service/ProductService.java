@@ -181,7 +181,6 @@ public class ProductService {
         return switch (productType) {
             case PRODUCT -> sequenceProvider.calculateNext(SequenceType.PRODUCT);
             case SERVICE -> sequenceProvider.calculateNext(SequenceType.SERVICE);
-            default -> sequenceProvider.calculateNext(SequenceType.UNKNOWN);
         };
     }
 

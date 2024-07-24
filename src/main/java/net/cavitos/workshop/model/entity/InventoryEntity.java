@@ -7,6 +7,10 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -17,10 +21,6 @@ import lombok.ToString;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import java.time.Instant;
 
 @Entity
@@ -46,10 +46,13 @@ public class InventoryEntity {
     @JoinColumn(name = "invoice_detail_id")
     private InvoiceDetailEntity invoiceDetailEntity;
 
-    @NotBlank
-    @Size(max = 1)
-    @Column(name = "operation_type")
-    private String operationType;
+    @ManyToOne
+    @JoinColumn(name = "operation_type_id")
+    private InventoryMovementTypeEntity inventoryMovementTypeEntity;
+
+    @NotNull
+    @Column(name = "operation_date")
+    private Instant operationDate;
 
     @Size(max = 200)
     private String description;
@@ -62,6 +65,10 @@ public class InventoryEntity {
     @Min(value = 0)
     @Column(name = "unit_price")
     private double unitPrice;
+
+    @Min(value = 0)
+    @Column(name = "discount_amount")
+    private double discountAmount;
 
     @NotNull
     @Min(value = 0)
