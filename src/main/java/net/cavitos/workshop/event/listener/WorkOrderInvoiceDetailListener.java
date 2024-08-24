@@ -25,7 +25,7 @@ public class WorkOrderInvoiceDetailListener {
     }
 
     @EventListener(InvoiceDetailEvent.class)
-    public void handleEvent(InvoiceDetailEvent invoiceDetailEvent) {
+    public void handleEvent(final InvoiceDetailEvent invoiceDetailEvent) {
 
         LOGGER.info("Invoice Detail Event of type={} with invoice_detail_id={}",
                 invoiceDetailEvent.getEventType(), invoiceDetailEvent.getInvoiceDetailEntity().getId());
@@ -43,7 +43,7 @@ public class WorkOrderInvoiceDetailListener {
     // --------------------------------------------------------------------------------------------------------
 
     @Transactional
-    void deleteWorkOrderDetailFor(InvoiceDetailEntity invoiceDetailEntity) {
+    void deleteWorkOrderDetailFor(final InvoiceDetailEntity invoiceDetailEntity) {
 
         final var workOrderEntity = invoiceDetailEntity.getWorkOrderEntity();
         final var productEntity = invoiceDetailEntity.getProductEntity();
@@ -58,7 +58,7 @@ public class WorkOrderInvoiceDetailListener {
     }
 
     @Transactional
-    void addWorkOrderDetailFor(InvoiceDetailEntity invoiceDetailEntity) {
+    void addWorkOrderDetailFor(final InvoiceDetailEntity invoiceDetailEntity) {
 
         final var workOrderEntity = invoiceDetailEntity.getWorkOrderEntity();
         final var productEntity = invoiceDetailEntity.getProductEntity();
@@ -92,7 +92,7 @@ public class WorkOrderInvoiceDetailListener {
     }
 
     @Transactional
-    void updateWorkOrderDetailFor(InvoiceDetailEntity invoiceDetailEntity) {
+    void updateWorkOrderDetailFor(final InvoiceDetailEntity invoiceDetailEntity) {
 
         final var workOrderEntity = invoiceDetailEntity.getWorkOrderEntity();
         final var productEntity = invoiceDetailEntity.getProductEntity();
