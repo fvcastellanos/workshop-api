@@ -2,8 +2,10 @@ package net.cavitos.workshop.web.controller;
 
 import net.cavitos.workshop.security.domain.UserProfile;
 import net.cavitos.workshop.security.service.UserService;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.security.Principal;
+import java.util.Map;
 
 public abstract class BaseController {
 
@@ -14,18 +16,12 @@ public abstract class BaseController {
 
     protected static final String DEFAULT_TENANT = "default";
 
+    @Value("${server.servlet.context-path}")
+    protected String basePath;
+
     public BaseController(UserService userService) {
 
         this.userService = userService;
-    }
-
-    protected String buildSelf(final String baseRoute, final String tenantId, final String self) {
-
-        return baseRoute +
-                "/" +
-                tenantId +
-                "/" +
-                self;
     }
 
     protected UserProfile getUserProfile(Principal principal) {
@@ -39,4 +35,12 @@ public abstract class BaseController {
 
         return userProfile.getTenant();
     }
+
+    protected Map<String, Object> buildAttributeMap() {
+
+        return Map.of(
+                "basePath", basePath
+        );
+    }
+
 }

@@ -45,8 +45,18 @@ public class ApiSecurityConfiguration {
                 .authorizeHttpRequests(requests -> requests
                         .requestMatchers(HttpMethod.GET, "/actuator/**")
                             .permitAll() // GET requests don't need auth
-                        .anyRequest()
-                        .authenticated()                
+                        .requestMatchers(HttpMethod.GET, "/**")
+                            .permitAll()
+                        .requestMatchers(HttpMethod.GET, "/**")
+                            .permitAll()
+                        .requestMatchers(HttpMethod.POST, "/**")
+                            .permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/**")
+                            .permitAll()
+                        .requestMatchers(HttpMethod.DELETE, "/**")
+                            .permitAll()
+//                        .anyRequest()
+//                        .authenticated()
                 )
                 .oauth2ResourceServer(server -> server
                         .jwt(jwtConfigurer ->

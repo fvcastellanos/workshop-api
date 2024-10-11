@@ -21,6 +21,7 @@
 		<hibernate.bean-validator.version>7.0.4.Final</hibernate.bean-validator.version>
 		<java.version>21</java.version>
         <java-uuid-generator.version>4.1.1</java-uuid-generator.version>
+		<jte.version>3.1.12</jte.version>
 		<ksuid.version>1.1.2</ksuid.version>
 		<lombok.version>1.18.30</lombok.version>
 		<maven-surefire-plugin.version>3.0.0</maven-surefire-plugin.version>
@@ -81,6 +82,16 @@
 			<optional>true</optional>
 		</dependency>
 		<dependency>
+			<groupId>gg.jte</groupId>
+			<artifactId>jte</artifactId>
+			<version>${jte.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>gg.jte</groupId>
+			<artifactId>jte-spring-boot-starter-3</artifactId>
+			<version>${jte.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
 			<version>${apache.commons-lang3.version}</version>
@@ -134,6 +145,26 @@
                     <url>${DATASOURCE_URL}</url>
                 </configuration>
             </plugin>
+			<plugin>
+				<groupId>gg.jte</groupId>
+				<artifactId>jte-maven-plugin</artifactId>
+				<version>${jte.version}</version>
+				<executions>
+					<execution>
+						<id>jte-generate</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>generate</goal>
+						</goals>
+						<configuration>
+							<sourceDirectory>${project.basedir}/src/main/jte</sourceDirectory>
+							<contentType>Html</contentType>
+<!--							<binaryStaticContent>true</binaryStaticContent>-->
+							<targetResourceDirectory>${project.build.outputDirectory}</targetResourceDirectory>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
