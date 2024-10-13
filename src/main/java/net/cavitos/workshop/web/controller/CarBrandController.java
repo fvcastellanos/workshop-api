@@ -30,8 +30,8 @@ import java.util.stream.Collectors;
 import static net.cavitos.workshop.web.controller.Route.CAR_BRANDS_RESOURCE;
 import static net.cavitos.workshop.web.controller.Route.CAR_LINES_RESOURCE;
 
-//@RestController
-//@RequestMapping(CAR_BRANDS_RESOURCE)
+@RestController
+@RequestMapping(CAR_BRANDS_RESOURCE)
 public class CarBrandController extends BaseController {
 
     private final CarBrandService carBrandService;

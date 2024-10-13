@@ -1,6 +1,6 @@
-@param String basePath
+@param String uiHome
 
-@template.contentWithNavigation(basePath = basePath, content = @`
+@template.layouts.main(basePath = uiHome, content = @`
 
     <div class="container-fluid top-separator">
         <div class="row justify-content-center">

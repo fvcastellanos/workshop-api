@@ -1,8 +1,10 @@
 package net.cavitos.workshop.web.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
 import net.cavitos.workshop.security.domain.UserProfile;
 import net.cavitos.workshop.security.service.UserService;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.web.csrf.CsrfToken;
 
 import java.security.Principal;
 import java.util.Map;
@@ -36,10 +38,14 @@ public abstract class BaseController {
         return userProfile.getTenant();
     }
 
-    protected Map<String, Object> buildAttributeMap() {
+    protected Map<String, Object> buildCommonUIAttributes(HttpServletRequest request) {
+
+        final var csrfToken = (CsrfToken) request.getAttribute("_csrf");
 
         return Map.of(
-                "basePath", basePath
+                "servletPath", basePath,
+                "uiHome", basePath + Route.UI_HOME,
+                "csrfToken", csrfToken
         );
     }
 

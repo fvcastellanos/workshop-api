@@ -12,6 +12,8 @@ import org.springframework.security.oauth2.jwt.JwtDecoders;
 import org.springframework.security.oauth2.jwt.JwtValidators;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.csrf.XorCsrfTokenRequestAttributeHandler;
+import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -43,25 +45,34 @@ public class ApiSecurityConfiguration {
 
         http.cors(withDefaults())
                 .authorizeHttpRequests(requests -> requests
+                        // Spring actuators
                         .requestMatchers(HttpMethod.GET, "/actuator/**")
                             .permitAll() // GET requests don't need auth
-                        .requestMatchers(HttpMethod.GET, "/**")
+
+                        // UI routes
+                        .requestMatchers(HttpMethod.GET, "/ui/**")
                             .permitAll()
-                        .requestMatchers(HttpMethod.GET, "/**")
+                        .requestMatchers(HttpMethod.POST, "/ui/**")
                             .permitAll()
-                        .requestMatchers(HttpMethod.POST, "/**")
+                        .requestMatchers(HttpMethod.PUT, "/ui/**")
                             .permitAll()
-                        .requestMatchers(HttpMethod.PUT, "/**")
+                        .requestMatchers(HttpMethod.DELETE, "/ui/**")
                             .permitAll()
-                        .requestMatchers(HttpMethod.DELETE, "/**")
+
+                        // Static files
+                        .requestMatchers(HttpMethod.GET, "/css/**")
                             .permitAll()
-//                        .anyRequest()
-//                        .authenticated()
+
+                        // API routes
+                        .anyRequest()
+                        .authenticated()
                 )
                 .oauth2ResourceServer(server -> server
                         .jwt(jwtConfigurer ->
                                 jwtConfigurer.decoder(jwtDecoder())
                         ));
+
+                http.csrf((csrf) -> csrf.csrfTokenRequestHandler(new XorCsrfTokenRequestAttributeHandler()));
 
         return http.build();
     }
