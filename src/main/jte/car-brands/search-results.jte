@@ -3,23 +3,33 @@
 
 @param List<CarBrandEntity> entities
 
-<table class="table table-striped">
-    <tr>
-        <th>#</th>
-        <th>Nombre</th>
-        <th>Activo</th>
-    </tr>
-    @for (var entity : entities)
+<table class="table table-bordered table-striped table-hover">
+    <thead>
         <tr>
-            <td>
-                ${entity.getId()}
-            </td>
-            <td>
-                ${entity.getName()}
-            </td>
-            <td>
-                ${entity.getActive()}
-            </td>
+            <th class="text-center">#</th>
+            <th class="text-center">Nombre</th>
+            <th class="text-center">Activo</th>
         </tr>
-    @endfor
+    </thead>
+    <tbody>
+        @for (var entity : entities)
+            <tr>
+                <td class="text-center">
+                    <a href="${entity.getId()}">
+                        <i class="bi bi-pencil"></i>
+                    </a>
+                </td>
+                <td>
+                    ${entity.getName()}
+                </td>
+                <td>
+                    ${entity.getActive()}
+                </td>
+            </tr>
+        @endfor
+    </tbody>
 </table>
+
+<div>
+    @template.layouts.pagination()
+</div>
