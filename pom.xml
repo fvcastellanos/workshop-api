@@ -23,6 +23,7 @@
         <java-uuid-generator.version>4.1.1</java-uuid-generator.version>
 		<ksuid.version>1.1.2</ksuid.version>
 		<lombok.version>1.18.30</lombok.version>
+		<maven-jar-plugin.version>3.4.2</maven-jar-plugin.version>
 		<maven-surefire-plugin.version>3.0.0</maven-surefire-plugin.version>
 		<maven-failsafe-plugin.version>3.0.0</maven-failsafe-plugin.version>
 		<vavr.version>0.10.4</vavr.version>		
@@ -162,5 +163,4 @@
 			</plugin>
         </plugins>
 	</build>
-
 </project>
