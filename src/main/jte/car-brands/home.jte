@@ -1,14 +1,12 @@
 @import net.cavitos.workshop.model.entity.CarBrandEntity
-@import net.cavitos.workshop.web.controller.ui.model.SearchRequest
+@import net.cavitos.workshop.web.controller.ui.model.SearchModel
 @import org.springframework.security.web.csrf.CsrfToken
 @import java.util.List
-@import net.cavitos.workshop.web.controller.Route
 
 @param String uiHome
-@param SearchRequest searchRequest
+@param SearchModel searchModel
 @param CsrfToken csrfToken
 @param List<CarBrandEntity> items
-
 
 @template.layouts.main(basePath = uiHome, content = @`
 
@@ -18,18 +16,18 @@
                 <h3>Marca de Vehículos</h3>
                 <div class="top-separator">
                     <div class="card">
-                        <form method="post" action="${uiHome + Route.CAR_BRANDS_RESOURCE}">
+                        <form method="get">
                             <div class="card-body">
                                     <div class="row md-6">
                                         <div class="col-8">
                                             <label class="form-label">Texto</label>
-                                            <input class="form-control" name="text" type="text" placeholder="Texto" value="${searchRequest.getText()}" />
+                                            <input class="form-control" name="text" type="text" placeholder="Texto" value="${searchModel.getText()}" />
                                         </div>
                                         <div class="col-2">
                                             <label class="form-label">Activo</label>
                                             <select class="form-select" name="active">
-                                                <option value="1" selected="${searchRequest.getActive() == 1}">Si</option>
-                                                <option value="0" selected="${searchRequest.getActive() == 0}">No</option>
+                                                <option value="1" selected="${searchModel.getActive() == 1}">Si</option>
+                                                <option value="0" selected="${searchModel.getActive() == 0}">No</option>
                                             </select>
                                         </div>
                                     </div>
@@ -40,12 +38,13 @@
                                 <button type="button" class="btn btn-primary">Agregar Fabricante</button>
                             </div>
                             <input type="hidden" name="${csrfToken.getParameterName()}" value="${csrfToken.getToken()}"/>
+
                         </form>
                     </div>
 
                 </div>
                 <div class="top-separator">
-                    @template.car-brands.search-results(entities = items, searchRequest = searchRequest)
+                    @template.car-brands.search-results(searchModel = searchModel, entities = items)
                 </div>
             </div>
         </div>

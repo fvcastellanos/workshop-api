@@ -3,18 +3,13 @@ package net.cavitos.workshop.web.controller.ui;
 import jakarta.servlet.http.HttpServletRequest;
 import net.cavitos.workshop.security.service.UserService;
 import net.cavitos.workshop.service.CarBrandService;
-import net.cavitos.workshop.transformer.CarBrandTransformer;
 import net.cavitos.workshop.web.controller.Route;
-import net.cavitos.workshop.web.controller.ui.model.SearchRequest;
+import net.cavitos.workshop.web.controller.ui.model.SearchModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.stream.Collectors;
 
@@ -33,17 +28,30 @@ public class CarBrandControllerUI extends ControllerUIBase {
     }
 
     @GetMapping
-    public String index(final HttpServletRequest request, final Model model) {
+    public String index(@RequestParam(defaultValue = "") final String text,
+                        @RequestParam(defaultValue = "1") final int active,
+                        @RequestParam(defaultValue = DEFAULT_PAGE) final int page,
+                        @RequestParam(defaultValue = DEFAULT_SIZE) final int size,
+                        final HttpServletRequest request,
+                        final Model model) {
 
-        var searchRequest = buildSearchRequest();
-        var carBrandEntityPage = carBrandService.getAllByTenant("resta", searchRequest.getActive(),
-                searchRequest.getText(), searchRequest.getPage(), searchRequest.getSize());
+        var carBrandEntityPage = carBrandService.getAllByTenant("resta", active, text, page, size);
 
         final var brands = carBrandEntityPage.stream()
                 .collect(Collectors.toList());
 
+        final var searchModel = new SearchModel();
+        searchModel.setText(text);
+        searchModel.setActive(active);
+        searchModel.setPage(page);
+        searchModel.setSize(size);
+//        searchModel.setTotalElements(carBrandEntityPage.getTotalElements());
+//        searchModel.setTotalPages(carBrandEntityPage.getTotalPages());
+        searchModel.setTotalElements(1000);
+        searchModel.setTotalPages(40);
+
         model.addAllAttributes(buildCommonUIAttributes(request));
-        model.addAttribute("searchRequest", searchRequest);
+        model.addAttribute("searchModel", searchModel);
         model.addAttribute("items", brands);
 
         return "car-brands/home";
@@ -51,18 +59,8 @@ public class CarBrandControllerUI extends ControllerUIBase {
 
     @PostMapping
     public String search(final HttpServletRequest request,
-                         final SearchRequest searchRequest,
+                         final SearchModel searchModel,
                          final Model model) {
-
-        var carBrandEntityPage = carBrandService.getAllByTenant("resta", searchRequest.getActive(),
-                searchRequest.getText(), searchRequest.getPage(), searchRequest.getSize());
-
-        final var brands = carBrandEntityPage.stream()
-                .collect(Collectors.toList());
-
-        model.addAllAttributes(buildCommonUIAttributes(request));
-        model.addAttribute("searchRequest", buildSearchRequest());
-        model.addAttribute("items", brands);
 
         model.addAllAttributes(buildCommonUIAttributes(request));
 //        model.addAttribute("searchRequest", buildSearchRequest());

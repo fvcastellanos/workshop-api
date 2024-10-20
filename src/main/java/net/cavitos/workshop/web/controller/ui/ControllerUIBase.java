@@ -2,7 +2,7 @@ package net.cavitos.workshop.web.controller.ui;
 
 import net.cavitos.workshop.security.service.UserService;
 import net.cavitos.workshop.web.controller.BaseController;
-import net.cavitos.workshop.web.controller.ui.model.SearchRequest;
+import net.cavitos.workshop.web.controller.ui.model.SearchModel;
 
 public abstract class ControllerUIBase extends BaseController {
 
@@ -10,9 +10,9 @@ public abstract class ControllerUIBase extends BaseController {
         super(userService);
     }
 
-    protected SearchRequest buildSearchRequest() {
+    protected SearchModel buildSearchModel() {
 
-        final var searchRequest = new SearchRequest();
+        final var searchRequest = new SearchModel();
         searchRequest.setText("");
         searchRequest.setActive(1);
         searchRequest.setCode("");

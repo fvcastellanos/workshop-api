@@ -9,7 +9,7 @@ import lombok.ToString;
 @Setter
 @ToString
 @EqualsAndHashCode
-public class SearchRequest {
+public class SearchModel {
 
     private String text;
     private int active;
@@ -17,4 +17,6 @@ public class SearchRequest {
     private String code;
     private int page;
     private int size;
+    private long totalElements;
+    private int totalPages;
 }
