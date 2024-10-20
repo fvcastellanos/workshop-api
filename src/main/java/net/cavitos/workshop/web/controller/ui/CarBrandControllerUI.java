@@ -35,13 +35,15 @@ public class CarBrandControllerUI extends ControllerUIBase {
     @GetMapping
     public String index(final HttpServletRequest request, final Model model) {
 
-        var carBrandEntityPage = carBrandService.getAllByTenant("resta", 1, "", 0, 25);
+        var searchRequest = buildSearchRequest();
+        var carBrandEntityPage = carBrandService.getAllByTenant("resta", searchRequest.getActive(),
+                searchRequest.getText(), searchRequest.getPage(), searchRequest.getSize());
 
         final var brands = carBrandEntityPage.stream()
                 .collect(Collectors.toList());
 
         model.addAllAttributes(buildCommonUIAttributes(request));
-        model.addAttribute("searchRequest", buildSearchRequest());
+        model.addAttribute("searchRequest", searchRequest);
         model.addAttribute("items", brands);
 
         return "car-brands/home";
@@ -51,6 +53,16 @@ public class CarBrandControllerUI extends ControllerUIBase {
     public String search(final HttpServletRequest request,
                          final SearchRequest searchRequest,
                          final Model model) {
+
+        var carBrandEntityPage = carBrandService.getAllByTenant("resta", searchRequest.getActive(),
+                searchRequest.getText(), searchRequest.getPage(), searchRequest.getSize());
+
+        final var brands = carBrandEntityPage.stream()
+                .collect(Collectors.toList());
+
+        model.addAllAttributes(buildCommonUIAttributes(request));
+        model.addAttribute("searchRequest", buildSearchRequest());
+        model.addAttribute("items", brands);
 
         model.addAllAttributes(buildCommonUIAttributes(request));
 //        model.addAttribute("searchRequest", buildSearchRequest());

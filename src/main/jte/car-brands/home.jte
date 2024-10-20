@@ -2,11 +2,13 @@
 @import net.cavitos.workshop.web.controller.ui.model.SearchRequest
 @import org.springframework.security.web.csrf.CsrfToken
 @import java.util.List
+@import net.cavitos.workshop.web.controller.Route
 
 @param String uiHome
 @param SearchRequest searchRequest
 @param CsrfToken csrfToken
 @param List<CarBrandEntity> items
+
 
 @template.layouts.main(basePath = uiHome, content = @`
 
@@ -16,7 +18,7 @@
                 <h3>Marca de Vehículos</h3>
                 <div class="top-separator">
                     <div class="card">
-                        <form method="post">
+                        <form method="post" action="${uiHome + Route.CAR_BRANDS_RESOURCE}">
                             <div class="card-body">
                                     <div class="row md-6">
                                         <div class="col-8">
@@ -43,7 +45,7 @@
 
                 </div>
                 <div class="top-separator">
-                    @template.car-brands.search-results(entities = items)
+                    @template.car-brands.search-results(entities = items, searchRequest = searchRequest)
                 </div>
             </div>
         </div>
