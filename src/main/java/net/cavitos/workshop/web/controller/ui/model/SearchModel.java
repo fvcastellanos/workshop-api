@@ -19,4 +19,11 @@ public class SearchModel {
     private int size;
     private long totalElements;
     private int totalPages;
+
+    public SearchModel() {
+        this.text = "";
+        this.active = 1;
+        this.page = 0;
+        this.size = 25;
+    }
 }

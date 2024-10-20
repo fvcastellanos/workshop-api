@@ -1,9 +1,10 @@
 package net.cavitos.workshop.web.controller.ui;
 
-import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import net.cavitos.workshop.security.service.UserService;
 import net.cavitos.workshop.service.CarBrandService;
 import net.cavitos.workshop.web.controller.Route;
+import net.cavitos.workshop.web.controller.ui.model.CarBrandModel;
 import net.cavitos.workshop.web.controller.ui.model.SearchModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,45 +29,54 @@ public class CarBrandControllerUI extends ControllerUIBase {
     }
 
     @GetMapping
-    public String index(@RequestParam(defaultValue = "") final String text,
-                        @RequestParam(defaultValue = "1") final int active,
-                        @RequestParam(defaultValue = DEFAULT_PAGE) final int page,
+    public String index(@RequestParam(defaultValue = DEFAULT_PAGE) final int page,
                         @RequestParam(defaultValue = DEFAULT_SIZE) final int size,
-                        final HttpServletRequest request,
+                        @ModelAttribute("searchModel") SearchModel searchModel,
                         final Model model) {
 
-        var carBrandEntityPage = carBrandService.getAllByTenant("resta", active, text, page, size);
-
-        final var brands = carBrandEntityPage.stream()
-                .collect(Collectors.toList());
-
-        final var searchModel = new SearchModel();
-        searchModel.setText(text);
-        searchModel.setActive(active);
-        searchModel.setPage(page);
-        searchModel.setSize(size);
-//        searchModel.setTotalElements(carBrandEntityPage.getTotalElements());
-//        searchModel.setTotalPages(carBrandEntityPage.getTotalPages());
-        searchModel.setTotalElements(1000);
-        searchModel.setTotalPages(40);
-
-        model.addAllAttributes(buildCommonUIAttributes(request));
-        model.addAttribute("searchModel", searchModel);
-        model.addAttribute("items", brands);
-
+        performSearch(searchModel, model);
         return "car-brands/home";
     }
 
     @PostMapping
-    public String search(final HttpServletRequest request,
-                         final SearchModel searchModel,
+    public String search(@ModelAttribute("searchModel") final SearchModel searchModel,
                          final Model model) {
 
-        model.addAllAttributes(buildCommonUIAttributes(request));
-//        model.addAttribute("searchRequest", buildSearchRequest());
-
-        LOGGER.info("model: {}", model);
-
+        performSearch(searchModel, model);
         return "car-brands/home";
     }
+
+    @GetMapping("/new")
+    public String add(@ModelAttribute("carBrandModel") final CarBrandModel carBrandModel,
+                      final Model model) {
+
+        return "car-brands/add-update";
+    }
+
+    @PostMapping("/new")
+    public String save(@ModelAttribute("carBrandModel") @Valid final CarBrandModel carBrandModel,
+                       final Model model) {
+
+
+
+        return "car-brands/add-update";
+    }
+
+    // -----------------------------------------------------------
+
+    private void performSearch(final SearchModel searchModel,
+                               final Model model) {
+
+        var carBrandEntityPage = carBrandService.getAllByTenant("resta", searchModel.getActive(),
+                searchModel.getText(), searchModel.getPage(), searchModel.getSize());
+
+        final var brands = carBrandEntityPage.stream()
+                .collect(Collectors.toList());
+
+        searchModel.setTotalElements(carBrandEntityPage.getTotalElements());
+        searchModel.setTotalPages(carBrandEntityPage.getTotalPages());
+
+        model.addAttribute("items", brands);
+    }
+
 }
